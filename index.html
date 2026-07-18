@@ -90,7 +90,7 @@
             background: #357abd;
         }
 
-        /* 遊戲主畫面（一開始隱藏） */
+        /* 遊戲主畫面 */
         #main-game-ui {
             display: none;
         }
@@ -161,6 +161,19 @@
             stroke: var(--primary);
         }
 
+        /* 答錯滿三次時，正確答案亮起明顯紅框與閃爍動畫 */
+        .hotspot.reveal-answer {
+            stroke: var(--danger) !important;
+            stroke-width: 5 !important;
+            fill: rgba(231, 29, 54, 0.25) !important;
+            animation: blink 0.5s linear infinite alternate;
+        }
+
+        @keyframes blink {
+            0% { opacity: 0.4; }
+            100% { opacity: 1; }
+        }
+
         .feedback {
             margin-top: 15px;
             padding: 12px;
@@ -189,7 +202,7 @@
             color: #721c24;
         }
 
-        /* 考試總成績畫面（一開始隱藏） */
+        /* 考試總成績畫面 */
         .result-screen {
             text-align: center;
             padding: 40px 20px;
@@ -223,8 +236,7 @@
 
     <!-- 1. 登入歡迎畫面 -->
     <div id="login-screen" class="login-screen">
-        <h2>歡迎參加藥品定位測驗</h2>
-        <p>請在下方輸入您的暱稱或員編以開始遊戲：</p>
+        <h2>歡迎歡迎！請輸入您的暱稱或員編開始測驗：</h2>
         <div class="input-group">
             <input type="text" id="username-input" placeholder="例如：王小明" maxlength="15" autocomplete="off">
         </div>
@@ -245,6 +257,7 @@
         </div>
 
         <div class="game-area">
+            <!-- ⚠️ 請記得確認 GitHub 上的照片副檔名是大寫 JPG 還是小寫 jpg -->
             <img src="門診調劑台全景照及分區編號1150718.jpg" alt="門診調劑台" id="game-img">
             
             <svg viewBox="0 0 1000 500">
@@ -305,9 +318,9 @@
 </div>
 
 <script>
-    // 這裡的題目文字已全面改版為「[藥名] 在哪裡？」
+    // 您的專屬 4 題題庫
     const questionBank = [
-        { q: "Amanda 在哪裡？", a: "1", name: "調劑台左方" },
+        { q: "Amanda 在哪裡？", a: "1", name: "調劑台右方" },
         { q: "Abilify 10mg 在哪裡？", a: "7", name: "口服1抽" },
         { q: "Abilify 2mg 在哪裡？", a: "7", name: "口服1抽" },
         { q: "Abilify 30mg 在哪裡？", a: "3", name: "調劑台右方" }
@@ -340,6 +353,9 @@
         document.getElementById('feedback').className = 'feedback';
         document.getElementById('feedback').innerText = '';
         
+        // 清除上一題可能留下的正確答案高亮框
+        document.querySelectorAll('.hotspot').forEach(el => el.classList.remove('reveal-answer'));
+        
         document.getElementById('current-q').innerText = currentIdx + 1;
         document.getElementById('total-q').innerText = questionBank.length;
         document.getElementById('chances-left').innerText = 3;
@@ -357,6 +373,7 @@
             const feedbackEl = document.getElementById('feedback');
 
             if (clickedId === correctAnswer) {
+                // 答對了
                 score += 25; 
                 document.getElementById('score').innerText = score;
                 feedbackEl.className = 'feedback correct';
@@ -365,6 +382,7 @@
                 
                 setTimeout(nextQuestion, 1200);
             } else {
+                // 答錯了
                 wrongCount++;
                 let chancesLeft = 3 - wrongCount;
                 document.getElementById('chances-left').innerText = chancesLeft;
@@ -373,11 +391,19 @@
                     feedbackEl.className = 'feedback try-again';
                     feedbackEl.innerText = `⚠️ 答錯囉！你點到的是【${clickedId}號：${clickedName}】。不是這裡，再試一次！(還剩 ${chancesLeft} 次機會)`;
                 } else {
+                    // 錯滿3次：觸發明顯紅框高亮顯示
                     feedbackEl.className = 'feedback wrong';
-                    feedbackEl.innerText = `❌ 機會用盡！你剛剛點到的是【${clickedId}號：${clickedName}】。正確答案應該是【${correctAnswer}號：${correctName}】。正在進入下一題...`;
+                    feedbackEl.innerText = `❌ 機會用盡！你剛剛點到的是【${clickedId}號：${clickedName}】。正確答案已在圖片上幫您用紅框框起【${correctAnswer}號：${correctName}】。`;
                     isLocked = true;
                     
-                    setTimeout(nextQuestion, 2500);
+                    // 尋找圖片上真正的正確答案區域，並加上高亮樣式
+                    const correctTarget = document.querySelector(`.hotspot[data-id="${correctAnswer}"]`);
+                    if (correctTarget) {
+                        correctTarget.classList.add('reveal-answer');
+                    }
+                    
+                    // 給答題者長一點的時間 (3.5秒) 看清楚紅框框在哪裡，再換下一題
+                    setTimeout(nextQuestion, 3500);
                 }
             }
         });
