@@ -378,7 +378,6 @@
     let wrongCount = 0; 
     let isLocked = false; 
 
-    // 🚀【已完美置入】您剛才生成的專屬雲端試算表 CSV 連線網址
     const googleSheetCSVURL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vSInj_hf5jioFl80-t9oqq7jZLJk29mzSHTy1r8Gj9ERSdhlOOWCZIm_lKoqSec3l0SPo6M97qHWYK8/pub?output=csv";
 
     function startGame() {
@@ -479,39 +478,57 @@
         else rank = `🚨 分數不及格喔，${nickname}！請重新核對圖片與藥包位置！`;
         document.getElementById('rank-text').innerText = rank;
 
-        // 背景提交成績，並在 1 秒後即時讀取全域前十名
         fetch(formActionURL, {
             method: "POST",
             mode: "no-cors",
             body: formData
         }).then(() => {
-            setTimeout(fetchCloudLeaderboard, 1000);
+            setTimeout(fetchCloudLeaderboard, 1200);
         }).catch((err) => {
             fetchCloudLeaderboard();
         });
     }
 
-    // 🏆 新增：抓取雲端 CSV 檔案，並自動過濾、排行前十名
+    // 🏆 【精準修正版】高解析度正則 CSV 欄位讀取與排序
     function fetchCloudLeaderboard() {
         fetch(googleSheetCSVURL)
         .then(response => response.text())
         .then(csvText => {
-            let lines = csvText.split('\n');
+            // 使用嚴謹的正則表達式拆解 CSV 橫列，避免因引號或內部逗號導致錯位
+            let lines = csvText.split(/\r?\n/);
             let playerRecords = [];
 
-            // 拆解 CSV 欄位，第1欄是名字，第2欄是分數
+            // 輔助函式：完美拆解包含雙引號的一列 CSV 資料
+            function parseCSVLine(text) {
+                let r = [""], c = 0, p = false;
+                for (let i = 0; i < text.length; i++) {
+                    let ch = text.charAt(i), next = text.charAt(i+1);
+                    if (ch == '"') { p = !p; }
+                    else if (ch == ',' && !p) { r[++c] = ""; }
+                    else { r[c] += ch; }
+                }
+                return r;
+            }
+
+            // 從第 1 列（跳過標題列）開始解析[cite: 1]
             for (let i = 1; i < lines.length; i++) {
                 if (!lines[i].trim()) continue;
                 
-                let columns = lines[i].split(',');
+                let columns = parseCSVLine(lines[i]);
+                
+                // 嚴格確保至少有「時間戳記、名字、分數」三個核心欄位[cite: 1]
                 if (columns.length >= 3) {
-                    let name = columns[1].replace(/"/g, '').trim();
-                    let pScore = parseInt(columns[2].replace(/"/g, '').trim()) || 0;
-                    playerRecords.push({ name: name, score: pScore });
+                    let name = columns[1].trim();
+                    let pScore = parseInt(columns[2].trim().replace(/[^0-9]/g, '')) || 0;
+                    
+                    // 只要名字不為空，就列入統計
+                    if (name.length > 0) {
+                        playerRecords.push({ name: name, score: pScore });
+                    }
                 }
             }
 
-            // 排行榜規則：由高分到低分排序
+            // 由高分到低分精確排序[cite: 1]
             playerRecords.sort((a, b) => b.score - a.score);
 
             // 只截取前 10 名
