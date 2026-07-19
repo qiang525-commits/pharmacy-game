@@ -99,9 +99,22 @@
             font-size: 0.95rem;
             line-height: 1.5;
             display: none;
-            max-height: 150px;
+            max-height: 180px;
             overflow-y: auto;
             border-left: 4px solid var(--danger);
+        }
+
+        /* 讓查出來的清單項目可以點選的樣式 */
+        .search-item-clickable {
+            color: #1a0dab;
+            text-decoration: underline;
+            cursor: pointer;
+            transition: color 0.1s;
+        }
+        
+        .search-item-clickable:hover {
+            color: var(--danger);
+            font-weight: bold;
         }
 
         /* 歡迎/輸入暱稱畫面 */
@@ -356,14 +369,13 @@
     <div id="search-system-container" class="search-box-container">
         <div class="search-row">
             <label for="drug-search-input"><strong>🔍 藥品落點快查：</strong></label>
-            <!-- 💡 新增 oninput 監聽器，當使用者把字刪除乾淨時，自動恢復挑戰賽功能 -->
             <input type="text" id="drug-search-input" placeholder="請輸入藥名關鍵字（例如：安、Ativan、康立定）" autocomplete="off" oninput="checkSearchEmpty()">
             <button class="btn-search" onclick="searchDrugLocation()">查詢落點</button>
         </div>
         <div id="search-result-block" class="search-result-block"></div>
     </div>
 
-    <!-- 1. 登入歡迎畫面（新增 id 控制動態隱藏） -->
+    <!-- 1. 登入歡迎畫面 -->
     <div id="login-screen-container" class="login-screen">
         <h2>🏆 參加調劑挑戰賽（隨機 20 題）</h2>
         <div class="input-group">
@@ -432,7 +444,7 @@
 </div>
 
 <script>
-    // 📦 第三版題庫（含 11 款 BZD/Z-drugs 定位 17 號、Carbatin 定位 8 號）[cite: 1]
+    // 📦 第三版題庫
     const questionBank = [
         { q: "Abilify 10mg 在哪裡？", a: "7", name: "口服1抽" },
         { q: "Abilify 10mg (安立復) (Aripiprazole) 在哪裡？", a: "7", name: "口服1抽" },
@@ -466,7 +478,7 @@
         { q: "Arika 15mg (立安達) (Aripiprazole) 在哪裡？", a: "7", name: "口服1抽" },
         { q: "Aripizole 20mg (安瑞平) (Aripiprazole) 在哪裡？", a: "3", name: "調劑台右方" },
         { q: "Aripizole 2mg (安瑞平) (Aripiprazole) 在哪裡？", a: "3", name: "調劑台右方" },
-        { q: "Ativan 0.5mg (安定文) (Lorazepam) 在哪裡？", a: "17", name: "管4檯面" }, 
+        { q: "Ativan 0.5mg (安定文) (Lorazepam) 在哪裡？", a: "17", name: "管4檯面" }, // ⭐ 這裡已徹底修復特殊隱藏控制字元
         { q: "Atomoxetine 10mg (apo) (安保思定) (Atomoxetine) 在哪裡？", a: "1", name: "調劑台左方" },
         { q: "Atomoxetine 18mg (apo) (安保思定) (Atomoxetine) 在哪裡？", a: "3", name: "調劑台右方" },
         { q: "Atomoxetine 25mg (apo) (安保思定) (Atomoxetine) 在哪裡？", a: "3", name: "調劑台右方" },
@@ -559,7 +571,7 @@
         { q: "Ezole 5mg (易靜) (Aripiprazole) 在哪裡？", a: "3", name: "調劑台右方" },
         { q: "Fenolip-U 160mg (袪脂優) (Fenofibrate  ) 在哪裡？", a: "1", name: "調劑台左方" },
         { q: "Fluanxol Depot 20mg/1ml (福祿安持續性注射液) (Flupentixol) 在哪裡？", a: "4", name: "針劑上抽" },
-        { q: "Flupine 0.25mg (福安源) (Fludiazepam) 在哪裡？", a: "17", name: "管4檯面" }, 
+        { q: "Flupine 0.25mg (福安源) (Flidiazepam) 在哪裡？", a: "17", name: "管4檯面" }, 
         { q: "Folic Acid 5mg(榮民) (葉酸) (Folic acid) 在哪裡？", a: "1", name: "調劑台左方" },
         { q: "Forxiga 10mg (福適佳) (Dapagliflozin) 在哪裡？", a: "1", name: "調劑台左方" },
         { q: "Fucon 10mg (保賜康) (Hyoscine Butylbromide) 在哪裡？", a: "2", name: "調劑台中間" },
@@ -629,6 +641,7 @@
         { q: "Nicorette QuickMist spray (尼古清戒菸噴霧) (Nicotine) 在哪裡？", a: "11", name: "戒菸" },
         { q: "Nicotinell TTS 30 (克菸貼片) (Nicotine) 在哪裡？", a: "11", name: "戒菸" },
         { q: "Nincort oral gel 5gm (康寧口內膠) (Triamcinolone) 在哪裡？", a: "16", name: "預包區" },
+        { q: "Picetam 400mg (必舒坦) (Piracetam) 在哪裡？", a: "1", name: "調劑台左方" },
         { q: "Ripam 2mg (利平靜) (Clonazepam) 在哪裡？", a: "17", name: "管4檯面" }, 
         { q: "Rivotril 0.5mg (利福全) (Clonazepam) 在哪裡？", a: "17", name: "管4檯面" }, 
         { q: "Silence 1mg (悠然) (Lorazepam) 在哪裡？", a: "17", name: "管4檯面" }, 
@@ -645,12 +658,12 @@
 
     const googleSheetCSVURL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vSInj_hf5jioFl80-t9oqq7jZLJk29mzSHTy1r8Gj9ERSdhlOOWCZIm_lKoqSec3l0SPo6M97qHWYK8/pub?output=csv";
 
-    // 💡 新增監聽：當搜尋框字串被清空時，自動還原挑戰賽登入區塊
     function checkSearchEmpty() {
         const inputKeyword = document.getElementById('drug-search-input').value.trim();
-        // 如果使用者把搜尋關鍵字刪光了，且此時沒有在進行挑戰賽，就把登入區塊帶回來
-        if (inputKeyword === "" && document.getElementById('game-info-ui').style.display !== 'block' && document.getElementById('result-screen').style.display !== 'block') {
-            document.getElementById('login-screen-container').style.display = 'block';
+        if (inputKeyword === "") {
+            if (document.getElementById('game-info-ui').style.display !== 'block' && document.getElementById('result-screen').style.display !== 'block') {
+                document.getElementById('login-screen-container').style.display = 'block';
+            }
             document.querySelectorAll('.hotspot').forEach(el => el.classList.remove('reveal-answer'));
             document.getElementById('search-result-block').innerHTML = "";
             document.getElementById('search-result-block').style.display = "none";
@@ -666,7 +679,6 @@
 
         const inputKeyword = document.getElementById('drug-search-input').value.trim().toLowerCase();
         
-        // 如果輸入空值按 Enter，直接判定為清空，還原挑戰賽
         if (inputKeyword === "") {
             if (document.getElementById('game-info-ui').style.display !== 'block' && document.getElementById('result-screen').style.display !== 'block') {
                 document.getElementById('login-screen-container').style.display = 'block';
@@ -674,7 +686,6 @@
             return;
         }
 
-        // 🔒 ⭐ 核心修正：只要使用者鍵入文字並觸發快查，就暫時隱藏「參加挑戰賽」的區塊
         if (document.getElementById('game-info-ui').style.display !== 'block') {
             document.getElementById('login-screen-container').style.display = 'none';
         }
@@ -683,14 +694,19 @@
 
         if (matchedDrugs.length > 0) {
             resultBlock.style.display = "block";
-            let htmlContent = `<strong>✨ 模糊快查成功！共找到 ${matchedDrugs.length} 筆符合的藥品（對應位置已同步亮起閃爍紅框）：</strong><br><ol style="margin:5px 0 0 20px; padding:0;">`;
+            let htmlContent = `<strong>✨ 模糊快查成功！共找到 ${matchedDrugs.length} 筆藥品（💡 提示：可直接點選下方單一藥名，進行單獨聚焦閃爍）：</strong><br><ol style="margin:5px 0 0 20px; padding:0;">`;
             
             const uniqueTargetIds = new Set();
 
-            matchedDrugs.forEach(item => {
+            matchedDrugs.forEach((item, index) => {
                 uniqueTargetIds.add(item.a);
                 const cleanName = item.q.replace("在哪裡？", "").trim();
-                htmlContent += `<li style="margin-bottom:3px;"><strong>${cleanName}</strong> &rarr; <span style="color:var(--primary); font-weight:bold;">【${item.a}號：${item.name}】</span></li>`;
+                
+                htmlContent += `<li style="margin-bottom:4px;">
+                    <span class="search-item-clickable" onclick="focusSingleDrug('${item.a}', '${item.name}', '${cleanName.replace(/'/g, "\\'")}')">
+                        ${cleanName}
+                    </span> &rarr; <span style="color:var(--primary); font-weight:bold;">【${item.a}號：${item.name}】</span>
+                </li>`;
             });
 
             htmlContent += "</ol>";
@@ -704,7 +720,19 @@
             });
         } else {
             resultBlock.style.display = "block";
-            resultBlock.innerHTML = "❌ <span style='color:var(--danger); font-weight:bold;'>找不到任何包含此關鍵字的藥品，請檢查中英文拼字！</span>";
+            resultBlock.innerHTML = "❌ <span style='color:var(--danger); font-weight:bold;'>找不到任何包含此關鍵字的藥品，請檢查拼字！</span>";
+        }
+    }
+
+    function focusSingleDrug(areaId, areaName, drugName) {
+        document.querySelectorAll('.hotspot').forEach(el => el.classList.remove('reveal-answer'));
+        const targetHotspot = document.querySelector(`.hotspot[data-id="${areaId}"]`);
+        if (targetHotspot) {
+            targetHotspot.classList.add('reveal-answer');
+            const headerHint = document.querySelector('#search-result-block strong');
+            if (headerHint) {
+                headerHint.innerHTML = `🎯 正在單獨聚焦：<span style="color:var(--danger); font-size:1.05rem;">${drugName}</span> &rarr; 鎖定位置在【${areaId}號：${areaName}】`;
+            }
         }
     }
 
@@ -714,7 +742,6 @@
         }
     });
 
-    // 🏆 開始挑戰賽邏輯
     function startGame() {
         const inputVal = document.getElementById('username-input').value.trim();
         if (inputVal === "") {
@@ -727,11 +754,9 @@
         currentIdx = 0;
         score = 0;
         
-        // 隱藏快查系統與登入區塊
         document.getElementById('search-system-container').style.display = 'none';
         document.getElementById('login-screen-container').style.display = 'none';
         
-        // 打開考試挑戰介面
         document.getElementById('game-info-ui').style.display = 'block';
         document.getElementById('player-name').innerText = nickname;
         document.getElementById('score').innerText = score;
