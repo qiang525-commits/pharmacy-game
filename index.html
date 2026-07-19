@@ -44,7 +44,6 @@
             color: var(--primary);
         }
 
-        /* 歡迎/輸入暱稱畫面 */
         .login-screen {
             text-align: center;
             padding: 40px 20px;
@@ -90,7 +89,6 @@
             background: #357abd;
         }
 
-        /* 遊戲主畫面 */
         #main-game-ui {
             display: none;
         }
@@ -201,7 +199,6 @@
             100% { opacity: 1; }
         }
 
-        /* 結算畫面 */
         .result-screen {
             text-align: center;
             padding: 30px 20px;
@@ -230,7 +227,6 @@
             color: #64748b;
         }
 
-        /* 🏆 排行榜外框樣式 */
         .leaderboard-box {
             margin-top: 25px;
             background: #ffffff;
@@ -489,20 +485,18 @@
         });
     }
 
-    // 🏆 【精準修正版】高解析度正則 CSV 欄位讀取與排序
+    // 🏆 【動態標題對位法】自動抓取 name、score 所在欄位，徹底解決欄位顛倒問題！
     function fetchCloudLeaderboard() {
         fetch(googleSheetCSVURL)
         .then(response => response.text())
         .then(csvText => {
-            // 使用嚴謹的正則表達式拆解 CSV 橫列，避免因引號或內部逗號導致錯位
             let lines = csvText.split(/\r?\n/);
             let playerRecords = [];
 
-            // 輔助函式：完美拆解包含雙引號的一列 CSV 資料
             function parseCSVLine(text) {
                 let r = [""], c = 0, p = false;
                 for (let i = 0; i < text.length; i++) {
-                    let ch = text.charAt(i), next = text.charAt(i+1);
+                    let ch = text.charAt(i);
                     if (ch == '"') { p = !p; }
                     else if (ch == ',' && !p) { r[++c] = ""; }
                     else { r[c] += ch; }
@@ -510,18 +504,37 @@
                 return r;
             }
 
-            // 從第 1 列（跳過標題列）開始解析[cite: 1]
+            if (lines.length < 2) {
+                document.getElementById('leaderboard-list').innerHTML = '<li class="loading-text">目前尚無排行紀錄。</li>';
+                return;
+            }
+
+            // 🎯 1. 讀取第 0 列標題，找出 'name' 和 'score' 具體在哪個直欄
+            let headers = parseCSVLine(lines[0]);
+            let nameColIdx = 1;  // 預設第 1 欄為名字
+            let scoreColIdx = 2; // 預設第 2 欄為分數
+
+            for(let j = 0; j < headers.length; j++) {
+                let headerStr = headers[j].toLowerCase().trim();
+                if(headerStr.includes("name") || headerStr.includes("名字") || headerStr.includes("暱稱") || headerStr.includes("員編")) {
+                    nameColIdx = j;
+                }
+                if(headerStr.includes("score") || headerStr.includes("分數") || headerStr.includes("成績")) {
+                    scoreColIdx = j;
+                }
+            }
+
+            // 🎯 2. 根據找到的正確欄位 index，開始解析每一筆資料[cite: 1]
             for (let i = 1; i < lines.length; i++) {
                 if (!lines[i].trim()) continue;
                 
                 let columns = parseCSVLine(lines[i]);
                 
-                // 嚴格確保至少有「時間戳記、名字、分數」三個核心欄位[cite: 1]
-                if (columns.length >= 3) {
-                    let name = columns[1].trim();
-                    let pScore = parseInt(columns[2].trim().replace(/[^0-9]/g, '')) || 0;
+                if (columns.length > Math.max(nameColIdx, scoreColIdx)) {
+                    let name = columns[nameColIdx].trim();
+                    // 提取數字字元並轉成整數
+                    let pScore = parseInt(columns[scoreColIdx].trim().replace(/[^0-9]/g, '')) || 0;
                     
-                    // 只要名字不為空，就列入統計
                     if (name.length > 0) {
                         playerRecords.push({ name: name, score: pScore });
                     }
@@ -531,16 +544,11 @@
             // 由高分到低分精確排序[cite: 1]
             playerRecords.sort((a, b) => b.score - a.score);
 
-            // 只截取前 10 名
+            // 截取前 10 名
             let topTen = playerRecords.slice(0, 10);
 
             const listEl = document.getElementById('leaderboard-list');
             listEl.innerHTML = ''; 
-
-            if (topTen.length === 0) {
-                listEl.innerHTML = '<li class="loading-text">目前尚無排行紀錄。</li>';
-                return;
-            }
 
             topTen.forEach((item, index) => {
                 let rankClass = (index < 3) ? `rank-${index + 1}` : '';
