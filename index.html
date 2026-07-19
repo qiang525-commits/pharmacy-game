@@ -365,7 +365,7 @@
 </div>
 
 <script>
-    // 📦 依「一半3遊戲考題」規格完全替換更新的 280 筆藥品大題庫[cite: 1]
+    // 📦 依您最新上傳的「第三版遊戲考題.xlsx」完整更新之 280 筆精密藥品大題庫[cite: 1]
     const questionBank = [
         { q: "Abilify 10mg 在哪裡？", a: "7", name: "口服1抽" },
         { q: "Abilify 10mg (安立復) (Aripiprazole) 在哪裡？", a: "7", name: "口服1抽" },
@@ -399,7 +399,7 @@
         { q: "Arika 15mg (立安達) (Aripiprazole) 在哪裡？", a: "7", name: "口服1抽" },
         { q: "Aripizole 20mg (安瑞平) (Aripiprazole) 在哪裡？", a: "3", name: "調劑台右方" },
         { q: "Aripizole 2mg (安瑞平) (Aripiprazole) 在哪裡？", a: "3", name: "調劑台右方" },
-        { q: "Ativan 0.5mg (安定文) (Lorazepam) 在哪裡？", a: "3", name: "調劑台右方" },
+        { q: "Ativan 0.5mg (安定文) (Lorazepam) 在哪裡？", a: "17", name: "管4檯面" }, // ⭐ 依第三版確定為 17 號[cite: 1]
         { q: "Atomoxetine 10mg (apo) (安保思定) (Atomoxetine) 在哪裡？", a: "1", name: "調劑台左方" },
         { q: "Atomoxetine 18mg (apo) (安保思定) (Atomoxetine) 在哪裡？", a: "3", name: "調劑台右方" },
         { q: "Atomoxetine 25mg (apo) (安保思定) (Atomoxetine) 在哪裡？", a: "3", name: "調劑台右方" },
@@ -540,7 +540,7 @@
         { q: "Lodiglit 15mg/850mg (雙革醣) (Pioglitazone/Metformin) 在哪裡？", a: "1", name: "調劑台左方" },
         { q: "Loperamide 2mg (洛普拉) (Loperamide) 在哪裡？", a: "3", name: "調劑台右方" },
         { q: "Lote 100mg (樂得) (Fluvoxamine) 在哪裡？", a: "1", name: "調劑台左方" },
-        { q: "Luvox 50mg (無鬱寧) (Fluvoxamine) 在哪裡？", a: "1", name: "調劑台left" },
+        { q: "Luvox 50mg (無鬱寧) (Fluvoxamine) 在哪裡？", a: "1", name: "調劑台左方" },
         { q: "Lygaba 75mg (萊瑞康) (Pregabalin) 在哪裡？", a: "1", name: "調劑台左方" },
         { q: "Madopar 250mg (美道普錠) (Levodopa/Benserazide) 在哪裡？", a: "16", name: "預包區" },
         { q: "Madopar HBS 125mg (美道普持續性藥效膠囊) (Levodopa/Benserazide) 在哪裡？", a: "16", name: "預包區" },
@@ -581,7 +581,6 @@
         }
         nickname = inputVal;
         
-        // 開局隨機抽取 20 題
         gameQuestions = getRandomQuestions(questionBank, 20);
         currentIdx = 0;
         score = 0;
@@ -624,7 +623,7 @@
             const feedbackEl = document.getElementById('feedback');
 
             if (clickedId === correctAnswer) {
-                score += 5; // 每題 5 分
+                score += 5; 
                 document.getElementById('score').innerText = score;
                 feedbackEl.className = 'feedback correct';
                 feedbackEl.innerText = `🎯 答對了！這裡確實是【${clickedId}號：${correctName}】。正在進入下一題...`;
