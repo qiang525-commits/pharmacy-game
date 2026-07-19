@@ -120,15 +120,14 @@
             padding: 15px;
             border-radius: 4px;
             font-size: 1.4rem;
-            margin-bottom: 15px; /* 微調間距 */
+            margin-bottom: 15px;
             min-height: 50px;
             display: flex;
             align-items: center;
         }
 
-        /* 答題反饋長方形框（已移至問題框下方） */
         .feedback {
-            margin-bottom: 20px; /* 讓它與下方的圖片保留間距 */
+            margin-bottom: 20px;
             padding: 12px;
             border-radius: 6px;
             text-align: center;
@@ -202,7 +201,6 @@
             100% { opacity: 1; }
         }
 
-        /* 考試總成績畫面 */
         .result-screen {
             text-align: center;
             padding: 40px 20px;
@@ -223,6 +221,12 @@
             color: var(--warning);
             font-weight: bold;
             margin: 20px 0;
+        }
+
+        .cloud-notice {
+            margin-top: 15px;
+            font-size: 0.9rem;
+            color: #64748b;
         }
     </style>
 </head>
@@ -252,58 +256,31 @@
             <div class="score-item">得分: <span id="score">0</span></div>
         </div>
 
-        <!-- 【問題框】 -->
         <div class="question-box">
             <strong>【定位挑戰】</strong>&nbsp;<span id="question-text">載入中...</span>
         </div>
 
-        <!-- 【答題反饋框】已經調整到這裡（問題框下面、圖片上方） -->
         <div id="feedback" class="feedback"></div>
 
-        <!-- 【圖片區】 -->
         <div class="game-area">
             <img src="門診調劑台全景照及分區編號1150718.jpg" alt="門診調劑台" id="game-img">
-            
             <svg viewBox="0 0 1000 500">
-                <!-- 調劑台左方 (1) -->
                 <rect class="hotspot" data-id="1" data-name="調劑台左方" x="40" y="10" width="360" height="240" />
-                <!-- 調劑台中間 (2) -->
                 <rect class="hotspot" data-id="2" data-name="調劑台中間" x="410" y="10" width="210" height="240" />
-                <!-- 調劑台右方 (3) -->
                 <rect class="hotspot" data-id="3" data-name="調劑台右方" x="630" y="10" width="340" height="240" />
-                
-                <!-- 針劑上抽 (4) -->
                 <rect class="hotspot" data-id="4" data-name="針劑上抽" x="70" y="260" width="130" height="40" />
-                <!-- 針劑下抽 (5) -->
                 <rect class="hotspot" data-id="5" data-name="針劑下抽" x="70" y="310" width="130" height="40" />
-                <!-- 外用 (6) -->
                 <rect class="hotspot" data-id="6" data-name="外用" x="70" y="360" width="130" height="40" />
-                
-                <!-- 口服1抽 (7) -->
                 <rect class="hotspot" data-id="7" data-name="口服1抽" x="210" y="295" width="170" height="40" />
-                <!-- 口服2抽 (8) -->
                 <rect class="hotspot" data-id="8" data-name="口服2抽" x="210" y="345" width="170" height="40" />
-                
-                <!-- 管4抽屜 (9) -->
                 <rect class="hotspot" data-id="9" data-name="管4抽屜" x="400" y="305" width="140" height="40" />
-                <!-- 口服3抽 (10) -->
                 <rect class="hotspot" data-id="10" data-name="口服3抽" x="450" y="355" width="140" height="40" />
-                
-                <!-- 戒菸 (11) -->
                 <rect class="hotspot" data-id="11" data-name="戒菸" x="620" y="300" width="140" height="40" />
-                <!-- 抗生素/新藥 (12) -->
                 <rect class="hotspot" data-id="12" data-name="抗生素/新藥" x="620" y="350" width="170" height="40" />
-                <!-- 水液劑 (13) -->
                 <rect class="hotspot" data-id="13" data-name="水液劑" x="620" y="420" width="140" height="40" />
-                
-                <!-- 管3上抽 (14) -->
                 <rect class="hotspot" data-id="14" data-name="管3上抽" x="850" y="325" width="120" height="35" />
-                <!-- 管3下抽 (15) -->
                 <rect class="hotspot" data-id="15" data-name="管3下抽" x="850" y="365" width="120" height="35" />
-                <!-- 預包區 (16) -->
                 <rect class="hotspot" data-id="16" data-name="預包區" x="850" y="440" width="120" height="40" />
-                
-                <!-- 管4檯面 (17) -->
                 <rect class="hotspot" data-id="17" data-name="管4檯面" x="635" y="160" width="190" height="100" />
             </svg>
         </div>
@@ -314,17 +291,19 @@
         <h2>🎉 測驗挑戰結束 🎉</h2>
         <p style="font-size: 1.3rem; margin-bottom: 5px;"><span id="result-username" style="color:var(--primary); font-weight:bold;"></span> 的最終考試總成績：</p>
         <div class="final-score"><span id="final-score-num">0</span> / <span id="max-score">0</span> 分</div>
-        <p id="rank-text" style="font-size: 1.2rem; font-weight: bold; color: var(--dark); margin-bottom: 25px;"></p>
-        <button onclick="window.location.reload();" style="padding: 12px 25px; background: var(--primary); color: white; border: none; border-radius: 6px; cursor: pointer; font-weight: bold; font-size: 1rem;">重新挑戰</button>
+        <p id="rank-text" style="font-size: 1.2rem; font-weight: bold; color: var(--dark); margin-bottom: 10px;"></p>
+        <div class="cloud-notice">☁️ 成績已自動上傳同步至雲端後台試算表中。</div>
+        
+        <button onclick="window.location.reload();" style="margin-top: 25px; padding: 12px 25px; background: var(--primary); color: white; border: none; border-radius: 6px; cursor: pointer; font-weight: bold; font-size: 1rem;">重新挑戰</button>
     </div>
 </div>
 
 <script>
     const questionBank = [
-        { q: "Amanda 在哪裡？", a: "1", name: "調劑台右方" },
-        { q: "Abilify 10mg 在哪裡？", a: "7", name: "口服1抽" },
-        { q: "Abilify 2mg 在哪裡？", a: "7", name: "口服1抽" },
-        { q: "Abilify 30mg 在哪裡？", a: "3", name: "調劑台右方" }
+        { q: "Amanda 在哪裡？", a: "1", name: "調劑台右方"[cite: 1] },
+        { q: "Abilify 10mg 在哪裡？", a: "7", name: "口服1抽"[cite: 1] },
+        { q: "Abilify 2mg 在哪裡？", a: "7", name: "口服1抽"[cite: 1] },
+        { q: "Abilify 30mg 在哪裡？", a: "3", name: "調劑台右方"[cite: 1] }
     ];
 
     let nickname = "訪客";
@@ -340,11 +319,9 @@
             return;
         }
         nickname = inputVal;
-        
         document.getElementById('login-screen').style.display = 'none';
         document.getElementById('main-game-ui').style.display = 'block';
         document.getElementById('player-name').innerText = nickname;
-        
         loadQuestion();
     }
 
@@ -353,9 +330,7 @@
         wrongCount = 0;
         document.getElementById('feedback').className = 'feedback';
         document.getElementById('feedback').innerText = '';
-        
         document.querySelectorAll('.hotspot').forEach(el => el.classList.remove('reveal-answer'));
-        
         document.getElementById('current-q').innerText = currentIdx + 1;
         document.getElementById('total-q').innerText = questionBank.length;
         document.getElementById('chances-left').innerText = 3;
@@ -365,7 +340,6 @@
     document.querySelectorAll('.hotspot').forEach(hotspot => {
         hotspot.addEventListener('click', function() {
             if (isLocked) return;
-            
             const clickedId = this.getAttribute('data-id');
             const clickedName = this.getAttribute('data-name'); 
             const correctAnswer = questionBank[currentIdx].a;
@@ -378,7 +352,6 @@
                 feedbackEl.className = 'feedback correct';
                 feedbackEl.innerText = `🎯 答對了！這裡確實是【${clickedId}號：${correctName}】。正在進入下一題...`;
                 isLocked = true;
-                
                 setTimeout(nextQuestion, 1200);
             } else {
                 wrongCount++;
@@ -392,12 +365,8 @@
                     feedbackEl.className = 'feedback wrong';
                     feedbackEl.innerText = `❌ 機會用盡！你剛剛點到的是【${clickedId}號：${clickedName}】。正確答案已在圖片上幫您用紅框框起【${correctAnswer}號：${correctName}】。`;
                     isLocked = true;
-                    
                     const correctTarget = document.querySelector(`.hotspot[data-id="${correctAnswer}"]`);
-                    if (correctTarget) {
-                        correctTarget.classList.add('reveal-answer');
-                    }
-                    
+                    if (correctTarget) correctTarget.classList.add('reveal-answer');
                     setTimeout(nextQuestion, 3500);
                 }
             }
@@ -409,25 +378,46 @@
         if (currentIdx < questionBank.length) {
             loadQuestion();
         } else {
-            const maxScore = questionBank.length * 25;
-            
-            document.getElementById('main-game-ui').style.display = 'none';
-            document.getElementById('result-screen').style.display = 'block';
-            
-            document.getElementById('result-username').innerText = nickname;
-            document.getElementById('final-score-num').innerText = score;
-            document.getElementById('max-score').innerText = maxScore;
-            
-            let rank = "";
-            if(score === maxScore) rank = `👑 太厲害了，${nickname}！拿到 100 分滿分！`;
-            else if(score >= 75) rank = `⚡ 表現很好，${nickname}！對藥品位置相當熟悉！`;
-            else if(score >= 50) rank = `🐢 及格邊緣，${nickname}！有空可以再多練習幾次喔！`;
-            else rank = `🚨 分數不及格喔，${nickname}！請重新核對圖片與藥包位置！`;
-
-            document.getElementById('rank-text').innerText = rank;
+            uploadToGoogleForm();
         }
+    }
+
+    // 🚀 已完美套用您的專屬 Google 表單後台通道 
+    function uploadToGoogleForm() {
+        const formActionURL = "https://docs.google.com/forms/d/e/1FAIpQLSdl_fklnEbSZjuoMm7KBL1rVlH1voPyorcGBJ9IGTYX7-NAXQ/formResponse"; 
+        const nameFieldID = "entry.122254180";   
+        const scoreFieldID = "entry.1908618859"; 
+
+        const formData = new FormData();
+        formData.append(nameFieldID, nickname);
+        formData.append(scoreFieldID, score);
+
+        fetch(formActionURL, {
+            method: "POST",
+            mode: "no-cors",
+            body: formData
+        }).then(() => {
+            console.log("雲端試算表連線上傳完成！");
+        }).catch((err) => {
+            console.error("雲端上傳失敗：", err);
+        });
+
+        // 結算畫面
+        const maxScore = questionBank.length * 25;
+        document.getElementById('main-game-ui').style.display = 'none';
+        document.getElementById('result-screen').style.display = 'block';
+        document.getElementById('result-username').innerText = nickname;
+        document.getElementById('final-score-num').innerText = score;
+        document.getElementById('max-score').innerText = maxScore;
+        
+        let rank = "";
+        if(score === maxScore) rank = `👑 太厲害了，${nickname}！拿到 100 分滿分！`;
+        else if(score >= 75) rank = `⚡ 表現很好，${nickname}！對藥品位置相當熟悉！`;
+        else if(score >= 50) rank = `🐢 及格邊緣，${nickname}！有空可以再多練習幾次喔！`;
+        else rank = `🚨 分數不及格喔，${nickname}！請重新核對圖片與藥包位置！`;
+        document.getElementById('rank-text').innerText = rank;
     }
 </script>
 
-</body
+</body>
 </html>
