@@ -44,6 +44,7 @@
             color: var(--primary);
         }
 
+        /* 歡迎/輸入暱稱畫面 */
         .login-screen {
             text-align: center;
             padding: 40px 20px;
@@ -89,6 +90,7 @@
             background: #357abd;
         }
 
+        /* 遊戲主畫面 */
         #main-game-ui {
             display: none;
         }
@@ -199,6 +201,7 @@
             100% { opacity: 1; }
         }
 
+        /* 結算畫面 */
         .result-screen {
             text-align: center;
             padding: 30px 20px;
@@ -227,6 +230,7 @@
             color: #64748b;
         }
 
+        /* 🏆 排行榜外框樣式 */
         .leaderboard-box {
             margin-top: 25px;
             background: #ffffff;
@@ -305,7 +309,7 @@
     <div id="main-game-ui">
         <div class="scoreboard">
             <div class="score-item">作答者: <span id="player-name" style="color:#4a90e2;">訪客</span></div>
-            <div class="score-item">目前題數: <span id="current-q">1</span> / <span id="total-q">4</span></div>
+            <div class="score-item">目前題數: <span id="current-q">1</span> / <span id="total-q">20</span></div>
             <div class="score-item">剩餘嘗試次數: <span id="chances-left" style="color: #ff9f1c;">3</span></div>
             <div class="score-item">得分: <span id="score">0</span></div>
         </div>
@@ -361,14 +365,349 @@
 </div>
 
 <script>
+    // 📦 您上傳的最新完整大題庫（280 筆）[cite: 1]
     const questionBank = [
-        { q: "Amanda 在哪裡？", a: "1", name: "調劑台右方" },
+        { q: "Amanda 100mg/tab 在哪裡？", a: "1", name: "調劑台左方" },
         { q: "Abilify 10mg 在哪裡？", a: "7", name: "口服1抽" },
         { q: "Abilify 2mg 在哪裡？", a: "7", name: "口服1抽" },
-        { q: "Abilify 30mg 在哪裡？", a: "3", name: "調劑台右方" }
+        { q: "Abilify 30mg 在哪裡？", a: "3", name: "調劑台右方" },
+        { q: "Abilify 10mg (安立復) (Aripiprazole) 在哪裡？", a: "7", name: "口服1抽" },
+        { q: "Abilify 2mg (安立復) (Aripiprazole) 在哪裡？", a: "7", name: "口服1抽" },
+        { q: "Abilify 30mg (安立復) (Aripiprazole) 在哪裡？", a: "3", name: "調劑台右方" },
+        { q: "Acamprosate 333mg () (Acamprosate) 在哪裡？", a: "2", name: "調劑台中間" },
+        { q: "Actein 200mg (愛克痰) (Acetylcysteine) 在哪裡？", a: "3", name: "調劑台右方" },
+        { q: "Adhood ER  27mg (助專長效錠) (Methylphenidate) 在哪裡？", a: "14", name: "管3上抽" },
+        { q: "Akinfree 2mg (安汀復) (Biperiden) 在哪裡？", a: "1", name: "調劑台左方" },
+        { q: "Aleviatin 100mg (阿雷彼阿慶) (Phenytoin) 在哪裡？", a: "2", name: "調劑台中間" },
+        { q: "Alglutol 333 mg (戒酒妥) (Acamprosate) 在哪裡？", a: "2", name: "調劑台中間" },
+        { q: "Alinamin-F 50mg (合利他命F50) (Fursultiamine) 在哪裡？", a: "1", name: "調劑台左方" },
+        { q: "Allopurinol 100mg (安樂普諾) (Allopurinol) 在哪裡？", a: "7", name: "口服1抽" },
+        { q: "Amanda 100mg (安滿達) (Amantadine) 在哪裡？", a: "1", name: "調劑台left" },
+        { q: "Amepiride 2mg (欣益糖) (Glimepiride) 在哪裡？", a: "1", name: "調劑台左方" },
+        { q: "Amizide  5mg/50mg (安立壓) (Amiloride (HCl)/Hydrochlorothiazide) 在哪裡？", a: "1", name: "調劑台左方" },
+        { q: "Andine Aq. 120ml () (Povidone-Iodine Aq. Sol'n) 在哪裡？", a: "16", name: "預包區" },
+        { q: "Apa-Risdol 1mg (理思得) (Risperidone) 在哪裡？", a: "16", name: "預包區" },
+        { q: "Apa-Risdol 3mg (理思得) (Risperidone) 在哪裡？", a: "16", name: "預包區" },
+        { q: "Apo-Divalproex 250mg (安保癲安腸溶錠) (Valproic acid) 在哪裡？", a: "16", name: "預包區" },
+        { q: "Apo-Divalproex 500mg (安保癲安) (Valproic acid) 在哪裡？", a: "16", name: "預包區" },
+        { q: "Apo-Quetiapine 100mg (安保思樂) (Quetiapine) 在哪裡？", a: "2", name: "調劑台中間" },
+        { q: "Apo-Quetiapine 200mg (安保思樂) (Quetiapine) 在哪裡？", a: "16", name: "預包區" },
+        { q: "Apo-Zopiclone 7.5mg (安保舒眠) (Zopiclone) 在哪裡？", a: "3", name: "調劑台右方" },
+        { q: "ApraZ Oral Solution 1mg/ml 150ml/Bot (安立舒內服液劑) (Aripiprazole) 在哪裡？", a: "13", name: "水液劑" },
+        { q: "Aricept 10mg (愛憶欣) (Donepezil) 在哪裡？", a: "3", name: "調劑台右方" },
+        { q: "Aricept Evess 10mg O.D.T (愛憶欣口崩錠) (Donepezil) 在哪裡？", a: "3", name: "調劑台右方" },
+        { q: "Arika 15mg (立安達) (Aripiprazole) 在哪裡？", a: "7", name: "口服1抽" },
+        { q: "Aripizole 20mg (安瑞平) (Aripiprazole) 在哪裡？", a: "3", name: "調劑台右方" },
+        { q: "Aripizole 2mg (安瑞平) (Aripiprazole) 在哪裡？", a: "3", name: "調劑台右方" },
+        { q: "Ativan 0.5mg (安定文) (Lorazepam) 在哪裡？", a: "3", name: "調劑台右方" },
+        { q: "Atomoxetine 10mg (apo) (安保思定) (Atomoxetine) 在哪裡？", a: "1", name: "調劑台左方" },
+        { q: "Atomoxetine 18mg (apo) (安保思定) (Atomoxetine) 在哪裡？", a: "3", name: "調劑台右方" },
+        { q: "Atomoxetine 25mg (apo) (安保思定) (Atomoxetine) 在哪裡？", a: "3", name: "調劑台右方" },
+        { q: "Atomoxetine 40mg (apo) (安保思定) (Atomoxetine  ) 在哪裡？", a: "3", name: "調劑台右方" },
+        { q: "Atomoxetine 60mg (apo) (安保思定) (Atomoxetine) 在哪裡？", a: "3", name: "調劑台右方" },
+        { q: "Atropine Inj 1mg/1ml (阿托品) (Atropine) 在哪裡？", a: "4", name: "針劑上抽" },
+        { q: "Bafen 10mg (痛獲平) (Baclofen) 在哪裡？", a: "16", name: "預包區" },
+        { q: "Behyd 4mg (泌排特) (Benzylhydrochlorothiazide) 在哪裡？", a: "7", name: "口服1抽" },
+        { q: "Berotec N Aerosol (備勞喘定量噴霧液) (Fenoterol HBr aerosol 100mcg/puff 200dose) 在哪裡？", a: "6", name: "外用" },
+        { q: "Berydone ER 9mg (倍理通持續性藥效錠) (Paliperidone) 在哪裡？", a: "3", name: "調劑台右方" },
+        { q: "Besonin Nasal Spray (碧適清鼻腔定量噴液劑) (Budesonide micronized Nasal Spray) 在哪裡？", a: "6", name: "外用" },
+        { q: "Betetrim SR 150mg (倍得舒持續性藥效膜衣錠) (Bupropion) 在哪裡？", a: "1", name: "調劑台左方" },
+        { q: "Binin-U 10mg (易寧優) (Haloperidol) 在哪裡？", a: "16", name: "預包區" },
+        { q: "Binin-U 2mg (易寧優) (Haloperidol) 在哪裡？", a: "16", name: "預包區" },
+        { q: "Binin-U 5mg (易寧優) (Haloperidol) 在哪裡？", a: "16", name: "預包區" },
+        { q: "Biperiden 2mg () (Biperiden) 在哪裡？", a: "1", name: "調劑台左方" },
+        { q: "Bisolvon 4mg (必嗽平) (Bromhexine) 在哪裡？", a: "7", name: "口服1抽" },
+        { q: "Bixian 50mg (必安昂) (Fluvoxamine) 在哪裡？", a: "1", name: "調劑台左方" },
+        { q: "Bokey 100mg (伯基) (Aspirin) 在哪裡？", a: "7", name: "口服1抽" },
+        { q: "Brintellix 10mg (敏憂補) (Vortioxetine) 在哪裡？", a: "3", name: "調劑台右方" },
+        { q: "Bromazepam 3mg (J.P) (博慢平) (Bromazepam) 在哪裡？", a: "1", name: "調劑台左方" },
+        { q: "Brown Mixture 120ml (甘草止咳水) (Opium Tincture Camphorated Co. Liq) 在哪裡？", a: "13", name: "水液劑" },
+        { q: "Buscopan 10mg (補斯可伴) (Hyoscine N-butylbromide) 在哪裡？", a: "7", name: "口服1抽" },
+        { q: "C.B. Strong Oint 5g (強力施美藥膏) (Chlorpheniramine/Lidocaine/Hexachlorophene/Methyl Salicylate/Menthol/Camphor) 在哪裡？", a: "6", name: "外用" },
+        { q: "Calm 0.5mg (康樂錠) (Alprazolam) 在哪裡？", a: "1", name: "調劑台左方" },
+        { q: "Camber 16mg (坎伯) (Candesartan cilexetil) 在哪裡？", a: "1", name: "調劑台左方" },
+        { q: "Carbamazepine 200mg () (Carbamazepine) 在哪裡？", a: "1", name: "調劑台左方" },
+        { q: "Ceolp ER 25mg (適憂持續性藥效膜衣錠) (Quetiapine) 在哪裡？", a: "2", name: "調劑台中間" },
+        { q: "Ceolp ER 50mg (適憂持續性藥效膜衣錠) (Quetiapine) 在哪裡？", a: "2", name: "調劑台中間" },
+        { q: "Cereb 200mg (舒腦) (Celecoxib) 在哪裡？", a: "7", name: "口服1抽" },
+        { q: "Ceteem 100mg/ml 20ml (希遞兒內服液) (Cetirizine) 在哪裡？", a: "13", name: "水液劑" },
+        { q: "Chloral Hydrate Soln 10% 30ml (克羅拉海德) (Chloral hydrate) 在哪裡？", a: "13", name: "水液劑" },
+        { q: "Cholin Soft Cap 400mg (思智高軟膠囊) (Choline Alfoscerate) 在哪裡？", a: "1", name: "調劑台左方" },
+        { q: "Cinnarizine 25mg () (Cinnarizine) 在哪裡？", a: "7", name: "口服1抽" },
+        { q: "Clonazepam 0.5mg () (Clonazepam) 在哪裡？", a: "1", name: "調劑台左方" },
+        { q: "Clonazepam 2mg () (Clonazepam) 在哪裡？", a: "2", name: "調劑台中間" },
+        { q: "Clozaril 100mg (可致律) (Clozapine) 在哪裡？", a: "2", name: "調劑台中間" },
+        { q: "Clozaril 25mg (可致律) (Clozapine) 在哪裡？", a: "1", name: "調劑台左方" },
+        { q: "Concerta ER 18mg (專司達) (Methylphenidate) 在哪裡？", a: "14", name: "管3上抽" },
+        { q: "Concerta ER 36mg (專司達) (Methylphenidate) 在哪裡？", a: "14", name: "管3上抽" },
+        { q: "Convulex CR 500mg (康福癲持續性膜衣錠) (Sodium Valproate) 在哪裡？", a: "2", name: "調劑台中間" },
+        { q: "Convulex Drop 300mg/ml 60ml/Bot (康福癲內服滴劑) (Valproic acid) 在哪裡？", a: "13", name: "水液劑" },
+        { q: "Coughcaps (滅咳康複合膠囊) (Dextromethorphan HBr/Lysozyme HCl/Guaifenesin) 在哪裡？", a: "8", name: "口服2抽" },
+        { q: "Cymbalta 30mg (千憂解) (Duloxetine) 在哪裡？", a: "1", name: "調劑台左方" },
+        { q: "Cymbalta 60mg (千憂解) (Duloxetine) 在哪裡？", a: "1", name: "調劑台左方" },
+        { q: "Deanxit (得安緒) (Flupentixol/Melitracen) 在哪裡？", a: "1", name: "調劑台左方" },
+        { q: "Depakine Chrono 500mg (帝拔癲持續性膜衣錠) (Sodium Valproate / Valproic acid) 在哪裡？", a: "1", name: "調劑台左方" },
+        { q: "Depakine Soln 200mg/ml 40ml (帝拔癲口服溶液劑) (Sodium valproate) 在哪裡？", a: "13", name: "水液劑" },
+        { q: "Depas 1mg (得意平) (Etizolam) 在哪裡？", a: "1", name: "調劑台左方" },
+        { q: "Depocanol Inj 50mg/2ml (得寶康針) (Fluphenazine decanoate) 在哪裡？", a: "4", name: "針劑上抽" },
+        { q: "Depo-Provera Inj 150mg/1ml (德寶廣效散針) (Medroxyprogesterone acetate) 在哪裡？", a: "5", name: "針劑下抽" },
+        { q: "Detrusitol 2mg (得妥) (Tolterodine L-tartrate) 在哪裡？", a: "7", name: "口服1抽" },
+        { q: "Dexilant 60mg (得喜胃通持續釋放膠囊) (Dexlansoprazole) 在哪裡？", a: "7", name: "口服1抽" },
+        { q: "Diazepam 2mg () (Diazepam) 在哪裡？", a: "1", name: "調劑台左方" },
+        { q: "Diazepam Inj 10mg/2ml (樂耐平針) (Diazepam) 在哪裡？", a: "4", name: "針劑上抽" },
+        { q: "Dinintel 40mg (得安妥) (Sertraline) 在哪裡？", a: "1", name: "調劑台左方" },
+        { q: "Dogmatyl 200mg (東美度) (Sulpiride) 在哪裡？", a: "1", name: "調劑台左方" },
+        { q: "Dogmatyl 50mg (東美度) (Sulpiride) 在哪裡？", a: "1", name: "調劑台左方" },
+        { q: "Dormicum 7.5mg (導眠靜) (Midazolam) 在哪裡？", a: "3", name: "調劑台右方" },
+        { q: "Dormicum Inj 5mg/1ml (導眠靜針) (Midazolam) 在哪裡？", a: "4", name: "針劑上抽" },
+        { q: "Dulcolax Sup 10mg (樂可舒栓劑) (Bisacodyl) 在哪裡？", a: "6", name: "外用" },
+        { q: "Ebixa 10mg (憶必佳) (Memantine HCl) 在哪裡？", a: "1", name: "調劑台左方" },
+        { q: "Ebixa Oral Solution 5mg/pump (憶必佳內服液) (Memantine HCl) 在哪裡？", a: "13", name: "水液劑" },
+        { q: "Efexor XR 37.5mg (速悅) (Venlafaxine) 在哪裡？", a: "1", name: "調劑台左方" },
+        { q: "Efexor XR 75mg (速悅) (Venlafaxine) 在哪裡？", a: "1", name: "調劑台左方" },
+        { q: "Eisac 100mg (益薩克) (Quetiapine) 在哪裡？", a: "2", name: "調劑台中間" },
+        { q: "Eisac 200mg (益薩克) (Quetiapine) 在哪裡？", a: "16", name: "預包區" },
+        { q: "Eisac ER 200mg (益薩克持續性藥效錠) (Quetiapine) 在哪裡？", a: "2", name: "調劑台中間" },
+        { q: "Eisac ER 50mg (益薩克持續性藥效錠) (Quetiapine) 在哪裡？", a: "2", name: "調劑台中間" },
+        { q: "Eisoon 0.25mg (易舒) (Alprazolam) 在哪裡？", a: "1", name: "調劑台左方" },
+        { q: "Eisoon 0.5mg (易舒) (Alprazolam) 在哪裡？", a: "1", name: "調劑台左方" },
+        { q: "Elidel Cream 1% 15g (醫利達乳膏) (Pimecrolimus) 在哪裡？", a: "6", name: "外用" },
+        { q: "Eliqus 5mg (艾必克凝膜衣錠) (Apixaban) 在哪裡？", a: "7", name: "口服1抽" },
+        { q: "Epitol 200mg (癲妥) (Carbamazepine) 在哪裡？", a: "1", name: "調劑台左方" },
+        { q: "Epitol CR 200mg (癲妥持續性膜衣錠) (Carbamazepine) 在哪裡？", a: "1", name: "調劑台左方" },
+        { q: "Esalen 5mg (易斯安) (Donepezil) 在哪裡？", a: "1", name: "調劑台左方" },
+        { q: "Eszo 2mg (愛斯樂) (Estazolam) 在哪裡？", a: "1", name: "調劑台左方" },
+        { q: "Ethe成長錠 30tab () (成長錠) 在哪裡？", a: "16", name: "預包區" },
+        { q: "Eulexin 250mg (福祿多) (Flutamide) 在哪裡？", a: "7", name: "口服1抽" },
+        { q: "Eurodin 2mg (悠樂丁) (Estazolam) 在哪裡？", a: "1", name: "調劑台左方" },
+        { q: "Exelon Patch 5 30s (憶思能貼片) (Rivastigmine) 在哪裡？", a: "6", name: "外用" },
+        { q: "Exelon Patch 10 30s (憶思能貼片) (Rivastigmine) 在哪裡？", a: "6", name: "外用" },
+        { q: "Ezetrol 10mg (怡妥) (Ezetimibe) 在哪裡？", a: "7", name: "口服1抽" },
+        { q: "Famotidine 20mg () (Famotidine) 在哪裡？", a: "7", name: "口服1抽" },
+        { q: "Finska LP 10mg (敏福持續釋放膜衣錠) (Fexofenadine HCl) 在哪裡？", a: "7", name: "口服1抽" },
+        { q: "Fluanxol 0.5mg (福祿安) (Flupentixol) 在哪裡？", a: "1", name: "調劑台左方" },
+        { q: "Fludiazepam 0.25mg () (Fludiazepam) 在哪裡？", a: "1", name: "調劑台左方" },
+        { q: "Fluoxetine 20mg (Standard) (百憂解) (Fluoxetine) 在哪裡？", a: "1", name: "調劑台左方" },
+        { q: "Flurazepam 30mg () (Flurazepam) 在哪裡？", a: "1", name: "調劑台左方" },
+        { q: "Fluvoxamine 50mg (apo) (安保伏慢) (Fluvoxamine) 在哪裡？", a: "1", name: "調劑台左方" },
+        { q: "Folic Acid 5mg (葉酸) (Folic acid) 在哪裡？", a: "7", name: "口服1抽" },
+        { q: "Forxiga 10mg (福安適膜衣錠) (Dapagliflozin) 在哪裡？", a: "7", name: "口服1抽" },
+        { q: "Fullsafe ER 50mg (富舒持續性藥效錠) (Quetiapine) 在哪裡？", a: "2", name: "調劑台中間" },
+        { q: "Gabalep 300mg (加巴烈) (Gabapentin) 在哪裡？", a: "2", name: "調劑台中間" },
+        { q: "Gabalep 400mg (加巴烈) (Gabapentin) 在哪裡？", a: "2", name: "調劑台中間" },
+        { q: "Gamanil 70mg (佳美耐) (Lofepramine) 在哪裡？", a: "1", name: "調劑台左方" },
+        { q: "Gascon 40mg (加斯康) (Simethicone) 在哪裡？", a: "8", name: "口服2抽" },
+        { q: "Genese Docetaxel Inj 20mg/1ml (健擇紫杉醇針) (Docetaxel) 在哪裡？", a: "5", name: "針劑下抽" },
+        { q: "Geodon 60mg (捷朋) (Ziprasidone) 在哪裡？", a: "2", name: "調劑台中間" },
+        { q: "Geodon Inj 20mg/ml (捷朋針) (Ziprasidone mesylate) 在哪裡？", a: "4", name: "針劑上抽" },
+        { q: "Gero-Asadin 50mg (若山錠) (Anetholtrithione) 在哪裡？", a: "7", name: "口服1抽" },
+        { q: "Glianon 30mg (利安糖) (Pioglitazone) 在哪裡？", a: "1", name: "調劑台左方" },
+        { q: "Glucophage 500mg (庫魯化) (Metformin) 在哪裡？", a: "7", name: "口服1抽" },
+        { q: "Glyceroid Sup (公和通便栓劑) (Glycerin) 在哪裡？", a: "6", name: "外用" },
+        { q: "Halicon 0.125mg (酣樂欣) (Triazolam) 在哪裡？", a: "3", name: "調劑台右方" },
+        { q: "Halidol 5mg (好度) (Haloperidol) 在哪裡？", a: "16", name: "預包區" },
+        { q: "Halidol Inj 5mg/1ml (好度針) (Haloperidol) 在哪裡？", a: "4", name: "針劑上抽" },
+        { q: "Haloperidol 5mg () (Haloperidol) 在哪裡？", a: "16", name: "預包區" },
+        { q: "Haloperidol Soln 2mg/ml 30ml (荷力保口服滴劑) (Haloperidol) 在哪裡？", a: "13", name: "水液劑" },
+        { q: "Harmonyd 20mg (和睦錠) (Paroxetine) 在哪裡？", a: "1", name: "調劑台左方" },
+        { q: "Invega 6mg (因維加) (Paliperidone) 在哪裡？", a: "3", name: "調劑台右方" },
+        { q: "Invega 9mg (因維加) (Paliperidone) 在哪裡？", a: "3", name: "調劑台右方" },
+        { q: "Invega Sustenna 100mg/1ml (因維加每月長效針) (Paliperidone palmitate) 在哪裡？", a: "5", name: "針劑下抽" },
+        { q: "Invega Sustenna 150mg/1.5ml (因維加每月長效針) (Paliperidone palmitate) 在哪裡？", a: "5", name: "針劑下抽" },
+        { q: "Invega Trinza 350mg/1.75ml (因維加三個月長效針) (Paliperidone palmitate) 在哪裡？", a: "5", name: "針劑下抽" },
+        { q: "Invega Trinza 525mg/2.63ml (因維加三個月長效針) (Paliperidone palmitate) 在哪裡？", a: "5", name: "針劑下抽" },
+        { q: "Ionsil 20mg (安神定) (Sertraline) 在哪裡？", a: "1", name: "調劑台左方" },
+        { q: "Janimet 50mg/500mg (捷糖妥) (Sitagliptin/Metformin) 在哪裡？", a: "1", name: "調劑台左方" },
+        { q: "Januvia 100mg (捷糖穩膜衣錠) (Sitagliptin) 在哪裡？", a: "1", name: "調劑台左方" },
+        { q: "Ketanest Inj 50mg/10ml (開泰利針) (Ketamine) 在哪裡？", a: "4", name: "針劑上抽" },
+        { q: "Keto 250mg (開度) (Ketoconazole) 在哪裡？", a: "7", name: "口服1抽" },
+        { q: "KinLoong Liquid 60ml (金龍驅風油) (Methyl Salicylate/Menthol/Camphor/Eucalyptus Oil/Lavender Oil) 在哪裡？", a: "6", name: "外用" },
+        { q: "Klonopin 0.5mg (克諾平) (Clonazepam) 在哪裡？", a: "1", name: "調劑台左方" },
+        { q: "Klonopin 2mg (克諾平) (Clonazepam) 在哪裡？", a: "2", name: "調劑台中間" },
+        { q: "Kofscat (複方甘草片) (Glycyrrhiza fluidextract/Opium powder/Antimony potassium tartrate/Anise oil) 在哪裡？", a: "8", name: "口服2抽" },
+        { q: "Lacoxa 50mg (優閒膜衣錠) (Lacosamide) 在哪裡？", a: "2", name: "調劑台中間" },
+        { q: "Lactulose Syr 200ml (樂多糖漿) (Lactulose) 在哪裡？", a: "13", name: "水液劑" },
+        { q: "Lamicat 100mg (樂密加) (Lamotrigine) 在哪裡？", a: "2", name: "調劑台中間" },
+        { q: "Lamicat 50mg (樂密加) (Lamotrigine) 在哪裡？", a: "2", name: "調劑台中間" },
+        { q: "Lamictal 50mg (樂密晴) (Lamotrigine) 在哪裡？", a: "2", name: "調劑台中間" },
+        { q: "Lexapro 10mg (立普能) (Escitalopram) 在哪裡？", a: "1", name: "調劑台左方" },
+        { q: "Lidin 100mg (力定) (Quetiapine) 在哪裡？", a: "2", name: "調劑台中間" },
+        { q: "Lidin 200mg (力定) (Quetiapine) 在哪裡？", a: "16", name: "預包區" },
+        { q: "Lidin ER 200mg (力定持續性藥效錠) (Quetiapine) 在哪裡？", a: "2", name: "調劑台中間" },
+        { q: "Lidin ER 50mg (力定持續性藥效錠) (Quetiapine) 在哪裡？", a: "2", name: "調劑台中間" },
+        { q: "Limerika 75mg (樂瑞卡膠囊) (Pregabalin) 在哪裡？", a: "2", name: "調劑台中間" },
+        { q: "Lipitor 20mg (立普妥) (Atorvastatin) 在哪裡？", a: "7", name: "口服1抽" },
+        { q: "Lithium 300mg () (Lithium carbonate) 在哪裡？", a: "1", name: "調劑台左方" },
+        { q: "Livalo 2mg (美百樂鎮膜衣錠) (Pitavastatin calcium) 在哪裡？", a: "7", name: "口服1抽" },
+        { q: "Loramet 1mg (羅拉麥) (Lormetazepam) 在哪裡？", a: "3", name: "調劑台右方" },
+        { q: "Lorazepam 0.5mg (Standard) (降焦慮) (Lorazepam) 在哪裡？", a: "3", name: "調劑台右方" },
+        { q: "Lorazepam 2mg (Standard) (降焦慮) (Lorazepam) 在哪裡？", a: "3", name: "調劑台右方" },
+        { q: "Loxitane 25mg (洛益欣) (Loxapine) 在哪裡？", a: "1", name: "調劑台左方" },
+        { q: "Ludiomil 25mg (路滴美) (Maprotiline) 在哪裡？", a: "1", name: "調劑台左方" },
+        { q: "Luvox 100mg (樂維可) (Fluvoxamine) 在哪裡？", a: "1", name: "調劑台左方" },
+        { q: "Luvox 50mg (樂維可) (Fluvoxamine) 在哪裡？", a: "1", name: "調劑台左方" },
+        { q: "Lyrica 150mg (樂瑞卡) (Pregabalin) 在哪裡？", a: "2", name: "調劑台中間" },
+        { q: "Lyrica 75mg (樂瑞卡) (Pregabalin) 在哪裡？", a: "2", name: "調劑台中間" },
+        { q: "Madopar 250mg (美多芭) (Levodopa / Benserazide) 在哪裡？", a: "1", name: "調劑台左方" },
+        { q: "Marnitane 10mg (慢憂解持續性藥效膜衣錠) (Duloxetine) 在哪裡？", a: "1", name: "調劑台左方" },
+        { q: "Marnitane 30mg (慢憂解持續性藥效膜衣錠) (Duloxetine) 在哪裡？", a: "1", name: "調劑台左方" },
+        { q: "Marnitane 60mg (慢憂解持續性藥效膜衣錠) (Duloxetine) 在哪裡？", a: "1", name: "調劑台左方" },
+        { q: "Meleril 25mg (美立廉) (Thioridazine) 在哪裡？", a: "1", name: "調劑台左方" },
+        { q: "Melotine 25mg (美樂定膜衣錠) (Agomelatine) 在哪裡？", a: "3", name: "調劑台右方" },
+        { q: "Mevalotin 10mg (美百樂鎮) (Pravastatin) 在哪裡？", a: "7", name: "口服1抽" },
+        { q: "Mexazolam 1mg () (Mexazolam) 在哪裡？", a: "1", name: "調劑台左方" },
+        { q: "Mirtazapine 30mg (apo) (安保美舒) (Mirtazapine) 在哪裡？", a: "3", name: "調劑台右方" },
+        { q: "Modiodal 100mg (普衛醒) (Modafinil) 在哪裡？", a: "3", name: "調劑台右方" },
+        { q: "Molipaxin 50mg (美妥平) (Trazodone) 在哪裡？", a: "1", name: "調劑台左方" },
+        { q: "Nalcon 250mg (鈉康) (Sodium Valproate) 在哪裡？", a: "2", name: "調劑台中間" },
+        { q: "Nalcon CR 500mg (鈉康持續性膜衣錠) (Sodium Valproate) 在哪裡？", a: "2", name: "調劑台中間" },
+        { q: "Navane 5mg (納凡) (Thiothixene) 在哪裡？", a: "1", name: "調劑台左方" },
+        { q: "Neurontin 300mg (紐羅欣) (Gabapentin) 在哪裡？", a: "2", name: "調劑台中間" },
+        { q: "Neurontin 400mg (紐羅欣) (Gabapentin) 在哪裡？", a: "2", name: "調劑台中間" },
+        { q: "Nexium 40mg (耐適恩) (Esomeprazole) 在哪裡？", a: "7", name: "口服1抽" },
+        { q: "Nifepin CR 30mg (易脈穩持續性膜衣錠) (Nifedipine) 在哪裡？", a: "1", name: "調劑台左方" },
+        { q: "Nirypan 4mg (立保欣) (Methylprednisolone) 在哪裡？", a: "7", name: "口服1抽" },
+        { q: "Nozinan 100mg (諾齊安) (Levomepromazine) 在哪裡？", a: "1", name: "調劑台左方" },
+        { q: "Nozinan 25mg (諾齊安) (Levomepromazine) 在哪裡？", a: "1", name: "調劑台左方" },
+        { q: "NP Ointment 28.4g (紐約新黴素軟膏) (Neomycin Palmitate) 在哪裡？", a: "6", name: "外用" },
+        { q: "Olanzapine 10mg (apo) (安保平憂) (Olanzapine) 在哪裡？", a: "2", name: "調劑台中間" },
+        { q: "Orap 2mg (歐拉) (Pimozide) 在哪裡？", a: "16", name: "預包區" },
+        { q: "Orap 4mg (歐拉) (Pimozide) 在哪裡？", a: "16", name: "預包區" },
+        { q: "Oxazepam 15mg () (Oxazepam) 在哪裡？", a: "1", name: "調劑台左方" },
+        { q: "Oxcarbazepine 150mg (apo) (安保奧卡西平) (Oxcarbazepine) 在哪裡？", a: "2", name: "調劑台中間" },
+        { q: "Oxcarbazepine 300mg (apo) (安保奧卡西平) (Oxcarbazepine) 在哪裡？", a: "2", name: "調劑台中間" },
+        { q: "Oxcarbazepine 600mg (apo) (安保奧卡西平) (Oxcarbazepine) 在哪裡？", a: "2", name: "調劑台中間" },
+        { q: "Pamelor 25mg (帕美樂) (Nortriptyline) 在哪裡？", a: "1", name: "調劑台左方" },
+        { q: "Pariet 20mg (百胃樂膜衣錠) (Rabeprazole sodium) 在哪裡？", a: "7", name: "口服1抽" },
+        { q: "Paroxetine 20mg (apo) (安保克憂) (Paroxetine) 在哪裡？", a: "1", name: "調劑台左方" },
+        { q: "Periactin 4mg (必利安) (Cyproheptadine) 在哪裡？", a: "7", name: "口服1抽" },
+        { q: "Pethidine Inj 50mg/1ml (鹽酸倍利丁針) (Meperidine) 在哪裡？", a: "4", name: "針劑上抽" },
+        { q: "Phytomenadione Inj 10mg/1ml (維他命K1針) (Phytomenadione) 在哪裡？", a: "5", name: "針劑下抽" },
+        { q: "Plavix 75mg (保栓通) (Clopidogrel) 在哪裡？", a: "7", name: "口服1抽" },
+        { q: "Plendil 5mg (敏脈) (Felodipine) 在哪裡？", a: "1", name: "調劑台左方" },
+        { q: "Ponderax 20mg (胖得來) (Fenfluramine) 在哪裡？", a: "1", name: "調劑台左方" },
+        { q: "Potarlon 250mg (博達隆) (Mefenamic acid) 在哪裡？", a: "7", name: "口服1抽" },
+        { q: "Pragrel 75mg (培格糖膜衣錠) (Pioglitazone) 在哪裡？", a: "1", name: "調劑台左方" },
+        { q: "Pragrel M 15mg/500mg (培格糖美膜衣錠) (Pioglitazone/Metformin) 在哪裡？", a: "1", name: "調劑台左方" },
+        { q: "Pramipexole 0.25mg (apo) (安保派密伯索) (Pramipexole) 在哪裡？", a: "1", name: "調劑台左方" },
+        { q: "Pramipexole 1mg (apo) (安保派密伯索) (Pramipexole) 在哪裡？", a: "1", name: "調劑台左方" },
+        { q: "Precedex Inj 200mcg/2ml (百事得針) (Dexmedetomidine) 在哪裡？", a: "4", name: "針劑上抽" },
+        { q: "Prednisolone 5mg (臨得隆) (Prednisolone) 在哪裡？", a: "7", name: "口服1抽" },
+        { q: "Propanolol 10mg () (Propranolol) 在哪裡？", a: "1", name: "調劑台左方" },
+        { q: "Propranolol 10mg () (Propranolol) 在哪裡？", a: "1", name: "調劑台左方" },
+        { q: "Prozac 20mg (百憂解) (Fluoxetine) 在哪裡？", a: "1", name: "調劑台左方" },
+        { q: "Quetiapine 100mg (apo) (安保奎地亞平) (Quetiapine) 在哪裡？", a: "2", name: "調劑台中間" },
+        { q: "Quetiapine 200mg (apo) (安保奎地亞平) (Quetiapine) 在哪裡？", a: "16", name: "預包區" },
+        { q: "Quetiapine XR 200mg (apo) (安保奎地亞平持續性藥效錠) (Quetiapine) 在哪裡？", a: "2", name: "調劑台中間" },
+        { q: "Quetiapine XR 50mg (apo) (安保奎地亞平持續性藥效錠) (Quetiapine) 在哪裡？", a: "2", name: "調劑台中間" },
+        { q: "Regonol Inj 5mg/1ml (肌弛能針) (Pyridostigmine bromide) 在哪裡？", a: "4", name: "針劑上抽" },
+        { q: "Remeron 30mg (樂密妥) (Mirtazapine) 在哪裡？", a: "3", name: "調劑台右方" },
+        { q: "Remeron SolTab 30mg (樂密妥口溶錠) (Mirtazapine) 在哪裡？", a: "3", name: "調劑台右方" },
+        { q: "Repaglinide 1mg (apo) (安保瑞格列奈) (Repaglinide) 在哪裡？", a: "1", name: "調劑台左方" },
+        { q: "Repaglinide 2mg (apo) (安保瑞格列奈) (Repaglinide) 在哪裡？", a: "1", name: "調劑台左方" },
+        { q: "Requip 0.25mg (力必平) (Ropinirole) 在哪裡？", a: "1", name: "調劑台左方" },
+        { q: "Requip PD 2mg (力必平持續性藥效錠) (Ropinirole) 在哪裡？", a: "1", name: "調劑台左方" },
+        { q: "Requip PD 4mg (力必平持續性藥效錠) (Ropinirole) 在哪裡？", a: "1", name: "調劑台左方" },
+        { q: "Requip PD 8mg (力必平持續性藥效錠) (Ropinirole) 在哪裡？", a: "1", name: "調劑台左方" },
+        { q: "Ridal 1mg (利達) (Risperidone) 在哪裡？", a: "16", name: "預包區" },
+        { q: "Ridal 3mg (利達) (Risperidone) 在哪裡？", a: "16", name: "預包區" },
+        { q: "Rilept 1mg (理立妥膜衣錠) (Risperidone) 在哪裡？", a: "16", name: "預包區" },
+        { q: "Rilept 2mg (理立妥膜衣錠) (Risperidone) 在哪裡？", a: "16", name: "預包區" },
+        { q: "Rilept 3mg (理立妥膜衣錠) (Risperidone) 在哪裡？", a: "16", name: "預包區" },
+        { q: "Riluzole 50mg (Standard) (銳力得) (Riluzole) 在哪裡？", a: "1", name: "調劑台左方" },
+        { q: "Ritalin 10mg (利他能) (Methylphenidate) 在哪裡？", a: "14", name: "管3上抽" },
+        { q: "Ritalin LA 20mg (利他能持續性藥效膠囊) (Methylphenidate) 在哪裡？", a: "14", name: "管3上抽" },
+        { q: "Ritalin LA 30mg (利他能持續性藥效膠囊) (Methylphenidate) 在哪裡？", a: "14", name: "管3上抽" },
+        { q: "Ritalin LA 40mg (利他能持續性藥效膠囊) (Methylphenidate) 在哪裡？", a: "14", name: "管3上抽" },
+        { q: "Rivadon 1.5mg (利憶糖) (Rivastigmine) 在哪裡？", a: "1", name: "調劑台左方" },
+        { q: "Rivadon 3mg (利憶糖) (Rivastigmine) 在哪裡？", a: "1", name: "調劑台左方" },
+        { q: "Rivadon 4.5mg (利憶糖) (Rivastigmine) 在哪裡？", a: "1", name: "調劑台左方" },
+        { q: "Rivadon 6mg (利憶糖) (Rivastigmine) 在哪裡？", a: "1", name: "調劑台左方" },
+        { q: "Rivotril 0.5mg (利福全) (Clonazepam) 在哪裡？", a: "1", name: "調劑台左方" },
+        { q: "Rivotril 2mg (利福全) (Clonazepam) 在哪裡？", a: "2", name: "調劑台中間" },
+        { q: "Rivotril Soln 2.5mg/ml 10ml (利福全內服滴劑) (Clonazepam) 在哪裡？", a: "13", name: "水液劑" },
+        { q: "Rozerem 8mg (柔速瑞) (Ramelteon) 在哪裡？", a: "3", name: "調劑台右方" },
+        { q: "Rubesta 15mg (安倍寧膜衣錠) (Aripiprazole) 在哪裡？", a: "7", name: "口服1抽" },
+        { q: "Scanal 500mg (斯卡服) (Acetaminophen) 在哪裡？", a: "7", name: "口服1抽" },
+        { q: "Seroquel 100mg (思樂康) (Quetiapine) 在哪裡？", a: "2", name: "調劑台中間" },
+        { q: "Seroquel 200mg (思樂康) (Quetiapine) 在哪裡？", a: "16", name: "預包區" },
+        { q: "Seroquel XR 200mg (思樂康持續性藥效錠) (Quetiapine) 在哪裡？", a: "2", name: "調劑台中間" },
+        { q: "Seroquel XR 50mg (思樂康持續性藥效錠) (Quetiapine) 在哪裡？", a: "2", name: "調劑台中間" },
+        { q: "Sertraline 50mg (apo) (安保思特林) (Sertraline) 在哪裡？", a: "1", name: "調劑台左方" },
+        { q: "Sifrol 0.25mg (森福羅) (Pramipexole) 在哪裡？", a: "1", name: "調劑台左方" },
+        { q: "Sifrol 1mg (森福羅) (Pramipexole) 在哪裡？", a: "1", name: "調劑台左方" },
+        { q: "Sinequan 25mg (賽克安) (Doxepin) 在哪裡？", a: "1", name: "調劑台左方" },
+        { q: "Solian 200mg (首利安) (Amisulpride) 在哪裡？", a: "2", name: "調劑台中間" },
+        { q: "Solian 400mg (首利安) (Amisulpride) 在哪裡？", a: "16", name: "預包區" },
+        { q: "Solian 50mg (首利安) (Amisulpride) 在哪裡？", a: "1", name: "調劑台左方" },
+        { q: "Solian Solution 100mg/ml 60ml (首利安內服液劑) (Amisulpride) 在哪裡？", a: "13", name: "水液劑" },
+        { q: "Stalevo 100 (史達力服) (Levodopa/Carbidopa/Entacapone) 在哪裡？", a: "1", name: "調劑台左方" },
+        { q: "Stilnox 10mg (史蒂諾斯) (Zolpidem) 在哪裡？", a: "3", name: "調劑台右方" },
+        { q: "Stresam 50mg (舒必朗) (Etifoxine HCl) 在哪裡？", a: "1", name: "調劑台左方" },
+        { q: "Suftin ER 50mg (舒富持續性藥效錠) (Quetiapine) 在哪裡？", a: "2", name: "調劑台中間" },
+        { q: "Sulpiride 200mg () (Sulpiride) 在哪裡？", a: "1", name: "調劑台左方" },
+        { q: "Sulpiride 50mg () (Sulpiride) 在哪裡？", a: "1", name: "調劑台左方" },
+        { q: "Surgam 300mg (舒感) (Tiaprofenic acid) 在哪裡？", a: "7", name: "口服1抽" },
+        { q: "Surmontil 25mg (舒夢妥) (Trimipramine) 在哪裡？", a: "1", name: "調劑台左方" },
+        { q: "Sycrest 5mg Sublingual (希奎斯舌下錠) (Asenapine) 在哪裡？", a: "3", name: "調劑台右方" },
+        { q: "Tegretol 200mg (癲通) (Carbamazepine) 在哪裡？", a: "1", name: "調劑台左方" },
+        { q: "Tegretol CR 200mg (癲通持續性膜衣錠) (Carbamazepine) 在哪裡？", a: "1", name: "調劑台左方" },
+        { q: "Thioridazine 25mg () (Thioridazine) 在哪裡？", a: "1", name: "調劑台左方" },
+        { q: "Ti अदालत ER 50mg (提阿達持續性藥效膜衣錠) (Quetiapine) 在哪裡？", a: "2", name: "調劑台中間" },
+        { q: "Ti अदालत ER 200mg (提阿達持續性藥效膜衣錠) (Quetiapine) 在哪裡？", a: "2", name: "調劑台中間" },
+        { q: "Ti अदालत ER 300mg (提阿達持續性藥效膜衣錠) (Quetiapine) 在哪裡？", a: "16", name: "預包區" },
+        { q: "Tofranil 25mg (妥富腦) (Imipramine) 在哪裡？", a: "1", name: "調劑台左方" },
+        { q: "Topamax 100mg (妥泰) (Topiramate) 在哪裡？", a: "2", name: "調劑台中間" },
+        { q: "Topamax 50mg (妥泰) (Topiramate) 在哪裡？", a: "2", name: "調劑台中間" },
+        { q: "Topiramate 100mg (apo) (安保妥泰) (Topiramate) 在哪裡？", a: "2", name: "調劑台中間" },
+        { q: "Topiramate 50mg (apo) (安保妥泰) (Topiramate) 在哪裡？", a: "2", name: "調劑台中間" },
+        { q: "Tranquil 0.5mg (親靜錠) (Alprazolam) 在哪裡？", a: "1", name: "調劑台左方" },
+        { q: "Trazodone 50mg (apo) (安保特拉唑酮) (Trazodone) 在哪裡？", a: "1", name: "調劑台左方" },
+        { q: "Triazolam 0.125mg () (Triazolam) 在哪裡？", a: "3", name: "調劑台右方" },
+        { q: "Trihexyphenidyl 2mg () (Trihexyphenidyl) 在哪裡？", a: "1", name: "調劑台左方" },
+        { q: "Trileptal 150mg (除癲達) (Oxcarbazepine) 在哪裡？", a: "2", name: "調劑台中間" },
+        { q: "Trileptal 300mg (除癲達) (Oxcarbazepine) 在哪裡？", a: "2", name: "調劑台中間" },
+        { q: "Trileptal 600mg (除癲達) (Oxcarbazepine) 在哪裡？", a: "2", name: "調劑台中間" },
+        { q: "Trileptal Susp 60mg/ml 250ml/Bot (除癲達口服懸浮液) (Oxcarbazepine) 在哪裡？", a: "13", name: "水液劑" },
+        { q: "U-Ca Soft Cap 0.25mcg (優力鈣軟膠囊) (Alfacalcidol) 在哪裡？", a: "7", name: "口服1抽" },
+        { q: "Ulcolin 20mg (優克胃) (Famotidine) 在哪裡？", a: "7", name: "口服1抽" },
+        { q: "Ulex 250mg (優力欣) (Cephalexin) 在哪裡？", a: "12", name: "抗生素/新藥" },
+        { q: "Uptone 2mg (阿普酮錠) (Biperiden) 在哪裡？", a: "1", name: "調劑台左方" },
+        { q: "Valax CR 500mg (巴醛持續性膜衣錠) (Sodium Valproate) 在哪裡？", a: "2", name: "調劑台中間" },
+        { q: "Valdoxan 25mg (凡多閃) (Agomelatine) 在哪裡？", a: "3", name: "調劑台右方" },
+        { q: "Valium 2mg (萬立安) (Diazepam) 在哪裡？", a: "1", name: "調劑台左方" },
+        { q: "Valproate Sodium 200mg () (Sodium Valproate) 在哪裡？", a: "2", name: "調劑台中間" },
+        { q: "Valproate Sodium CR 500mg () (Sodium Valproate) 在哪裡？", a: "2", name: "調劑台中間" },
+        { q: "Vandprazole EC 20mg (安胃平腸溶膜衣錠) (Pantoprazole sodium sesquihydrate) 在哪裡？", a: "7", name: "口服1抽" },
+        { q: "Venlafaxine XR 37.5mg (apo) (安保文拉法辛持續性膠囊) (Venlafaxine) 在哪裡？", a: "1", name: "調劑台左方" },
+        { q: "Venlafaxine XR 75mg (apo) (安保文拉法辛持續性膠囊) (Venlafaxine) 在哪裡？", a: "1", name: "調劑台左方" },
+        { q: "Vesicare 5mg (衛喜康膜衣錠) (Solifenacin succinate) 在哪裡？", a: "7", name: "口服1抽" },
+        { q: "Vistaril 25mg (維勝立) (Hydroxyzine) 在哪裡？", a: "1", name: "調劑台左方" },
+        { q: "Vortioxetine 10mg (apo) (安保沃替西汀) (Vortioxetine) 在哪裡？", a: "3", name: "調劑台右方" },
+        { q: "Wempty 10mg (穩必體) (Domperidone) 在哪裡？", a: "7", name: "口服1抽" },
+        { q: "Wyeth-Ativan 0.5mg (安定文) (Lorazepam) 在哪裡？", a: "3", name: "調劑台右方" },
+        { q: "Wyeth-Ativan 2mg (安定文) (Lorazepam) 在哪裡？", a: "3", name: "調劑台右方" },
+        { q: "Xanax 0.25mg (贊安諾) (Alprazolam) 在哪裡？", a: "1", name: "調劑台左方" },
+        { q: "Xanax 0.5mg (贊安諾) (Alprazolam) 在哪裡？", a: "1", name: "調劑台左方" },
+        { q: "Xanax XR 0.5mg (贊安諾持續釋放錠) (Alprazolam) 在哪裡？", a: "1", name: "調劑台左方" },
+        { q: "Xatral XL 10mg (札特持續性藥效錠) (Alfuzosin HCl) 在哪裡？", a: "7", name: "口服1抽" },
+        { q: "Zaluron ER 50mg (扎憂樂持續性藥效膜衣錠) (Quetiapine) 在哪裡？", a: "2", name: "調劑台中間" },
+        { q: "Zaluron ER 200mg (扎憂樂持續性藥效膜衣錠) (Quetiapine) 在哪裡？", a: "2", name: "調劑台中間" },
+        { q: "Zaluron ER 300mg (扎憂樂持續性藥效膜衣錠) (Quetiapine) 在哪裡？", a: "16", name: "預包區" },
+        { q: "Zeldox 60mg (齊杜斯) (Ziprasidone) 在哪裡？", a: "2", name: "調劑台中間" },
+        { q: "Zeteem 10mg (哲廷) (Cetirizine) 在哪裡？", a: "7", name: "口服1抽" },
+        { q: "Zispin SolTab 30mg (樂活憂口溶錠) (Mirtazapine) 在哪裡？", a: "3", name: "調劑台右方" },
+        { q: "Zoloft 50mg (左洛復) (Sertraline) 在哪裡？", a: "1", name: "調劑台左方" },
+        { q: "Zolpidem 10mg () (Zolpidem) 在哪裡？", a: "3", name: "調劑台右方" },
+        { q: "Zolpidem ER 12.5mg (Standard) (舒眠諾思持續釋放膜衣錠) (Zolpidem) 在哪裡？", a: "3", name: "調劑台右方" },
+        { q: "Zopiclone 7.5mg () (Zopiclone) 在哪裡？", a: "3", name: "調劑台右方" },
+        { q: "Zotepine 25mg () (Zotepine) 在哪裡？", a: "16", name: "預包區" },
+        { q: "Zyprexa 10mg (金普薩) (Olanzapine) 在哪裡？", a: "2", name: "調劑台中間" },
+        { q: "Zyprexa Zydis 5mg (金普薩速溶錠) (Olanzapine) 在哪裡？", a: "2", name: "調劑台中間" }
     ];
 
     let nickname = "訪客";
+    let gameQuestions = []; // 🎯 新增：存放本次隨機抽出的 20 題
     let currentIdx = 0;
     let score = 0;
     let wrongCount = 0; 
@@ -384,11 +723,23 @@
         }
         nickname = inputVal;
         
+        // 🎯 核心改動：開局時，從 280 題大題庫中隨機挑選 20 題
+        gameQuestions = getRandomQuestions(questionBank, 20);
+        currentIdx = 0;
+        score = 0;
+        
         document.getElementById('login-screen').style.display = 'none';
         document.getElementById('main-game-ui').style.display = 'block';
         document.getElementById('player-name').innerText = nickname;
+        document.getElementById('score').innerText = score;
         
         loadQuestion();
+    }
+
+    // 🎯 輔助函式：洗牌並抽取特定數量題目
+    function getRandomQuestions(arr, num) {
+        let shuffled = [...arr].sort(() => 0.5 - Math.random());
+        return shuffled.slice(0, num);
     }
 
     function loadQuestion() {
@@ -400,9 +751,9 @@
         
         if(document.getElementById('current-q')) {
             document.getElementById('current-q').innerText = currentIdx + 1;
-            document.getElementById('total-q').innerText = questionBank.length;
+            document.getElementById('total-q').innerText = gameQuestions.length; // 將總題數固定顯示為 20
             document.getElementById('chances-left').innerText = 3;
-            document.getElementById('question-text').innerText = questionBank[currentIdx].q;
+            document.getElementById('question-text').innerText = gameQuestions[currentIdx].q;
         }
     }
 
@@ -411,12 +762,13 @@
             if (isLocked) return;
             const clickedId = this.getAttribute('data-id');
             const clickedName = this.getAttribute('data-name'); 
-            const correctAnswer = questionBank[currentIdx].a;
-            const correctName = questionBank[currentIdx].name;
+            const correctAnswer = gameQuestions[currentIdx].a;
+            const correctName = gameQuestions[currentIdx].name;
             const feedbackEl = document.getElementById('feedback');
 
             if (clickedId === correctAnswer) {
-                score += 25; 
+                // 🎯 核心改動：答對一題累加 5 分
+                score += 5; 
                 document.getElementById('score').innerText = score;
                 feedbackEl.className = 'feedback correct';
                 feedbackEl.innerText = `🎯 答對了！這裡確實是【${clickedId}號：${correctName}】。正在進入下一題...`;
@@ -444,7 +796,7 @@
 
     function nextQuestion() {
         currentIdx++;
-        if (currentIdx < questionBank.length) {
+        if (currentIdx < gameQuestions.length) {
             loadQuestion();
         } else {
             uploadToGoogleForm();
@@ -460,7 +812,7 @@
         formData.append(nameFieldID, nickname);
         formData.append(scoreFieldID, score);
 
-        const maxScore = questionBank.length * 25;
+        const maxScore = gameQuestions.length * 5; // 總分 100 分
         document.getElementById('main-game-ui').style.display = 'none';
         document.getElementById('result-screen').style.display = 'block';
         document.getElementById('result-username').innerText = nickname;
@@ -469,8 +821,8 @@
         
         let rank = "";
         if(score === maxScore) rank = `👑 太厲害了，${nickname}！拿到 100 分滿分！`;
-        else if(score >= 75) rank = `⚡ 表現很好，${nickname}！對藥品位置相當熟悉！`;
-        else if(score >= 50) rank = `🐢 及格邊緣，${nickname}！有空可以再多練習幾次喔！`;
+        else if(score >= 80) rank = `⚡ 表現很好，${nickname}！對藥品位置相當熟悉！`;
+        else if(score >= 60) rank = `🐢 及格邊緣，${nickname}！有空可以再多練習幾次喔！`;
         else rank = `🚨 分數不及格喔，${nickname}！請重新核對圖片與藥包位置！`;
         document.getElementById('rank-text').innerText = rank;
 
@@ -485,7 +837,6 @@
         });
     }
 
-    // 🏆 【動態標題對位法】自動抓取 name、score 所在欄位，徹底解決欄位顛倒問題！
     function fetchCloudLeaderboard() {
         fetch(googleSheetCSVURL)
         .then(response => response.text())
@@ -509,10 +860,9 @@
                 return;
             }
 
-            // 🎯 1. 讀取第 0 列標題，找出 'name' 和 'score' 具體在哪個直欄
             let headers = parseCSVLine(lines[0]);
-            let nameColIdx = 1;  // 預設第 1 欄為名字
-            let scoreColIdx = 2; // 預設第 2 欄為分數
+            let nameColIdx = 1;  
+            let scoreColIdx = 2; 
 
             for(let j = 0; j < headers.length; j++) {
                 let headerStr = headers[j].toLowerCase().trim();
@@ -524,7 +874,6 @@
                 }
             }
 
-            // 🎯 2. 根據找到的正確欄位 index，開始解析每一筆資料[cite: 1]
             for (let i = 1; i < lines.length; i++) {
                 if (!lines[i].trim()) continue;
                 
@@ -532,7 +881,6 @@
                 
                 if (columns.length > Math.max(nameColIdx, scoreColIdx)) {
                     let name = columns[nameColIdx].trim();
-                    // 提取數字字元並轉成整數
                     let pScore = parseInt(columns[scoreColIdx].trim().replace(/[^0-9]/g, '')) || 0;
                     
                     if (name.length > 0) {
@@ -541,10 +889,7 @@
                 }
             }
 
-            // 由高分到低分精確排序[cite: 1]
             playerRecords.sort((a, b) => b.score - a.score);
-
-            // 截取前 10 名
             let topTen = playerRecords.slice(0, 10);
 
             const listEl = document.getElementById('leaderboard-list');
