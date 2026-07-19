@@ -365,7 +365,7 @@
 </div>
 
 <script>
-    // 📦 依您最新上傳的「第三版遊戲考題.xlsx」完整更新之 280 筆精密藥品大題庫[cite: 1]
+    // 📦 您「第三版遊戲考題」大題庫（已精準確保 Carbatin 800mg 移至 8 號口服2抽）[cite: 1]
     const questionBank = [
         { q: "Abilify 10mg 在哪裡？", a: "7", name: "口服1抽" },
         { q: "Abilify 10mg (安立復) (Aripiprazole) 在哪裡？", a: "7", name: "口服1抽" },
@@ -392,14 +392,14 @@
         { q: "Apo-Divalproex 500mg (安保癲安) (Valproic acid) 在哪裡？", a: "16", name: "預包區" },
         { q: "Apo-Quetiapine 100mg (安保思樂) (Quetiapine) 在哪裡？", a: "2", name: "調劑台中間" },
         { q: "Apo-Quetiapine 200mg (安保思樂) (Quetiapine) 在哪裡？", a: "16", name: "預包區" },
-        { q: "Apo-Zopiclone 7.5mg (安保舒眠) (Zopiclone) 在哪裡？", a: "3", name: "調劑台右方" },
+        { q: "Apo-Zopiclone 7.5mg (安保舒眠) (Zopiclone) 在哪裡？", a: "17", name: "管4檯面" },
         { q: "ApraZ Oral Solution 1mg/ml 150ml/Bot (安立舒內服液劑) (Aripiprazole) 在哪裡？", a: "13", name: "水液劑" },
         { q: "Aricept 10mg (愛憶欣) (Donepezil) 在哪裡？", a: "3", name: "調劑台右方" },
         { q: "Aricept Evess 10mg O.D.T (愛憶欣口崩錠) (Donepezil) 在哪裡？", a: "3", name: "調劑台右方" },
         { q: "Arika 15mg (立安達) (Aripiprazole) 在哪裡？", a: "7", name: "口服1抽" },
         { q: "Aripizole 20mg (安瑞平) (Aripiprazole) 在哪裡？", a: "3", name: "調劑台右方" },
         { q: "Aripizole 2mg (安瑞平) (Aripiprazole) 在哪裡？", a: "3", name: "調劑台右方" },
-        { q: "Ativan 0.5mg (安定文) (Lorazepam) 在哪裡？", a: "17", name: "管4檯面" }, // ⭐ 依第三版確定為 17 號[cite: 1]
+        { q: "Ativan 0.5mg (安定文) (Lorazepam) 在哪裡？", a: "17", name: "管4檯面" }, 
         { q: "Atomoxetine 10mg (apo) (安保思定) (Atomoxetine) 在哪裡？", a: "1", name: "調劑台左方" },
         { q: "Atomoxetine 18mg (apo) (安保思定) (Atomoxetine) 在哪裡？", a: "3", name: "調劑台右方" },
         { q: "Atomoxetine 25mg (apo) (安保思定) (Atomoxetine) 在哪裡？", a: "3", name: "調劑台右方" },
@@ -428,7 +428,7 @@
         { q: "Busron 10mg (百事隆) (Buspirone) 在哪裡？", a: "7", name: "口服1抽" },
         { q: "Caduet 5mg/10mg (脂脈優) (Amlodipine/Atorvastatin) 在哪裡？", a: "7", name: "口服1抽" },
         { q: "Calm-Up 200mg (康緒神) (Sulpiride) 在哪裡？", a: "3", name: "調劑台右方" },
-        { q: "Carbatin 800mg (康立定) (Gabapentin) 在哪裡？", a: "1", name: "調劑台左方" },
+        { q: "Carbatin 800mg (康立定) (Gabapentin) 在哪裡？", a: "8", name: "口服2抽" }, // ⭐ 已同步修正為 8 號[cite: 1]
         { q: "Cardolol 40mg (心康樂) (Propranolol) 在哪裡？", a: "7", name: "口服1抽" },
         { q: "Carpine 200mg (卡賓) (Carbamazepine) 在哪裡？", a: "1", name: "調劑台左方" },
         { q: "Catapres 75mcg (降保適) (Clonidine) 在哪裡？", a: "8", name: "口服2抽" },
@@ -464,18 +464,18 @@
         { q: "Doang 50mg (吐安) (Dimenhydrinate) 在哪裡？", a: "16", name: "預包區" },
         { q: "Dolan (多倫) (Acetaminophen/Orphenadrine 450mg/35mg) 在哪裡？", a: "16", name: "預包區" },
         { q: "Donepezil Mylan 5mg OD (多憶安口腔崩散錠) (Donepezil) 在哪裡？", a: "3", name: "調劑台右方" },
-        { q: "Dormicum 7.5mg (導美睡) (Midazolam) 在哪裡？", a: "3", name: "調劑台右方" },
+        { q: "Dormicum 7.5mg (導美睡) (Midazolam) 在哪裡？", a: "17", name: "管4檯面" }, 
         { q: "Doxepin 25mg (杜使平) (Doxepin) 在哪裡？", a: "16", name: "預包區" },
         { q: "Easyfor SR 37.5mg (悅康持續藥效膠囊) (Venlafaxine) 在哪裡？", a: "8", name: "口服2抽" },
         { q: "Eaten Sol'n 100ml 0.4mg/ml (亞典內用液) (Trihexyphenidyl) 在哪裡？", a: "13", name: "水液劑" },
-        { q: "Effexor XR 37.5mg (速悅) (Venlafaxine) 在哪裡？", a: "3", name: "調劑台右方" },
+        { q: "Effexor XR 37.5mg (速釋膠囊) (Venlafaxine) 在哪裡？", a: "3", name: "調劑台右方" },
         { q: "Eltroxin 0.05mg (昂特欣) (Levothyroxine) 在哪裡？", a: "16", name: "預包區" },
         { q: "Epalon 10mg (憶可朗) (Donepezil) 在哪裡？", a: "2", name: "調劑台中間" },
         { q: "Epine 25mg (東健) (Quetiapine) 在哪裡？", a: "1", name: "調劑台左方" },
         { q: "Epine 300mg (東健) (Quetiapine) 在哪裡？", a: "3", name: "調劑台右方" },
         { q: "Equfina 50mg (愛可穩) (Safinamide) 在哪裡？", a: "3", name: "調劑台右方" },
         { q: "Escitalo 20mg (易思坦) (Escitalopram) 在哪裡？", a: "3", name: "調劑台右方" },
-        { q: "Eszo 2mg (艾斯樂) (Estazolam) 在哪裡？", a: "3", name: "調劑台右方" },
+        { q: "Eszo 2mg (艾斯樂) (Estazolam) 在哪裡？", a: "17", name: "管4檯面" }, 
         { q: "Etumine 40mg (意妥明) (Clotiapine) 在哪裡？", a: "1", name: "調劑台左方" },
         { q: "EVAC  enema (意福灌腸液) (Sod. phosphate dibasic anhydrous/Sod. phosphate monobasic anhydrous enema 31.8mg/139.1mg/ml 118ml)... 在哪裡？", a: "16", name: "預包區" },
         { q: "Exelderm (優足達親水軟膏) (Sulconazole nitrate cream 10mg/gm 5gm) 在哪裡？", a: "16", name: "預包區" },
@@ -492,7 +492,7 @@
         { q: "Ezole 5mg (易靜) (Aripiprazole) 在哪裡？", a: "3", name: "調劑台右方" },
         { q: "Fenolip-U 160mg (袪脂優) (Fenofibrate  ) 在哪裡？", a: "1", name: "調劑台左方" },
         { q: "Fluanxol Depot 20mg/1ml (福祿安持續性注射液) (Flupentixol) 在哪裡？", a: "4", name: "針劑上抽" },
-        { q: "Flupine 0.25mg (福安源) (Fludiazepam) 在哪裡？", a: "3", name: "調劑台右方" },
+        { q: "Flupine 0.25mg (福安源) (Fludiazepam) 在哪裡？", a: "17", name: "管4檯面" }, 
         { q: "Folic Acid 5mg(榮民) (葉酸) (Folic acid) 在哪裡？", a: "1", name: "調劑台左方" },
         { q: "Forxiga 10mg (福適佳) (Dapagliflozin) 在哪裡？", a: "1", name: "調劑台左方" },
         { q: "Fucon 10mg (保賜康) (Hyoscine Butylbromide) 在哪裡？", a: "2", name: "調劑台中間" },
@@ -513,7 +513,7 @@
         { q: "Hodrin 1.5mg (好如臨) (Dihydroergotoxine) 在哪裡？", a: "1", name: "調劑台左方" },
         { q: "Homagyl 50mg (斯邁爾) (Sulpiride) 在哪裡？", a: "8", name: "口服2抽" },
         { q: "Ichderm Cream 15gm (普膚乳膏) (Doxepin) 在哪裡？", a: "16", name: "預包區" },
-        { q: "Imovane 7.5mg (宜眠安) (Zopiclone) 在哪裡？", a: "3", name: "調劑台右方" },
+        { q: "Imovane 7.5mg (宜眠安) (Zopiclone) 在哪裡？", a: "17", name: "管4檯面" }, 
         { q: "Inolim 3mg (宜喘寧) (Trimetoquinol) 在哪裡？", a: "16", name: "預包區" },
         { q: "Invega ER 3mg (思維佳) (Paliperidone) 在哪裡？", a: "1", name: "調劑台左方" },
         { q: "Invega ER 6mg (思維佳) (Paliperidone) 在哪裡？", a: "2", name: "調劑台中間" },
@@ -561,7 +561,12 @@
         { q: "Nicorette Freshmint 4 (尼古清薄荷咀嚼錠) (Nicotine) 在哪裡？", a: "11", name: "戒菸" },
         { q: "Nicorette QuickMist spray (尼古清戒菸噴霧) (Nicotine) 在哪裡？", a: "11", name: "戒菸" },
         { q: "Nicotinell TTS 30 (克菸貼片) (Nicotine) 在哪裡？", a: "11", name: "戒菸" },
-        { q: "Nincort oral gel 5gm (康寧口內膠) (Triamcinolone) 在哪裡？", a: "16", name: "預包區" }
+        { q: "Nincort oral gel 5gm (康寧口內膠) (Triamcinolone) 在哪裡？", a: "16", name: "預包區" },
+        { q: "Ripam 2mg (利平靜) (Clonazepam) 在哪裡？", a: "17", name: "管4檯面" }, 
+        { q: "Rivotril 0.5mg (利福全) (Clonazepam) 在哪裡？", a: "17", name: "管4檯面" }, 
+        { q: "Silence 1mg (悠然) (Lorazepam) 在哪裡？", a: "17", name: "管4檯面" }, 
+        { q: "Syndoman 15mg (欣得眠) (Flurazepam) 在哪裡？", a: "17", name: "管4檯面" }, 
+        { q: "Xanax  0.5mg (贊安諾) (Alprazolam) 在哪裡？", a: "17", name: "管4檯面" } 
     ];
 
     let nickname = "訪客";
