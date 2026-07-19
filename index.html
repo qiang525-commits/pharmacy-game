@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>調劑快手：藥品落點大挑戰！</title>
+    <title>調劑快手：藥品落點大挑戰與查詢系統</title>
     <style>
         :root {
             --primary: #4a90e2;
@@ -44,17 +44,78 @@
             color: var(--primary);
         }
 
+        /* 🔍 藥品快速查詢系統專用樣式 */
+        .search-box-container {
+            background: #fff;
+            border: 2px solid var(--primary);
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 8px rgba(74, 144, 226, 0.1);
+        }
+
+        .search-row {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .search-box-container input {
+            padding: 10px 15px;
+            font-size: 1rem;
+            border: 1px solid #cbd5e1;
+            border-radius: 6px;
+            width: 350px;
+            max-width: 60%;
+            outline: none;
+        }
+
+        .search-box-container input:focus {
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(74, 144, 226, 0.2);
+        }
+
+        .btn-search {
+            padding: 10px 20px;
+            background: var(--primary);
+            color: white;
+            font-weight: bold;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+
+        .btn-search:hover {
+            background: #357abd;
+        }
+
+        .search-result-block {
+            margin-top: 12px;
+            padding: 10px;
+            background: #fdf2f2;
+            border-radius: 6px;
+            font-size: 0.95rem;
+            line-height: 1.5;
+            display: none;
+            max-height: 150px;
+            overflow-y: auto;
+            border-left: 4px solid var(--danger);
+        }
+
         /* 歡迎/輸入暱稱畫面 */
         .login-screen {
             text-align: center;
-            padding: 40px 20px;
+            padding: 20px;
             background: #f8fafc;
             border-radius: 8px;
             border: 2px solid #e2e8f0;
+            margin-bottom: 20px;
         }
 
         .input-group {
-            margin: 25px 0;
+            margin: 15px 0;
         }
 
         .input-group input {
@@ -90,8 +151,8 @@
             background: #357abd;
         }
 
-        /* 遊戲主畫面 */
-        #main-game-ui {
+        /* 遊戲主畫面（考題提示欄與分數計分板） */
+        #game-info-ui {
             display: none;
         }
 
@@ -154,6 +215,7 @@
             color: #721c24;
         }
 
+        /* 🖼️ 獨立在最外層的影像主區塊 */
         .game-area {
             position: relative;
             width: 100%;
@@ -185,8 +247,8 @@
         }
 
         .hotspot:hover {
-            fill: rgba(255, 255, 255, 0.2);
-            stroke: var(--primary);
+            fill: rgba(74, 144, 226, 0.15); 
+            stroke: var(--primary); 
         }
 
         .hotspot.reveal-answer {
@@ -209,6 +271,7 @@
             border-radius: 8px;
             border: 2px dashed var(--primary);
             display: none;
+            margin-bottom: 20px;
         }
 
         .result-screen h2 {
@@ -230,7 +293,7 @@
             color: #64748b;
         }
 
-        /* 🏆 排行榜外框樣式 */
+        /* 排行榜樣式 */
         .leaderboard-box {
             margin-top: 25px;
             background: #ffffff;
@@ -279,34 +342,38 @@
         .rank-1 { color: #ff9f1c; }
         .rank-2 { color: #94a3b8; }
         .rank-3 { color: #b45309; }
-        
-        .loading-text {
-            text-align: center;
-            color: #64748b;
-            font-style: italic;
-            padding: 10px 0;
-        }
     </style>
 </head>
 <body>
 
 <div class="container">
     <header>
-        <h1>💊 調劑快手：藥品落點大挑戰！</h1>
-        <p>請根據提示的情境，點擊圖片中正確的藥品收納區域編號。每題有 3 次答錯機會！</p>
+        <h1>💊 門診藥品定位落點系統</h1>
+        <p>此系統可作為平日「藥品落點快查指南」，亦可登入進行「調劑快手挑戰賽」！</p>
     </header>
 
-    <!-- 1. 登入歡迎畫面 -->
-    <div id="login-screen" class="login-screen">
-        <h2>歡迎歡迎！請輸入您的暱稱或員編開始測驗：</h2>
+    <!-- 🔍 藥品快速查詢功能區 -->
+    <div id="search-system-container" class="search-box-container">
+        <div class="search-row">
+            <label for="drug-search-input"><strong>🔍 藥品落點快查：</strong></label>
+            <!-- 💡 新增 oninput 監聽器，當使用者把字刪除乾淨時，自動恢復挑戰賽功能 -->
+            <input type="text" id="drug-search-input" placeholder="請輸入藥名關鍵字（例如：安、Ativan、康立定）" autocomplete="off" oninput="checkSearchEmpty()">
+            <button class="btn-search" onclick="searchDrugLocation()">查詢落點</button>
+        </div>
+        <div id="search-result-block" class="search-result-block"></div>
+    </div>
+
+    <!-- 1. 登入歡迎畫面（新增 id 控制動態隱藏） -->
+    <div id="login-screen-container" class="login-screen">
+        <h2>🏆 參加調劑挑戰賽（隨機 20 題）</h2>
         <div class="input-group">
-            <input type="text" id="username-input" placeholder="例如：王小明" maxlength="15" autocomplete="off">
+            <input type="text" id="username-input" placeholder="請輸入您的暱稱或員編" maxlength="15" autocomplete="off">
         </div>
         <button class="btn-start" onclick="startGame()">開始挑戰</button>
     </div>
 
     <!-- 2. 遊戲主畫面 -->
-    <div id="main-game-ui">
+    <div id="game-info-ui">
         <div class="scoreboard">
             <div class="score-item">作答者: <span id="player-name" style="color:#4a90e2;">訪客</span></div>
             <div class="score-item">目前題數: <span id="current-q">1</span> / <span id="total-q">20</span></div>
@@ -315,44 +382,20 @@
         </div>
 
         <div class="question-box">
-            <strong>【定位挑戰】</strong>&nbsp;<span id="question-text">載入中...</span>
+            <strong>【挑戰題提示】</strong>&nbsp;<span id="question-text">請在下方圖片中點擊正確區域...</span>
         </div>
 
         <div id="feedback" class="feedback"></div>
-
-        <div class="game-area">
-            <img src="門診調劑台全景照及分區編號1150718.jpg" alt="門診調劑台" id="game-img">
-            <svg viewBox="0 0 1000 500">
-                <rect class="hotspot" data-id="1" data-name="調劑台左方" x="40" y="10" width="360" height="240" />
-                <rect class="hotspot" data-id="2" data-name="調劑台中間" x="410" y="10" width="210" height="240" />
-                <rect class="hotspot" data-id="3" data-name="調劑台右方" x="630" y="10" width="340" height="240" />
-                <rect class="hotspot" data-id="4" data-name="針劑上抽" x="70" y="260" width="130" height="40" />
-                <rect class="hotspot" data-id="5" data-name="針劑下抽" x="70" y="310" width="130" height="40" />
-                <rect class="hotspot" data-id="6" data-name="外用" x="70" y="360" width="130" height="40" />
-                <rect class="hotspot" data-id="7" data-name="口服1抽" x="210" y="295" width="170" height="40" />
-                <rect class="hotspot" data-id="8" data-name="口服2抽" x="210" y="345" width="170" height="40" />
-                <rect class="hotspot" data-id="9" data-name="管4抽屜" x="400" y="305" width="140" height="40" />
-                <rect class="hotspot" data-id="10" data-name="口服3抽" x="450" y="355" width="140" height="40" />
-                <rect class="hotspot" data-id="11" data-name="戒菸" x="620" y="300" width="140" height="40" />
-                <rect class="hotspot" data-id="12" data-name="抗生素/新藥" x="620" y="350" width="170" height="40" />
-                <rect class="hotspot" data-id="13" data-name="水液劑" x="620" y="420" width="140" height="40" />
-                <rect class="hotspot" data-id="14" data-name="管3上抽" x="850" y="325" width="120" height="35" />
-                <rect class="hotspot" data-id="15" data-name="管3下抽" x="850" y="365" width="120" height="35" />
-                <rect class="hotspot" data-id="16" data-name="預包區" x="850" y="440" width="120" height="40" />
-                <rect class="hotspot" data-id="17" data-name="管4檯面" x="635" y="160" width="190" height="100" />
-            </svg>
-        </div>
     </div>
 
-    <!-- 3. 考試總成績畫面 -->
+    <!-- 3. 考試總成績與雲端排行榜畫面 -->
     <div id="result-screen" class="result-screen">
-        <h2>🎉 測驗挑戰結束 🎉</h2>
-        <p style="font-size: 1.3rem; margin-bottom: 5px;"><span id="result-username" style="color:var(--primary); font-weight:bold;"></span> 的最終考試總成績：</p>
+        <h2>🎉 挑戰賽結束 🎉</h2>
+        <p style="font-size: 1.3rem; margin-bottom: 5px;"><span id="result-username" style="color:var(--primary); font-weight:bold;"></span> 的最終測驗成績：</p>
         <div class="final-score"><span id="final-score-num">0</span> / <span id="max-score">0</span> 分</div>
         <p id="rank-text" style="font-size: 1.2rem; font-weight: bold; color: var(--dark); margin-bottom: 10px;"></p>
-        <div class="cloud-notice">☁️ 成績已自動上傳同步至雲端後台試算表中。</div>
+        <div class="cloud-notice">☁️ 成績已自動同步上傳至雲端後台。</div>
         
-        <!-- 🏆 全局雲端前十名排行榜 -->
         <div class="leaderboard-box">
             <h3>🏆 全藥局雲端前 10 名排行榜</h3>
             <ul id="leaderboard-list" class="leaderboard-list">
@@ -360,12 +403,36 @@
             </ul>
         </div>
 
-        <button onclick="window.location.reload();" style="margin-top: 25px; padding: 12px 25px; background: var(--primary); color: white; border: none; border-radius: 6px; cursor: pointer; font-weight: bold; font-size: 1rem;">重新挑戰</button>
+        <button onclick="window.location.reload();" style="margin-top: 25px; padding: 12px 25px; background: var(--primary); color: white; border: none; border-radius: 6px; cursor: pointer; font-weight: bold; font-size: 1rem;">再次挑戰</button>
+    </div>
+
+    <!-- 🖼️ 調劑台全景照與對位熱區 -->
+    <div class="game-area">
+        <img src="門診調劑台全景照及分區編號1150718.jpg" alt="門診調劑台全景圖" id="game-img">
+        <svg viewBox="0 0 1000 500">
+            <rect class="hotspot" data-id="1" data-name="調劑台左方" x="80" y="45" width="280" height="150" />
+            <rect class="hotspot" data-id="2" data-name="調劑台中間" x="425" y="45" width="180" height="150" />
+            <rect class="hotspot" data-id="3" data-name="調劑台右方" x="660" y="45" width="280" height="150" />
+            <rect class="hotspot" data-id="4" data-name="針劑上抽" x="75" y="265" width="120" height="30" />
+            <rect class="hotspot" data-id="5" data-name="針劑下抽" x="75" y="315" width="120" height="30" />
+            <rect class="hotspot" data-id="6" data-name="外用" x="80" y="367" width="100" height="26" />
+            <rect class="hotspot" data-id="7" data-name="口服1抽" x="225" y="300" width="140" height="30" />
+            <rect class="hotspot" data-id="8" data-name="口服2抽" x="225" y="350" width="140" height="30" />
+            <rect class="hotspot" data-id="9" data-name="管4抽屜" x="405" y="310" width="130" height="30" />
+            <rect class="hotspot" data-id="10" data-name="口服3抽" x="455" y="360" width="130" height="30" />
+            <rect class="hotspot" data-id="11" data-name="戒菸" x="625" y="305" width="130" height="30" />
+            <rect class="hotspot" data-id="12" data-name="抗生素/新藥" x="645" y="357" width="125" height="26" />
+            <rect class="hotspot" data-id="13" data-name="水液劑" x="635" y="427" width="105" height="26" />
+            <rect class="hotspot" data-id="14" data-name="管3上抽" x="855" y="325" width="110" height="30" />
+            <rect class="hotspot" data-id="15" data-name="管3下抽" x="855" y="370" width="110" height="30" />
+            <rect class="hotspot" data-id="16" data-name="預包區" x="855" y="445" width="110" height="30" />
+            <rect class="hotspot" data-id="17" data-name="管4檯面" x="655" y="205" width="150" height="55" />
+        </svg>
     </div>
 </div>
 
 <script>
-    // 📦 您「第三版遊戲考題」大題庫（已精準確保 Carbatin 800mg 移至 8 號口服2抽）[cite: 1]
+    // 📦 第三版題庫（含 11 款 BZD/Z-drugs 定位 17 號、Carbatin 定位 8 號）[cite: 1]
     const questionBank = [
         { q: "Abilify 10mg 在哪裡？", a: "7", name: "口服1抽" },
         { q: "Abilify 10mg (安立復) (Aripiprazole) 在哪裡？", a: "7", name: "口服1抽" },
@@ -428,7 +495,7 @@
         { q: "Busron 10mg (百事隆) (Buspirone) 在哪裡？", a: "7", name: "口服1抽" },
         { q: "Caduet 5mg/10mg (脂脈優) (Amlodipine/Atorvastatin) 在哪裡？", a: "7", name: "口服1抽" },
         { q: "Calm-Up 200mg (康緒神) (Sulpiride) 在哪裡？", a: "3", name: "調劑台右方" },
-        { q: "Carbatin 800mg (康立定) (Gabapentin) 在哪裡？", a: "8", name: "口服2抽" }, // ⭐ 已同步修正為 8 號[cite: 1]
+        { q: "Carbatin 800mg (康立定) (Gabapentin) 在哪裡？", a: "8", name: "口服2抽" }, 
         { q: "Cardolol 40mg (心康樂) (Propranolol) 在哪裡？", a: "7", name: "口服1抽" },
         { q: "Carpine 200mg (卡賓) (Carbamazepine) 在哪裡？", a: "1", name: "調劑台左方" },
         { q: "Catapres 75mcg (降保適) (Clonidine) 在哪裡？", a: "8", name: "口服2抽" },
@@ -578,10 +645,80 @@
 
     const googleSheetCSVURL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vSInj_hf5jioFl80-t9oqq7jZLJk29mzSHTy1r8Gj9ERSdhlOOWCZIm_lKoqSec3l0SPo6M97qHWYK8/pub?output=csv";
 
+    // 💡 新增監聽：當搜尋框字串被清空時，自動還原挑戰賽登入區塊
+    function checkSearchEmpty() {
+        const inputKeyword = document.getElementById('drug-search-input').value.trim();
+        // 如果使用者把搜尋關鍵字刪光了，且此時沒有在進行挑戰賽，就把登入區塊帶回來
+        if (inputKeyword === "" && document.getElementById('game-info-ui').style.display !== 'block' && document.getElementById('result-screen').style.display !== 'block') {
+            document.getElementById('login-screen-container').style.display = 'block';
+            document.querySelectorAll('.hotspot').forEach(el => el.classList.remove('reveal-answer'));
+            document.getElementById('search-result-block').innerHTML = "";
+            document.getElementById('search-result-block').style.display = "none";
+        }
+    }
+
+    // 🔍 藥品落點模糊查詢邏輯
+    function searchDrugLocation() {
+        document.querySelectorAll('.hotspot').forEach(el => el.classList.remove('reveal-answer'));
+        const resultBlock = document.getElementById('search-result-block');
+        resultBlock.innerHTML = "";
+        resultBlock.style.display = "none";
+
+        const inputKeyword = document.getElementById('drug-search-input').value.trim().toLowerCase();
+        
+        // 如果輸入空值按 Enter，直接判定為清空，還原挑戰賽
+        if (inputKeyword === "") {
+            if (document.getElementById('game-info-ui').style.display !== 'block' && document.getElementById('result-screen').style.display !== 'block') {
+                document.getElementById('login-screen-container').style.display = 'block';
+            }
+            return;
+        }
+
+        // 🔒 ⭐ 核心修正：只要使用者鍵入文字並觸發快查，就暫時隱藏「參加挑戰賽」的區塊
+        if (document.getElementById('game-info-ui').style.display !== 'block') {
+            document.getElementById('login-screen-container').style.display = 'none';
+        }
+
+        const matchedDrugs = questionBank.filter(item => item.q.toLowerCase().includes(inputKeyword));
+
+        if (matchedDrugs.length > 0) {
+            resultBlock.style.display = "block";
+            let htmlContent = `<strong>✨ 模糊快查成功！共找到 ${matchedDrugs.length} 筆符合的藥品（對應位置已同步亮起閃爍紅框）：</strong><br><ol style="margin:5px 0 0 20px; padding:0;">`;
+            
+            const uniqueTargetIds = new Set();
+
+            matchedDrugs.forEach(item => {
+                uniqueTargetIds.add(item.a);
+                const cleanName = item.q.replace("在哪裡？", "").trim();
+                htmlContent += `<li style="margin-bottom:3px;"><strong>${cleanName}</strong> &rarr; <span style="color:var(--primary); font-weight:bold;">【${item.a}號：${item.name}】</span></li>`;
+            });
+
+            htmlContent += "</ol>";
+            resultBlock.innerHTML = htmlContent;
+
+            uniqueTargetIds.forEach(areaId => {
+                const targetHotspot = document.querySelector(`.hotspot[data-id="${areaId}"]`);
+                if (targetHotspot) {
+                    targetHotspot.classList.add('reveal-answer');
+                }
+            });
+        } else {
+            resultBlock.style.display = "block";
+            resultBlock.innerHTML = "❌ <span style='color:var(--danger); font-weight:bold;'>找不到任何包含此關鍵字的藥品，請檢查中英文拼字！</span>";
+        }
+    }
+
+    document.getElementById('drug-search-input').addEventListener('keypress', function(event) {
+        if (event.key === 'Enter') {
+            searchDrugLocation();
+        }
+    });
+
+    // 🏆 開始挑戰賽邏輯
     function startGame() {
         const inputVal = document.getElementById('username-input').value.trim();
         if (inputVal === "") {
-            alert("請輸入您的暱稱才能開始考試喔！");
+            alert("請輸入您的暱稱才能開始挑戰賽喔！");
             return;
         }
         nickname = inputVal;
@@ -590,10 +727,16 @@
         currentIdx = 0;
         score = 0;
         
-        document.getElementById('login-screen').style.display = 'none';
-        document.getElementById('main-game-ui').style.display = 'block';
+        // 隱藏快查系統與登入區塊
+        document.getElementById('search-system-container').style.display = 'none';
+        document.getElementById('login-screen-container').style.display = 'none';
+        
+        // 打開考試挑戰介面
+        document.getElementById('game-info-ui').style.display = 'block';
         document.getElementById('player-name').innerText = nickname;
         document.getElementById('score').innerText = score;
+        
+        document.querySelectorAll('.hotspot').forEach(el => el.classList.remove('reveal-answer'));
         
         loadQuestion();
     }
@@ -608,6 +751,7 @@
         wrongCount = 0;
         document.getElementById('feedback').className = 'feedback';
         document.getElementById('feedback').innerText = '';
+        
         document.querySelectorAll('.hotspot').forEach(el => el.classList.remove('reveal-answer'));
         
         if(document.getElementById('current-q')) {
@@ -620,6 +764,10 @@
 
     document.querySelectorAll('.hotspot').forEach(hotspot => {
         hotspot.addEventListener('click', function() {
+            if (document.getElementById('game-info-ui').style.display !== 'block') {
+                return; 
+            }
+
             if (isLocked) return;
             const clickedId = this.getAttribute('data-id');
             const clickedName = this.getAttribute('data-name'); 
@@ -673,7 +821,7 @@
         formData.append(scoreFieldID, score);
 
         const maxScore = gameQuestions.length * 5; 
-        document.getElementById('main-game-ui').style.display = 'none';
+        document.getElementById('game-info-ui').style.display = 'none';
         document.getElementById('result-screen').style.display = 'block';
         document.getElementById('result-username').innerText = nickname;
         document.getElementById('final-score-num').innerText = score;
@@ -726,7 +874,7 @@
 
             for(let j = 0; j < headers.length; j++) {
                 let headerStr = headers[j].toLowerCase().trim();
-                if(headerStr.includes("name") || headerStr.includes("名字") || headerStr.includes("暱稱") || headerStr.includes("員編")) {
+                if(headerStr.includes("name") || headerStr.includes("名字") || headerStr.includes("員編") || headerStr.includes("暱稱")) {
                     nameColIdx = j;
                 }
                 if(headerStr.includes("score") || headerStr.includes("分數") || headerStr.includes("成績")) {
@@ -736,13 +884,10 @@
 
             for (let i = 1; i < lines.length; i++) {
                 if (!lines[i].trim()) continue;
-                
                 let columns = parseCSVLine(lines[i]);
-                
                 if (columns.length > Math.max(nameColIdx, scoreColIdx)) {
                     let name = columns[nameColIdx].trim();
                     let pScore = parseInt(columns[scoreColIdx].trim().replace(/[^0-9]/g, '')) || 0;
-                    
                     if (name.length > 0) {
                         playerRecords.push({ name: name, score: pScore });
                     }
@@ -751,7 +896,6 @@
 
             playerRecords.sort((a, b) => b.score - a.score);
             let topTen = playerRecords.slice(0, 10);
-
             const listEl = document.getElementById('leaderboard-list');
             listEl.innerHTML = ''; 
 
