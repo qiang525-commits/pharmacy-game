@@ -201,9 +201,10 @@
             100% { opacity: 1; }
         }
 
+        /* 結算畫面 */
         .result-screen {
             text-align: center;
-            padding: 40px 20px;
+            padding: 30px 20px;
             background: #f8fafc;
             border-radius: 8px;
             border: 2px dashed var(--primary);
@@ -220,13 +221,70 @@
             font-size: 3.5rem;
             color: var(--warning);
             font-weight: bold;
-            margin: 20px 0;
+            margin: 15px 0;
         }
 
         .cloud-notice {
-            margin-top: 15px;
+            margin-top: 10px;
             font-size: 0.9rem;
             color: #64748b;
+        }
+
+        /* 🏆 排行榜外框樣式 */
+        .leaderboard-box {
+            margin-top: 25px;
+            background: #ffffff;
+            border: 1px solid #e2e8f0;
+            border-radius: 8px;
+            padding: 15px;
+            max-width: 450px;
+            margin-left: auto;
+            margin-right: auto;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+        }
+
+        .leaderboard-box h3 {
+            margin-top: 0;
+            color: var(--dark);
+            border-bottom: 2px solid #cbd5e1;
+            padding-bottom: 8px;
+            font-size: 1.3rem;
+        }
+
+        .leaderboard-list {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+            text-align: left;
+        }
+
+        .leaderboard-item {
+            display: flex;
+            justify-content: space-between;
+            padding: 8px 15px;
+            border-bottom: 1px solid #f1f5f9;
+            font-size: 1.1rem;
+        }
+
+        .leaderboard-item:last-child {
+            border-bottom: none;
+        }
+
+        .rank-badge {
+            font-weight: bold;
+            display: inline-block;
+            width: 28px;
+        }
+        
+        .rank-1 { color: #ff9f1c; }
+        .rank-2 { color: #94a3b8; }
+        .rank-3 { color: #b45309; }
+        
+        .loading-text {
+            text-align: center;
+            color: #64748b;
+            font-style: italic;
+            padding: 10px 0;
         }
     </style>
 </head>
@@ -294,16 +352,24 @@
         <p id="rank-text" style="font-size: 1.2rem; font-weight: bold; color: var(--dark); margin-bottom: 10px;"></p>
         <div class="cloud-notice">☁️ 成績已自動上傳同步至雲端後台試算表中。</div>
         
+        <!-- 🏆 全局雲端前十名排行榜 -->
+        <div class="leaderboard-box">
+            <h3>🏆 全藥局雲端前 10 名排行榜</h3>
+            <ul id="leaderboard-list" class="leaderboard-list">
+                <li class="loading-text">正在讀取雲端最新排行資料...</li>
+            </ul>
+        </div>
+
         <button onclick="window.location.reload();" style="margin-top: 25px; padding: 12px 25px; background: var(--primary); color: white; border: none; border-radius: 6px; cursor: pointer; font-weight: bold; font-size: 1rem;">重新挑戰</button>
     </div>
 </div>
 
 <script>
     const questionBank = [
-        { q: "Amanda 在哪裡？", a: "1", name: "調劑台右方"[cite: 1] },
-        { q: "Abilify 10mg 在哪裡？", a: "7", name: "口服1抽"[cite: 1] },
-        { q: "Abilify 2mg 在哪裡？", a: "7", name: "口服1抽"[cite: 1] },
-        { q: "Abilify 30mg 在哪裡？", a: "3", name: "調劑台右方"[cite: 1] }
+        { q: "Amanda 在哪裡？", a: "1", name: "調劑台右方" },
+        { q: "Abilify 10mg 在哪裡？", a: "7", name: "口服1抽" },
+        { q: "Abilify 2mg 在哪裡？", a: "7", name: "口服1抽" },
+        { q: "Abilify 30mg 在哪裡？", a: "3", name: "調劑台右方" }
     ];
 
     let nickname = "訪客";
@@ -312,6 +378,9 @@
     let wrongCount = 0; 
     let isLocked = false; 
 
+    // 🚀【已完美置入】您剛才生成的專屬雲端試算表 CSV 連線網址
+    const googleSheetCSVURL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vSInj_hf5jioFl80-t9oqq7jZLJk29mzSHTy1r8Gj9ERSdhlOOWCZIm_lKoqSec3l0SPo6M97qHWYK8/pub?output=csv";
+
     function startGame() {
         const inputVal = document.getElementById('username-input').value.trim();
         if (inputVal === "") {
@@ -319,9 +388,11 @@
             return;
         }
         nickname = inputVal;
+        
         document.getElementById('login-screen').style.display = 'none';
         document.getElementById('main-game-ui').style.display = 'block';
         document.getElementById('player-name').innerText = nickname;
+        
         loadQuestion();
     }
 
@@ -331,10 +402,13 @@
         document.getElementById('feedback').className = 'feedback';
         document.getElementById('feedback').innerText = '';
         document.querySelectorAll('.hotspot').forEach(el => el.classList.remove('reveal-answer'));
-        document.getElementById('current-q').innerText = currentIdx + 1;
-        document.getElementById('total-q').innerText = questionBank.length;
-        document.getElementById('chances-left').innerText = 3;
-        document.getElementById('question-text').innerText = questionBank[currentIdx].q;
+        
+        if(document.getElementById('current-q')) {
+            document.getElementById('current-q').innerText = currentIdx + 1;
+            document.getElementById('total-q').innerText = questionBank.length;
+            document.getElementById('chances-left').innerText = 3;
+            document.getElementById('question-text').innerText = questionBank[currentIdx].q;
+        }
     }
 
     document.querySelectorAll('.hotspot').forEach(hotspot => {
@@ -382,7 +456,6 @@
         }
     }
 
-    // 🚀 已完美套用您的專屬 Google 表單後台通道 
     function uploadToGoogleForm() {
         const formActionURL = "https://docs.google.com/forms/d/e/1FAIpQLSdl_fklnEbSZjuoMm7KBL1rVlH1voPyorcGBJ9IGTYX7-NAXQ/formResponse"; 
         const nameFieldID = "entry.122254180";   
@@ -392,17 +465,6 @@
         formData.append(nameFieldID, nickname);
         formData.append(scoreFieldID, score);
 
-        fetch(formActionURL, {
-            method: "POST",
-            mode: "no-cors",
-            body: formData
-        }).then(() => {
-            console.log("雲端試算表連線上傳完成！");
-        }).catch((err) => {
-            console.error("雲端上傳失敗：", err);
-        });
-
-        // 結算畫面
         const maxScore = questionBank.length * 25;
         document.getElementById('main-game-ui').style.display = 'none';
         document.getElementById('result-screen').style.display = 'block';
@@ -416,6 +478,67 @@
         else if(score >= 50) rank = `🐢 及格邊緣，${nickname}！有空可以再多練習幾次喔！`;
         else rank = `🚨 分數不及格喔，${nickname}！請重新核對圖片與藥包位置！`;
         document.getElementById('rank-text').innerText = rank;
+
+        // 背景提交成績，並在 1 秒後即時讀取全域前十名
+        fetch(formActionURL, {
+            method: "POST",
+            mode: "no-cors",
+            body: formData
+        }).then(() => {
+            setTimeout(fetchCloudLeaderboard, 1000);
+        }).catch((err) => {
+            fetchCloudLeaderboard();
+        });
+    }
+
+    // 🏆 新增：抓取雲端 CSV 檔案，並自動過濾、排行前十名
+    function fetchCloudLeaderboard() {
+        fetch(googleSheetCSVURL)
+        .then(response => response.text())
+        .then(csvText => {
+            let lines = csvText.split('\n');
+            let playerRecords = [];
+
+            // 拆解 CSV 欄位，第1欄是名字，第2欄是分數
+            for (let i = 1; i < lines.length; i++) {
+                if (!lines[i].trim()) continue;
+                
+                let columns = lines[i].split(',');
+                if (columns.length >= 3) {
+                    let name = columns[1].replace(/"/g, '').trim();
+                    let pScore = parseInt(columns[2].replace(/"/g, '').trim()) || 0;
+                    playerRecords.push({ name: name, score: pScore });
+                }
+            }
+
+            // 排行榜規則：由高分到低分排序
+            playerRecords.sort((a, b) => b.score - a.score);
+
+            // 只截取前 10 名
+            let topTen = playerRecords.slice(0, 10);
+
+            const listEl = document.getElementById('leaderboard-list');
+            listEl.innerHTML = ''; 
+
+            if (topTen.length === 0) {
+                listEl.innerHTML = '<li class="loading-text">目前尚無排行紀錄。</li>';
+                return;
+            }
+
+            topTen.forEach((item, index) => {
+                let rankClass = (index < 3) ? `rank-${index + 1}` : '';
+                listEl.innerHTML += `
+                    <li class="leaderboard-item">
+                        <span><span class="rank-badge ${rankClass}">#${index + 1}</span> ${item.name}</span>
+                        <strong style="color: var(--primary);">${item.score} 分</strong>
+                    </li>
+                `;
+            });
+        })
+        .catch(err => {
+            console.error(err);
+            document.getElementById('leaderboard-list').innerHTML = '<li class="loading-text" style="color:red;">❌ 無法連線讀取雲端排行榜。</li>';
+        });
     }
 </script>
 
