@@ -306,6 +306,35 @@
             color: #64748b;
         }
 
+        /* ❌ 錯題複習本專用外框樣式 */
+        .wrong-summary-box {
+            margin-top: 20px;
+            background: #fff5f5;
+            border: 1px solid #feb2b2;
+            border-radius: 8px;
+            padding: 15px;
+            max-width: 550px;
+            margin-left: auto;
+            margin-right: auto;
+            text-align: left;
+            box-shadow: 0 2px 8px rgba(229, 62, 62, 0.05);
+        }
+
+        .wrong-summary-box h3 {
+            margin-top: 0;
+            color: #c53030;
+            border-bottom: 2px solid #feb2b2;
+            padding-bottom: 8px;
+            font-size: 1.25rem;
+        }
+
+        .wrong-summary-list {
+            padding-left: 20px;
+            margin: 0;
+            font-size: 1.05rem;
+            line-height: 1.6;
+        }
+
         /* 排行榜樣式 */
         .leaderboard-box {
             margin-top: 25px;
@@ -408,6 +437,14 @@
         <p id="rank-text" style="font-size: 1.2rem; font-weight: bold; color: var(--dark); margin-bottom: 10px;"></p>
         <div class="cloud-notice">☁️ 成績已自動同步上傳至雲端後台。</div>
         
+        <!-- ❌ 錯題複訊總結區 -->
+        <div id="wrong-answers-summary" class="wrong-summary-box">
+            <h3>❌ 本次測驗錯題複習（💡 提示：可直接點選下方紅色藥名，讓地圖閃爍該題正確落點）</h3>
+            <ul id="wrong-summary-list" class="wrong-summary-list">
+                <!-- 錯題內容將由 JavaScript 動態寫入 -->
+            </ul>
+        </div>
+        
         <div class="leaderboard-box">
             <h3>🏆 全藥局雲端前 10 名排行榜</h3>
             <ul id="leaderboard-list" class="leaderboard-list">
@@ -444,7 +481,7 @@
 </div>
 
 <script>
-    // 📦 第三版題庫
+    // 📦 第三版題庫（含 11 款 BZD/Z-drugs 定位 17 號、Carbatin 定位 8 號）
     const questionBank = [
         { q: "Abilify 10mg 在哪裡？", a: "7", name: "口服1抽" },
         { q: "Abilify 10mg (安立復) (Aripiprazole) 在哪裡？", a: "7", name: "口服1抽" },
@@ -478,7 +515,7 @@
         { q: "Arika 15mg (立安達) (Aripiprazole) 在哪裡？", a: "7", name: "口服1抽" },
         { q: "Aripizole 20mg (安瑞平) (Aripiprazole) 在哪裡？", a: "3", name: "調劑台右方" },
         { q: "Aripizole 2mg (安瑞平) (Aripiprazole) 在哪裡？", a: "3", name: "調劑台右方" },
-        { q: "Ativan 0.5mg (安定文) (Lorazepam) 在哪裡？", a: "17", name: "管4檯面" }, // ⭐ 這裡已徹底修復特殊隱藏控制字元
+        { q: "Ativan 0.5mg (安定文) (Lorazepam) 在哪裡？", a: "17", name: "管4檯面" }, 
         { q: "Atomoxetine 10mg (apo) (安保思定) (Atomoxetine) 在哪裡？", a: "1", name: "調劑台左方" },
         { q: "Atomoxetine 18mg (apo) (安保思定) (Atomoxetine) 在哪裡？", a: "3", name: "調劑台右方" },
         { q: "Atomoxetine 25mg (apo) (安保思定) (Atomoxetine) 在哪裡？", a: "3", name: "調劑台右方" },
@@ -655,6 +692,7 @@
     let score = 0;
     let wrongCount = 0; 
     let isLocked = false; 
+    let wrongAnswersList = []; 
 
     const googleSheetCSVURL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vSInj_hf5jioFl80-t9oqq7jZLJk29mzSHTy1r8Gj9ERSdhlOOWCZIm_lKoqSec3l0SPo6M97qHWYK8/pub?output=csv";
 
@@ -703,7 +741,7 @@
                 const cleanName = item.q.replace("在哪裡？", "").trim();
                 
                 htmlContent += `<li style="margin-bottom:4px;">
-                    <span class="search-item-clickable" onclick="focusSingleDrug('${item.a}', '${item.name}', '${cleanName.replace(/'/g, "\\'")}')">
+                    <span class="search-item-clickable" onclick="focusSingleDrug('${item.a}', '${item.name}', '${cleanName.replace(/'/g, "\\'")}', true)">
                         ${cleanName}
                     </span> &rarr; <span style="color:var(--primary); font-weight:bold;">【${item.a}號：${item.name}】</span>
                 </li>`;
@@ -724,14 +762,28 @@
         }
     }
 
-    function focusSingleDrug(areaId, areaName, drugName) {
+    // 💡 統一個別藥品聚焦閃爍控制（快查與錯題本共用邏輯）
+    function focusSingleDrug(areaId, areaName, drugName, isFromSearchSystem) {
+        // 先熄滅地圖上既有的所有紅框
         document.querySelectorAll('.hotspot').forEach(el => el.classList.remove('reveal-answer'));
+
+        // 單獨讓點選的這款藥物區域亮起呼吸閃爍紅框
         const targetHotspot = document.querySelector(`.hotspot[data-id="${areaId}"]`);
         if (targetHotspot) {
             targetHotspot.classList.add('reveal-answer');
-            const headerHint = document.querySelector('#search-result-block strong');
-            if (headerHint) {
-                headerHint.innerHTML = `🎯 正在單獨聚焦：<span style="color:var(--danger); font-size:1.05rem;">${drugName}</span> &rarr; 鎖定位置在【${areaId}號：${areaName}】`;
+            
+            if (isFromSearchSystem) {
+                // 快查系統更新提示
+                const headerHint = document.querySelector('#search-result-block strong');
+                if (headerHint) {
+                    headerHint.innerHTML = `🎯 正在單獨聚焦：<span style="color:var(--danger); font-size:1.05rem;">${drugName}</span> &rarr; 鎖定位置在【${areaId}號：${areaName}】`;
+                }
+            } else {
+                // 錯題本更新標題動態提示
+                const wrongTitleHint = document.querySelector('#wrong-answers-summary h3');
+                if (wrongTitleHint) {
+                    wrongTitleHint.innerHTML = `🎯 正在複習錯題位置：<span style="color:var(--danger); font-size:1.1rem;">${drugName}</span> &rarr; 【${areaId}號：${areaName}】`;
+                }
             }
         }
     }
@@ -753,6 +805,7 @@
         gameQuestions = getRandomQuestions(questionBank, 20);
         currentIdx = 0;
         score = 0;
+        wrongAnswersList = []; 
         
         document.getElementById('search-system-container').style.display = 'none';
         document.getElementById('login-screen-container').style.display = 'none';
@@ -819,6 +872,14 @@
                     feedbackEl.className = 'feedback wrong';
                     feedbackEl.innerText = `❌ 機會用盡！你剛剛點到的是【${clickedId}號：${clickedName}】。正確答案已在圖片上幫您用紅框框起【${correctAnswer}號：${correctName}】。`;
                     isLocked = true;
+                    
+                    const drugCleanText = gameQuestions[currentIdx].q.replace("在哪裡？", "").trim();
+                    wrongAnswersList.push({
+                        drug: drugCleanText,
+                        id: correctAnswer,
+                        name: correctName
+                    });
+
                     const correctTarget = document.querySelector(`.hotspot[data-id="${correctAnswer}"]`);
                     if (correctTarget) correctTarget.classList.add('reveal-answer');
                     setTimeout(nextQuestion, 3500);
@@ -858,6 +919,24 @@
         else if(score >= 60) rank = `🐢 及格邊緣，${nickname}！有空可以再多練習幾次喔！`;
         else rank = `🚨 分數不及格喔，${nickname}！請重新核對圖片與藥包位置！`;
         document.getElementById('rank-text').innerText = rank;
+
+        // 渲染錯題本清單
+        const wrongSummaryUl = document.getElementById('wrong-summary-list');
+        wrongSummaryUl.innerHTML = ""; 
+        
+        if (wrongAnswersList.length === 0) {
+            wrongSummaryUl.innerHTML = `<li style="color:var(--success); font-weight:bold; list-style:none;">✨ 完美通關！您本次沒有答錯任何題目，實力無懈可擊！</li>`;
+        } else {
+            wrongAnswersList.forEach((item, idx) => {
+                // 💡 核心優化：將錯題名稱封裝成帶有 onclick 的 span 連結，點擊即可對應閃爍地圖位置！
+                wrongSummaryUl.innerHTML += `
+                    <li style="margin-bottom:6px;">
+                        題號 #${idx + 1}：<span class="search-item-clickable" onclick="focusSingleDrug('${item.id}', '${item.name}', '${item.drug.replace(/'/g, "\\'")}', false)">${item.drug}</span><br>
+                        &rarr; 正確位置為：<span style="color:var(--danger); font-weight:bold;">【${item.id}號：${item.name}】</span>
+                    </li>
+                `;
+            });
+        }
 
         fetch(formActionURL, {
             method: "POST",
