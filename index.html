@@ -120,10 +120,39 @@
             padding: 15px;
             border-radius: 4px;
             font-size: 1.4rem;
-            margin-bottom: 20px;
+            margin-bottom: 15px; /* 微調間距 */
             min-height: 50px;
             display: flex;
             align-items: center;
+        }
+
+        /* 答題反饋長方形框（已移至問題框下方） */
+        .feedback {
+            margin-bottom: 20px; /* 讓它與下方的圖片保留間距 */
+            padding: 12px;
+            border-radius: 6px;
+            text-align: center;
+            font-weight: bold;
+            font-size: 1.1rem;
+            display: none;
+        }
+
+        .feedback.correct {
+            display: block;
+            background-color: #d4edda;
+            color: #155724;
+        }
+
+        .feedback.try-again {
+            display: block;
+            background-color: #fff3cd;
+            color: #856404;
+        }
+
+        .feedback.wrong {
+            display: block;
+            background-color: #f8d7da;
+            color: #721c24;
         }
 
         .game-area {
@@ -161,7 +190,6 @@
             stroke: var(--primary);
         }
 
-        /* 答錯滿三次時，正確答案亮起明顯紅框與閃爍動畫 */
         .hotspot.reveal-answer {
             stroke: var(--danger) !important;
             stroke-width: 5 !important;
@@ -172,34 +200,6 @@
         @keyframes blink {
             0% { opacity: 0.4; }
             100% { opacity: 1; }
-        }
-
-        .feedback {
-            margin-top: 15px;
-            padding: 12px;
-            border-radius: 6px;
-            text-align: center;
-            font-weight: bold;
-            font-size: 1.1rem;
-            display: none;
-        }
-
-        .feedback.correct {
-            display: block;
-            background-color: #d4edda;
-            color: #155724;
-        }
-
-        .feedback.try-again {
-            display: block;
-            background-color: #fff3cd;
-            color: #856404;
-        }
-
-        .feedback.wrong {
-            display: block;
-            background-color: #f8d7da;
-            color: #721c24;
         }
 
         /* 考試總成績畫面 */
@@ -252,12 +252,16 @@
             <div class="score-item">得分: <span id="score">0</span></div>
         </div>
 
+        <!-- 【問題框】 -->
         <div class="question-box">
             <strong>【定位挑戰】</strong>&nbsp;<span id="question-text">載入中...</span>
         </div>
 
+        <!-- 【答題反饋框】已經調整到這裡（問題框下面、圖片上方） -->
+        <div id="feedback" class="feedback"></div>
+
+        <!-- 【圖片區】 -->
         <div class="game-area">
-            <!-- ⚠️ 請記得確認 GitHub 上的照片副檔名是大寫 JPG 還是小寫 jpg -->
             <img src="門診調劑台全景照及分區編號1150718.jpg" alt="門診調劑台" id="game-img">
             
             <svg viewBox="0 0 1000 500">
@@ -303,8 +307,6 @@
                 <rect class="hotspot" data-id="17" data-name="管4檯面" x="635" y="160" width="190" height="100" />
             </svg>
         </div>
-
-        <div id="feedback" class="feedback"></div>
     </div>
 
     <!-- 3. 考試總成績畫面 -->
@@ -318,7 +320,6 @@
 </div>
 
 <script>
-    // 您的專屬 4 題題庫
     const questionBank = [
         { q: "Amanda 在哪裡？", a: "1", name: "調劑台右方" },
         { q: "Abilify 10mg 在哪裡？", a: "7", name: "口服1抽" },
@@ -353,7 +354,6 @@
         document.getElementById('feedback').className = 'feedback';
         document.getElementById('feedback').innerText = '';
         
-        // 清除上一題可能留下的正確答案高亮框
         document.querySelectorAll('.hotspot').forEach(el => el.classList.remove('reveal-answer'));
         
         document.getElementById('current-q').innerText = currentIdx + 1;
@@ -373,7 +373,6 @@
             const feedbackEl = document.getElementById('feedback');
 
             if (clickedId === correctAnswer) {
-                // 答對了
                 score += 25; 
                 document.getElementById('score').innerText = score;
                 feedbackEl.className = 'feedback correct';
@@ -382,7 +381,6 @@
                 
                 setTimeout(nextQuestion, 1200);
             } else {
-                // 答錯了
                 wrongCount++;
                 let chancesLeft = 3 - wrongCount;
                 document.getElementById('chances-left').innerText = chancesLeft;
@@ -391,18 +389,15 @@
                     feedbackEl.className = 'feedback try-again';
                     feedbackEl.innerText = `⚠️ 答錯囉！你點到的是【${clickedId}號：${clickedName}】。不是這裡，再試一次！(還剩 ${chancesLeft} 次機會)`;
                 } else {
-                    // 錯滿3次：觸發明顯紅框高亮顯示
                     feedbackEl.className = 'feedback wrong';
                     feedbackEl.innerText = `❌ 機會用盡！你剛剛點到的是【${clickedId}號：${clickedName}】。正確答案已在圖片上幫您用紅框框起【${correctAnswer}號：${correctName}】。`;
                     isLocked = true;
                     
-                    // 尋找圖片上真正的正確答案區域，並加上高亮樣式
                     const correctTarget = document.querySelector(`.hotspot[data-id="${correctAnswer}"]`);
                     if (correctTarget) {
                         correctTarget.classList.add('reveal-answer');
                     }
                     
-                    // 給答題者長一點的時間 (3.5秒) 看清楚紅框框在哪裡，再換下一題
                     setTimeout(nextQuestion, 3500);
                 }
             }
@@ -434,5 +429,5 @@
     }
 </script>
 
-</body>
+</body
 </html>
