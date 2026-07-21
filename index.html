@@ -949,11 +949,33 @@
 
     const googleSheetCSVURL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vSInj_hf5jioFl80-t9oqq7jZLJk29mzSHTy1r8Gj9ERSdhlOOWCZIm_lKoqSec3l0SPo6M97qHWYK8/pub?output=csv";
 
-    // 💡 預先設定：若使用者想要將快查紀錄送到 Google 表單，可在此填入對應的 formResponse 網址與 entry ID
-    // 目前先保留空白，不影響正常快查與挑戰賽運作
-    const quickSearchFormURL = ""; 
-    const searchDrugEntryID = ""; 
-    const searchTimeEntryID = ""; 
+    // ⭐ 新增：將藥品快查紀錄發送至專屬 Google 表單
+    function logQuickSearchToForm(drugName) {
+        const formActionURL = "https://docs.google.com/forms/d/16yxm83-Ir98b8hHMwxQJ2ZroUkaOMD56biGw4nMRlaM/formResponse";
+        const drugEntryID = "entry.1035242856";
+        const timeEntryID = "entry.1146663743";
+
+        // 取得目前精確日期時間 (格式：YYYY-MM-DD HH:mm:ss)
+        const now = new Date();
+        const timeStr = now.getFullYear() + '-' + 
+            String(now.getMonth() + 1).padStart(2, '0') + '-' + 
+            String(now.getDate()).padStart(2, '0') + ' ' + 
+            String(now.getHours()).padStart(2, '0') + ':' + 
+            String(now.getMinutes()).padStart(2, '0') + ':' + 
+            String(now.getSeconds()).padStart(2, '0');
+
+        const formData = new FormData();
+        formData.append(drugEntryID, drugName);
+        formData.append(timeEntryID, timeStr);
+
+        fetch(formActionURL, {
+            method: "POST",
+            mode: "no-cors",
+            body: formData
+        }).catch(err => {
+            console.error("Quick search log error:", err);
+        });
+    }
 
     window.onload = function() {
         fetchCloudLeaderboard();
@@ -979,6 +1001,7 @@
         }
     }
 
+    // 🔍 藥品落點模糊查詢邏輯
     function searchDrugLocation() {
         clearHighlights();
         const resultBlock = document.getElementById('search-result-block');
@@ -1039,6 +1062,10 @@
                 const cleanName = singleDrug.q.replace("在哪裡？", "").trim();
                 focusSingleDrug(singleDrug.a, singleDrug.name, cleanName, true);
             }
+
+            // ⭐ 記錄搜尋紀錄至 Google 表單 (紀錄使用者輸入的關鍵字)
+            logQuickSearchToForm(inputKeyword);
+
         } else {
             resultBlock.style.display = "block";
             resultBlock.innerHTML = "❌ <span style='color:var(--danger); font-weight:bold;'>找不到任何包含此關鍵字的藥品，請檢查拼字！</span>";
@@ -1089,6 +1116,8 @@
                 if (headerHint) {
                     headerHint.innerHTML = `🎯 正在單獨聚焦：<span style="color:var(--danger); font-size:1.05rem;">${drugName}</span> &rarr; 鎖定位置在【${areaRaw}號：${areaName}】`;
                 }
+                // 同時記錄點選的單一藥名
+                logQuickSearchToForm(drugName);
             } else {
                 const resHeader = document.getElementById('result-header-block');
                 const resLeaderboard = document.getElementById('result-leaderboard-block');
