@@ -104,7 +104,6 @@
             border-left: 4px solid var(--danger);
         }
 
-        /* 讓查出來的清單項目可以點選的樣式 */
         .search-item-clickable {
             color: #1a0dab;
             text-decoration: underline;
@@ -119,12 +118,45 @@
 
         /* 歡迎/輸入暱稱畫面 */
         .login-screen {
-            text-align: center;
             padding: 20px;
             background: #f8fafc;
             border-radius: 8px;
             border: 2px solid #e2e8f0;
             margin-bottom: 20px;
+        }
+
+        .login-flex-container {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 20px;
+            flex-wrap: wrap;
+        }
+
+        .login-left-box {
+            flex: 1;
+            min-width: 280px;
+            text-align: center;
+        }
+
+        .login-right-box {
+            flex: 1;
+            min-width: 280px;
+            background: #ffffff;
+            border: 1px solid #cbd5e1;
+            border-radius: 8px;
+            padding: 15px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+        }
+
+        .login-right-box h3 {
+            margin-top: 0;
+            margin-bottom: 10px;
+            font-size: 1.15rem;
+            color: var(--dark);
+            border-bottom: 2px solid var(--primary);
+            padding-bottom: 5px;
+            text-align: center;
         }
 
         .input-group {
@@ -136,7 +168,7 @@
             font-size: 1.1rem;
             border: 2px solid #cbd5e1;
             border-radius: 6px;
-            width: 250px;
+            width: 220px;
             max-width: 80%;
             text-align: center;
             outline: none;
@@ -164,7 +196,7 @@
             background: #357abd;
         }
 
-        /* 遊戲主畫面（考題提示欄與分數計分板） */
+        /* 遊戲主畫面 */
         #game-info-ui {
             display: none;
         }
@@ -251,23 +283,54 @@
             height: 100%;
         }
 
+        /* 🎯 SVG 熱區群組 Hover 視覺控制 */
+        .hotspot-group {
+            cursor: pointer;
+        }
+
         .hotspot {
             fill: transparent;
-            cursor: pointer;
             stroke: transparent;
             stroke-width: 2;
             transition: all 0.2s;
         }
 
-        .hotspot:hover {
-            fill: rgba(74, 144, 226, 0.15); 
+        .hotspot-label {
+            fill: #011627;
+            font-size: 14px;
+            font-weight: bold;
+            text-anchor: middle;
+            dominant-baseline: central;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.2s ease-in-out;
+            text-shadow: -1.5px -1.5px 0 #fff, 1.5px -1.5px 0 #fff, -1.5px 1.5px 0 #fff, 1.5px 1.5px 0 #fff, 0 0 5px #fff;
+        }
+
+        .hotspot-group:hover .hotspot {
+            fill: rgba(74, 144, 226, 0.25); 
             stroke: var(--primary); 
+        }
+
+        .hotspot-group:hover .hotspot-label {
+            opacity: 1;
         }
 
         .hotspot.reveal-answer {
             stroke: var(--danger) !important;
             stroke-width: 5 !important;
             fill: rgba(231, 29, 54, 0.25) !important;
+            animation: blink 0.5s linear infinite alternate;
+        }
+
+        .search-target-label {
+            fill: var(--danger);
+            font-size: 15px;
+            font-weight: bold;
+            text-anchor: middle;
+            dominant-baseline: central;
+            pointer-events: none;
+            text-shadow: -2px -2px 0 #fff, 2px -2px 0 #fff, -2px 2px 0 #fff, 2px 2px 0 #fff, 0 0 6px #fff;
             animation: blink 0.5s linear infinite alternate;
         }
 
@@ -306,36 +369,7 @@
             color: #64748b;
         }
 
-        /* ❌ 錯題複習本專用外框樣式 */
-        .wrong-summary-box {
-            margin-top: 20px;
-            background: #fff5f5;
-            border: 1px solid #feb2b2;
-            border-radius: 8px;
-            padding: 15px;
-            max-width: 550px;
-            margin-left: auto;
-            margin-right: auto;
-            text-align: left;
-            box-shadow: 0 2px 8px rgba(229, 62, 62, 0.05);
-        }
-
-        .wrong-summary-box h3 {
-            margin-top: 0;
-            color: #c53030;
-            border-bottom: 2px solid #feb2b2;
-            padding-bottom: 8px;
-            font-size: 1.25rem;
-        }
-
-        .wrong-summary-list {
-            padding-left: 20px;
-            margin: 0;
-            font-size: 1.05rem;
-            line-height: 1.6;
-        }
-
-        /* 排行榜樣式 */
+        /* 排行榜通用列表樣式 */
         .leaderboard-box {
             margin-top: 25px;
             background: #ffffff;
@@ -366,9 +400,9 @@
         .leaderboard-item {
             display: flex;
             justify-content: space-between;
-            padding: 8px 15px;
+            padding: 8px 12px;
             border-bottom: 1px solid #f1f5f9;
-            font-size: 1.1rem;
+            font-size: 1rem;
         }
 
         .leaderboard-item:last-child {
@@ -384,12 +418,41 @@
         .rank-1 { color: #ff9f1c; }
         .rank-2 { color: #94a3b8; }
         .rank-3 { color: #b45309; }
+
+        /* ❌ 錯題複習本專用外框樣式 */
+        .wrong-summary-box {
+            margin-top: 25px;
+            background: #fff5f5;
+            border: 1px solid #feb2b2;
+            border-radius: 8px;
+            padding: 15px;
+            max-width: 550px;
+            margin-left: auto;
+            margin-right: auto;
+            text-align: left;
+            box-shadow: 0 2px 8px rgba(229, 62, 62, 0.05);
+        }
+
+        .wrong-summary-box h3 {
+            margin-top: 0;
+            color: #c53030;
+            border-bottom: 2px solid #feb2b2;
+            padding-bottom: 8px;
+            font-size: 1.25rem;
+        }
+
+        .wrong-summary-list {
+            padding-left: 20px;
+            margin: 0;
+            font-size: 1.05rem;
+            line-height: 1.6;
+        }
     </style>
 </head>
 <body>
 
 <div class="container">
-    <header>
+    <header id="main-header">
         <h1>💊 門診藥品定位落點系統</h1>
         <p>此系統可作為平日「藥品落點快查指南」，亦可登入進行「調劑快手挑戰賽」！</p>
     </header>
@@ -398,7 +461,7 @@
     <div id="search-system-container" class="search-box-container">
         <div class="search-row">
             <label for="drug-search-input"><strong>🔍 藥品落點快查：</strong></label>
-            <input type="text" id="drug-search-input" placeholder="請輸入藥名關鍵字（例如：安、Ativan、康立定）" autocomplete="off" oninput="checkSearchEmpty()">
+            <input type="text" id="drug-search-input" placeholder="請輸入藥名關鍵字（例如：安、Ativan、Amizide）" autocomplete="off" oninput="checkSearchEmpty()">
             <button class="btn-search" onclick="searchDrugLocation()">查詢落點</button>
         </div>
         <div id="search-result-block" class="search-result-block"></div>
@@ -406,11 +469,22 @@
 
     <!-- 1. 登入歡迎畫面 -->
     <div id="login-screen-container" class="login-screen">
-        <h2>🏆 參加調劑挑戰賽（隨機 20 題）</h2>
-        <div class="input-group">
-            <input type="text" id="username-input" placeholder="請輸入您的暱稱或員編" maxlength="15" autocomplete="off">
+        <div class="login-flex-container">
+            <div class="login-left-box">
+                <h2>🏆 參加調劑挑戰賽<br><span style="font-size:1.1rem; color:#64748b; font-weight:normal;">（隨機 20 題）</span></h2>
+                <div class="input-group">
+                    <input type="text" id="username-input" placeholder="請輸入您的暱稱或員編" maxlength="15" autocomplete="off">
+                </div>
+                <button class="btn-start" onclick="startGame()">開始挑戰</button>
+            </div>
+
+            <div class="login-right-box">
+                <h3>👑 雲端排行榜 前 5 名</h3>
+                <ul id="top5-leaderboard-list" class="leaderboard-list">
+                    <li style="text-align:center; color:#64748b; padding:10px;">載入雲端排行中...</li>
+                </ul>
+            </div>
         </div>
-        <button class="btn-start" onclick="startGame()">開始挑戰</button>
     </div>
 
     <!-- 2. 遊戲主畫面 -->
@@ -418,7 +492,7 @@
         <div class="scoreboard">
             <div class="score-item">作答者: <span id="player-name" style="color:#4a90e2;">訪客</span></div>
             <div class="score-item">目前題數: <span id="current-q">1</span> / <span id="total-q">20</span></div>
-            <div class="score-item">剩餘嘗試次數: <span id="chances-left" style="color: #ff9f1c;">3</span></div>
+            <div class="score-item">剩餘嘗試次數: <span id="chances-left" style="color: #ff9f1c;">2</span></div>
             <div class="score-item">得分: <span id="score">0</span></div>
         </div>
 
@@ -431,57 +505,123 @@
 
     <!-- 3. 考試總成績與雲端排行榜畫面 -->
     <div id="result-screen" class="result-screen">
-        <h2>🎉 挑戰賽結束 🎉</h2>
-        <p style="font-size: 1.3rem; margin-bottom: 5px;"><span id="result-username" style="color:var(--primary); font-weight:bold;"></span> 的最終測驗成績：</p>
-        <div class="final-score"><span id="final-score-num">0</span> / <span id="max-score">0</span> 分</div>
-        <p id="rank-text" style="font-size: 1.2rem; font-weight: bold; color: var(--dark); margin-bottom: 10px;"></p>
-        <div class="cloud-notice">☁️ 成績已自動同步上傳至雲端後台。</div>
-        
-        <!-- ❌ 錯題複訊總結區 -->
-        <div id="wrong-answers-summary" class="wrong-summary-box">
-            <h3>❌ 本次測驗錯題複習（💡 提示：可直接點選下方紅色藥名，讓地圖閃爍該題正確落點）</h3>
-            <ul id="wrong-summary-list" class="wrong-summary-list">
-                <!-- 錯題內容將由 JavaScript 動態寫入 -->
-            </ul>
+        <div id="result-header-block">
+            <h2>🎉 挑戰賽結束 🎉</h2>
+            <p style="font-size: 1.3rem; margin-bottom: 5px;"><span id="result-username" style="color:var(--primary); font-weight:bold;"></span> 的最終測驗成績：</p>
+            <div class="final-score"><span id="final-score-num">0</span> / <span id="max-score">0</span> 分</div>
+            <p id="rank-text" style="font-size: 1.2rem; font-weight: bold; color: var(--dark); margin-bottom: 10px;"></p>
+            <div class="cloud-notice">☁️ 成績已自動同步上傳至雲端後台。</div>
         </div>
         
-        <div class="leaderboard-box">
+        <div id="result-leaderboard-block" class="leaderboard-box">
             <h3>🏆 全藥局雲端前 10 名排行榜</h3>
             <ul id="leaderboard-list" class="leaderboard-list">
                 <li class="loading-text">正在讀取雲端最新排行資料...</li>
             </ul>
         </div>
 
-        <button onclick="window.location.reload();" style="margin-top: 25px; padding: 12px 25px; background: var(--primary); color: white; border: none; border-radius: 6px; cursor: pointer; font-weight: bold; font-size: 1rem;">再次挑戰</button>
+        <div>
+            <button onclick="window.location.reload();" style="margin-top: 25px; padding: 12px 25px; background: var(--primary); color: white; border: none; border-radius: 6px; cursor: pointer; font-weight: bold; font-size: 1rem;">再次挑戰</button>
+        </div>
+
+        <div id="wrong-answers-summary" class="wrong-summary-box">
+            <h3>❌ 本次測驗錯題複習（💡 提示：可點選藥名，讓地圖閃爍該題正確落點）</h3>
+            <ul id="wrong-summary-list" class="wrong-summary-list">
+                <!-- 錯題內容將由 JavaScript 動態寫入 -->
+            </ul>
+        </div>
     </div>
 
-    <!-- 🖼️ 調劑台全景照與對位熱區 -->
+    <!-- 🖼️ 調劑台全景照與對位熱區（1~20 區） -->
     <div class="game-area">
-        <img src="門診調劑台全景照及分區編號1150718.jpg" alt="門診調劑台全景圖" id="game-img">
-        <svg viewBox="0 0 1000 500">
-            <rect class="hotspot" data-id="1" data-name="調劑台左方" x="80" y="45" width="280" height="150" />
-            <rect class="hotspot" data-id="2" data-name="調劑台中間" x="425" y="45" width="180" height="150" />
-            <rect class="hotspot" data-id="3" data-name="調劑台右方" x="660" y="45" width="280" height="150" />
-            <rect class="hotspot" data-id="4" data-name="針劑上抽" x="75" y="265" width="120" height="30" />
-            <rect class="hotspot" data-id="5" data-name="針劑下抽" x="75" y="315" width="120" height="30" />
-            <rect class="hotspot" data-id="6" data-name="外用" x="80" y="367" width="100" height="26" />
-            <rect class="hotspot" data-id="7" data-name="口服1抽" x="225" y="300" width="140" height="30" />
-            <rect class="hotspot" data-id="8" data-name="口服2抽" x="225" y="350" width="140" height="30" />
-            <rect class="hotspot" data-id="9" data-name="管4抽屜" x="405" y="310" width="130" height="30" />
-            <rect class="hotspot" data-id="10" data-name="口服3抽" x="455" y="360" width="130" height="30" />
-            <rect class="hotspot" data-id="11" data-name="戒菸" x="625" y="305" width="130" height="30" />
-            <rect class="hotspot" data-id="12" data-name="抗生素/新藥" x="645" y="357" width="125" height="26" />
-            <rect class="hotspot" data-id="13" data-name="水液劑" x="635" y="427" width="105" height="26" />
-            <rect class="hotspot" data-id="14" data-name="管3上抽" x="855" y="325" width="110" height="30" />
-            <rect class="hotspot" data-id="15" data-name="管3下抽" x="855" y="370" width="110" height="30" />
-            <rect class="hotspot" data-id="16" data-name="預包區" x="855" y="445" width="110" height="30" />
-            <rect class="hotspot" data-id="17" data-name="管4檯面" x="655" y="205" width="150" height="55" />
+        <img src="門診調劑台全景照及分區編號1150721.jpg" alt="門診調劑台全景圖" id="game-img">
+        <svg viewBox="0 0 1000 500" id="main-svg">
+            <g class="hotspot-group" data-group-id="1">
+                <rect class="hotspot" data-id="1" data-name="調劑台左方" x="80" y="45" width="280" height="150" />
+                <text x="220" y="120" class="hotspot-label" font-size="18">1號 調劑台左方</text>
+            </g>
+            <g class="hotspot-group" data-group-id="2">
+                <rect class="hotspot" data-id="2" data-name="調劑台中間" x="425" y="45" width="180" height="150" />
+                <text x="515" y="120" class="hotspot-label" font-size="18">2號 調劑台中間</text>
+            </g>
+            <g class="hotspot-group" data-group-id="3">
+                <rect class="hotspot" data-id="3" data-name="調劑台右方" x="660" y="45" width="280" height="150" />
+                <text x="800" y="120" class="hotspot-label" font-size="18">3號 調劑台右方</text>
+            </g>
+            <g class="hotspot-group" data-group-id="4">
+                <rect class="hotspot" data-id="4" data-name="針劑上抽" x="15" y="255" width="150" height="30" />
+                <text x="90" y="270" class="hotspot-label">4號 針劑上抽</text>
+            </g>
+            <g class="hotspot-group" data-group-id="5">
+                <rect class="hotspot" data-id="5" data-name="針劑下抽" x="15" y="305" width="150" height="30" />
+                <text x="90" y="320" class="hotspot-label">5號 針劑下抽</text>
+            </g>
+            <g class="hotspot-group" data-group-id="6">
+                <rect class="hotspot" data-id="6" data-name="外用抽屜" x="15" y="360" width="150" height="30" />
+                <text x="90" y="375" class="hotspot-label">6號 外用抽屜</text>
+            </g>
+            <g class="hotspot-group" data-group-id="7">
+                <rect class="hotspot" data-id="7" data-name="口服1抽" x="225" y="300" width="140" height="30" />
+                <text x="295" y="315" class="hotspot-label">7號 口服1抽</text>
+            </g>
+            <g class="hotspot-group" data-group-id="8">
+                <rect class="hotspot" data-id="8" data-name="口服2抽" x="225" y="350" width="140" height="30" />
+                <text x="295" y="365" class="hotspot-label">8號 口服2抽</text>
+            </g>
+            <g class="hotspot-group" data-group-id="9">
+                <rect class="hotspot" data-id="9" data-name="管4抽屜" x="405" y="310" width="130" height="30" />
+                <text x="470" y="325" class="hotspot-label">9號 管4抽屜</text>
+            </g>
+            <g class="hotspot-group" data-group-id="10">
+                <rect class="hotspot" data-id="10" data-name="口服3抽" x="415" y="360" width="130" height="30" />
+                <text x="480" y="375" class="hotspot-label">10號 口服3抽</text>
+            </g>
+            <g class="hotspot-group" data-group-id="11">
+                <rect class="hotspot" data-id="11" data-name="戒菸" x="605" y="305" width="115" height="30" />
+                <text x="662" y="320" class="hotspot-label">11號 戒菸</text>
+            </g>
+            <g class="hotspot-group" data-group-id="12">
+                <rect class="hotspot" data-id="12" data-name="抗生素/新藥" x="595" y="357" width="165" height="28" />
+                <text x="677" y="371" class="hotspot-label">12號 抗生素/新藥</text>
+            </g>
+            <g class="hotspot-group" data-group-id="13">
+                <rect class="hotspot" data-id="13" data-name="水液劑" x="575" y="425" width="110" height="26" />
+                <text x="630" y="438" class="hotspot-label">13號 水液劑</text>
+            </g>
+            <g class="hotspot-group" data-group-id="14">
+                <rect class="hotspot" data-id="14" data-name="管3上抽" x="825" y="325" width="125" height="30" />
+                <text x="887" y="340" class="hotspot-label">14號 管3上抽</text>
+            </g>
+            <g class="hotspot-group" data-group-id="15">
+                <rect class="hotspot" data-id="15" data-name="管3下抽" x="825" y="370" width="125" height="30" />
+                <text x="887" y="385" class="hotspot-label">15號 管3下抽</text>
+            </g>
+            <g class="hotspot-group" data-group-id="16">
+                <rect class="hotspot" data-id="16" data-name="預包區" x="830" y="440" width="120" height="30" />
+                <text x="890" y="455" class="hotspot-label">16號 預包區</text>
+            </g>
+            <g class="hotspot-group" data-group-id="17">
+                <rect class="hotspot" data-id="17" data-name="管4檯面" x="635" y="160" width="190" height="100" />
+                <text x="730" y="210" class="hotspot-label" font-size="16">17號 管4檯面</text>
+            </g>
+            <g class="hotspot-group" data-group-id="18">
+                <rect class="hotspot" data-id="18" data-name="點滴" x="415" y="425" width="125" height="30" />
+                <text x="477" y="440" class="hotspot-label">18號 點滴</text>
+            </g>
+            <g class="hotspot-group" data-group-id="19">
+                <rect class="hotspot" data-id="19" data-name="長效針(後方)" x="235" y="400" width="135" height="30" />
+                <text x="302" y="415" class="hotspot-label">19號 長效針(後方)</text>
+            </g>
+            <g class="hotspot-group" data-group-id="20">
+                <rect class="hotspot" data-id="20" data-name="外用(後方)" x="20" y="420" width="140" height="30" />
+                <text x="90" y="435" class="hotspot-label">20號 外用(後方)</text>
+            </g>
         </svg>
     </div>
 </div>
 
 <script>
-    // 📦 第三版題庫（含 11 款 BZD/Z-drugs 定位 17 號、Carbatin 定位 8 號）
+    // 📦 最新解析之 314 筆全考題資料庫[cite: 1]
     const questionBank = [
         { q: "Abilify 10mg 在哪裡？", a: "7", name: "口服1抽" },
         { q: "Abilify 10mg (安立復) (Aripiprazole) 在哪裡？", a: "7", name: "口服1抽" },
@@ -500,8 +640,8 @@
         { q: "Amanda 100mg (安滿達) (Amantadine) 在哪裡？", a: "1", name: "調劑台左方" },
         { q: "Amanda 100mg/tab 在哪裡？", a: "1", name: "調劑台左方" },
         { q: "Amepiride 2mg (欣益糖) (Glimepiride) 在哪裡？", a: "1", name: "調劑台左方" },
-        { q: "Amizide  5mg/50mg (安立壓) (Amiloride (HCl)/Hydrochlorothiazide) 在哪裡？", a: "1", name: "調劑台左方" },
-        { q: "Andine Aq. 120ml () (Povidone-Iodine Aq. Sol'n) 在哪裡？", a: "16", name: "預包區" },
+        { q: "Amizide  5mg/50mg (安立壓) (Amiloride (HCl)/Hydrochlorothiazide) 在哪裡？", a: "3", name: "調劑台右方" },
+        { q: "Andine Aq. 120ml (安碘液) (Povidone-Iodine Aq. Sol'n) 在哪裡？", a: "16,20", name: "預包區, 外用(後方)" },
         { q: "Apa-Risdol 1mg (理思得) (Risperidone) 在哪裡？", a: "16", name: "預包區" },
         { q: "Apa-Risdol 3mg (理思得) (Risperidone) 在哪裡？", a: "16", name: "預包區" },
         { q: "Apo-Divalproex 250mg (安保癲安腸溶錠) (Valproic acid) 在哪裡？", a: "16", name: "預包區" },
@@ -509,13 +649,13 @@
         { q: "Apo-Quetiapine 100mg (安保思樂) (Quetiapine) 在哪裡？", a: "2", name: "調劑台中間" },
         { q: "Apo-Quetiapine 200mg (安保思樂) (Quetiapine) 在哪裡？", a: "16", name: "預包區" },
         { q: "Apo-Zopiclone 7.5mg (安保舒眠) (Zopiclone) 在哪裡？", a: "17", name: "管4檯面" },
-        { q: "ApraZ Oral Solution 1mg/ml 150ml/Bot (安立舒內服液劑) (Aripiprazole) 在哪裡？", a: "13", name: "水液劑" },
+        { q: "ApraZ Oral Solution 1mg/ml 150ml/Bot (安立舒內服液劑) (Aripiprazole) 在哪裡？", a: "16", name: "預包區" },
         { q: "Aricept 10mg (愛憶欣) (Donepezil) 在哪裡？", a: "3", name: "調劑台右方" },
         { q: "Aricept Evess 10mg O.D.T (愛憶欣口崩錠) (Donepezil) 在哪裡？", a: "3", name: "調劑台右方" },
         { q: "Arika 15mg (立安達) (Aripiprazole) 在哪裡？", a: "7", name: "口服1抽" },
         { q: "Aripizole 20mg (安瑞平) (Aripiprazole) 在哪裡？", a: "3", name: "調劑台右方" },
         { q: "Aripizole 2mg (安瑞平) (Aripiprazole) 在哪裡？", a: "3", name: "調劑台右方" },
-        { q: "Ativan 0.5mg (安定文) (Lorazepam) 在哪裡？", a: "17", name: "管4檯面" }, 
+        { q: "Ativan 0.5mg (安定文) (Lorazepam) 在哪裡？", a: "17", name: "管4檯面" },
         { q: "Atomoxetine 10mg (apo) (安保思定) (Atomoxetine) 在哪裡？", a: "1", name: "調劑台左方" },
         { q: "Atomoxetine 18mg (apo) (安保思定) (Atomoxetine) 在哪裡？", a: "3", name: "調劑台右方" },
         { q: "Atomoxetine 25mg (apo) (安保思定) (Atomoxetine) 在哪裡？", a: "3", name: "調劑台右方" },
@@ -524,9 +664,9 @@
         { q: "Atropine Inj 1mg/1ml (阿托品) (Atropine) 在哪裡？", a: "4", name: "針劑上抽" },
         { q: "Bafen 10mg (痛獲平) (Baclofen) 在哪裡？", a: "16", name: "預包區" },
         { q: "Behyd 4mg (泌排特) (Benzylhydrochlorothiazide) 在哪裡？", a: "7", name: "口服1抽" },
-        { q: "Berotec N Aerosol (備勞喘定量噴霧液) (Fenoterol HBr aerosol 100mcg/puff 200dose) 在哪裡？", a: "6", name: "外用" },
+        { q: "Berotec N Aerosol (備勞喘定量噴霧液) (Fenoterol HBr aerosol 100mcg/puff 200dose) 在哪裡？", a: "6", name: "外用抽屜" },
         { q: "Berydone ER 9mg (倍理通持續性藥效錠) (Paliperidone) 在哪裡？", a: "3", name: "調劑台右方" },
-        { q: "Besonin Nasal Spray (碧適清鼻腔定量噴液劑) (Budesonide micronized Nasal Spray) 在哪裡？", a: "6", name: "外用" },
+        { q: "Besonin Nasal Spray (碧適清鼻腔定量噴液劑) (Budesonide micronized Nasal Spray) 在哪裡？", a: "6", name: "外用抽屜" },
         { q: "Betetrim SR 150mg (倍得舒持續性藥效膜衣錠) (Bupropion) 在哪裡？", a: "1", name: "調劑台左方" },
         { q: "Binin-U 10mg (易寧優) (Haloperidol) 在哪裡？", a: "16", name: "預包區" },
         { q: "Binin-U 2mg (易寧優) (Haloperidol) 在哪裡？", a: "16", name: "預包區" },
@@ -536,21 +676,21 @@
         { q: "Biorix 150mg (保鬱舒) (Moclobemide) 在哪裡？", a: "16", name: "預包區" },
         { q: "Bipiden Inj 5mg/1ml (美必定注射液) (Biperiden) 在哪裡？", a: "5", name: "針劑下抽" },
         { q: "Bisadyl 5mg (秘瀉樂) (Bisacodyl) 在哪裡？", a: "1", name: "調劑台左方" },
-        { q: "Bisadyl Supp. 10mg (秘瀉樂栓劑) (Bisacodyl) 在哪裡？", a: "6", name: "外用" },
-        { q: "Bloodful (益血康) (Ferrous fumarate/Niacinamide/Thiamine mononitrate/Riboflavin/Cyanocobalamin/Folic acid 50mg/3mg/1mg/1mg/2mcg... 在哪裡？", a: "16", name: "預包區" },
+        { q: "Bisadyl Supp. 10mg (秘瀉樂栓劑) (Bisacodyl) 在哪裡？", a: "6", name: "外用抽屜" },
+        { q: "Bloodful (益血康) (Ferrous fumarate/Niacinamide/Thiamine mononitrate/Riboflavin/Cyanocobalamin/Folic acid 50mg/3mg/1mg/1mg/2mcg/2mg) 在哪裡？", a: "16", name: "預包區" },
         { q: "Bokey 100mg (伯基腸溶微粒膠囊) (Aspirin) 在哪裡？", a: "1", name: "調劑台左方" },
         { q: "Brintellix 10mg (敏特思) (Vortioxetine) 在哪裡？", a: "7", name: "口服1抽" },
         { q: "Broen-C 10mg (撲炎喜) (Bromelain/L-Cysteine) 在哪裡？", a: "16", name: "預包區" },
         { q: "Busron 10mg (百事隆) (Buspirone) 在哪裡？", a: "7", name: "口服1抽" },
         { q: "Caduet 5mg/10mg (脂脈優) (Amlodipine/Atorvastatin) 在哪裡？", a: "7", name: "口服1抽" },
         { q: "Calm-Up 200mg (康緒神) (Sulpiride) 在哪裡？", a: "3", name: "調劑台右方" },
-        { q: "Carbatin 800mg (康立定) (Gabapentin) 在哪裡？", a: "8", name: "口服2抽" }, 
+        { q: "Carbatin 800mg (康立定) (Gabapentin) 在哪裡？", a: "8", name: "口服2抽" },
         { q: "Cardolol 40mg (心康樂) (Propranolol) 在哪裡？", a: "7", name: "口服1抽" },
         { q: "Carpine 200mg (卡賓) (Carbamazepine) 在哪裡？", a: "1", name: "調劑台左方" },
         { q: "Catapres 75mcg (降保適) (Clonidine) 在哪裡？", a: "8", name: "口服2抽" },
         { q: "Cetimin 10mg (喜克敏) (Cetirizine) 在哪裡？", a: "7", name: "口服1抽" },
         { q: "Citao 20mg (替你憂) (Citalopram) 在哪裡？", a: "8", name: "口服2抽" },
-        { q: "Cividoid gel 20gm 250IU/gm  (喜美凝膠) (Heparinoid ) 在哪裡？", a: "16", name: "預包區" },
+        { q: "Cividoid gel 20gm 250IU/gm  (喜美凝膠) (Heparinoid ) 在哪裡？", a: "16,20", name: "預包區, 外用(後方)" },
         { q: "Clopine 100mg (克慮平) (Clozapine) 在哪裡？", a: "1", name: "調劑台左方" },
         { q: "Clopine 25mg (克慮平) (Clozapine) 在哪裡？", a: "1", name: "調劑台左方" },
         { q: "Co-Diovan (可得安穩) (Valsartan+Hydrochlorthiazide) 在哪裡？", a: "2", name: "調劑台中間" },
@@ -568,7 +708,7 @@
         { q: "Curam 1000mg (諾快寧) (Amoxicillin/Clavulanate) 在哪裡？", a: "12", name: "抗生素/新藥" },
         { q: "Dampurine 25mg  (舒解) (Bethanechol) 在哪裡？", a: "16", name: "預包區" },
         { q: "Deglu 50mg (抵克醣) (Acarbose) 在哪裡？", a: "1", name: "調劑台左方" },
-        { q: "Depakine 200mg (帝拔癲) (Valproic acid) 在哪裡？", a: "3", name: "調劑台右方" },
+        { q: "Depakine 200mg (帝拔癲) (Valproic acid) 在哪裡？", a: "2", name: "調劑台中間" },
         { q: "Depyretin 500mg (得百利寧) (Acetaminophen) 在哪裡？", a: "16", name: "預包區" },
         { q: "Desud Plus 8mg/2mg (解佳益) (Buprenorphine/Naloxone tab. 8mg/2mg) 在哪裡？", a: "15", name: "管3下抽" },
         { q: "Diapine 5mg (大安源) (Diazepam) 在哪裡？", a: "9", name: "管4抽屜" },
@@ -576,25 +716,25 @@
         { q: "Dipachro SR 300mg (帝帕克) (Valproic acid) 在哪裡？", a: "1", name: "調劑台左方" },
         { q: "Diphenhydramine inj 30mg/ml 1ml (鹽酸二苯胺明) (Diphenhydramine) 在哪裡？", a: "5", name: "針劑下抽" },
         { q: "Diphenidol  25mg (敵芬尼) (Diphenidol) 在哪裡？", a: "1", name: "調劑台左方" },
-        { q: "Dispain patch (袪痛貼貼片) (Flurbiprofen patch 40mg/12gm(10cm*14cm)) 在哪裡？", a: "16", name: "預包區" },
+        { q: "Dispain patch (袪痛貼貼片) (Flurbiprofen patch 40mg/12gm(10cm*14cm)) 在哪裡？", a: "16,20", name: "預包區, 外用(後方)" },
         { q: "Doang 50mg (吐安) (Dimenhydrinate) 在哪裡？", a: "16", name: "預包區" },
         { q: "Dolan (多倫) (Acetaminophen/Orphenadrine 450mg/35mg) 在哪裡？", a: "16", name: "預包區" },
         { q: "Donepezil Mylan 5mg OD (多憶安口腔崩散錠) (Donepezil) 在哪裡？", a: "3", name: "調劑台右方" },
-        { q: "Dormicum 7.5mg (導美睡) (Midazolam) 在哪裡？", a: "17", name: "管4檯面" }, 
+        { q: "Dormicum 7.5mg (導美睡) (Midazolam) 在哪裡？", a: "17", name: "管4檯面" },
         { q: "Doxepin 25mg (杜使平) (Doxepin) 在哪裡？", a: "16", name: "預包區" },
         { q: "Easyfor SR 37.5mg (悅康持續藥效膠囊) (Venlafaxine) 在哪裡？", a: "8", name: "口服2抽" },
         { q: "Eaten Sol'n 100ml 0.4mg/ml (亞典內用液) (Trihexyphenidyl) 在哪裡？", a: "13", name: "水液劑" },
-        { q: "Effexor XR 37.5mg (速釋膠囊) (Venlafaxine) 在哪裡？", a: "3", name: "調劑台右方" },
+        { q: "Effexor XR 37.5mg (速悅) (Venlafaxine) 在哪裡？", a: "3", name: "調劑台右方" },
         { q: "Eltroxin 0.05mg (昂特欣) (Levothyroxine) 在哪裡？", a: "16", name: "預包區" },
         { q: "Epalon 10mg (憶可朗) (Donepezil) 在哪裡？", a: "2", name: "調劑台中間" },
         { q: "Epine 25mg (東健) (Quetiapine) 在哪裡？", a: "1", name: "調劑台左方" },
         { q: "Epine 300mg (東健) (Quetiapine) 在哪裡？", a: "3", name: "調劑台右方" },
         { q: "Equfina 50mg (愛可穩) (Safinamide) 在哪裡？", a: "3", name: "調劑台右方" },
         { q: "Escitalo 20mg (易思坦) (Escitalopram) 在哪裡？", a: "3", name: "調劑台右方" },
-        { q: "Eszo 2mg (艾斯樂) (Estazolam) 在哪裡？", a: "17", name: "管4檯面" }, 
+        { q: "Eszo 2mg (艾斯樂) (Estazolam) 在哪裡？", a: "17", name: "管4檯面" },
         { q: "Etumine 40mg (意妥明) (Clotiapine) 在哪裡？", a: "1", name: "調劑台左方" },
-        { q: "EVAC  enema (意福灌腸液) (Sod. phosphate dibasic anhydrous/Sod. phosphate monobasic anhydrous enema 31.8mg/139.1mg/ml 118ml)... 在哪裡？", a: "16", name: "預包區" },
-        { q: "Exelderm (優足達親水軟膏) (Sulconazole nitrate cream 10mg/gm 5gm) 在哪裡？", a: "16", name: "預包區" },
+        { q: "EVAC  enema (意福灌腸液) (Sod. phosphate dibasic anhydrous/Sod. phosphate monobasic anhydrous enema 31.8mg/139.1mg/ml 118ml) 在哪裡？", a: "16,20", name: "預包區, 外用(後方)" },
+        { q: "Exelderm (優足達親水軟膏) (Sulconazole nitrate cream 10mg/gm 5gm) 在哪裡？", a: "16,20", name: "預包區, 外用(後方)" },
         { q: "Exelon 1.5mg (憶思能) (Rivastigmine) 在哪裡？", a: "3", name: "調劑台右方" },
         { q: "Exelon 3mg (憶思能) (Rivastigmine) 在哪裡？", a: "3", name: "調劑台右方" },
         { q: "Exelon 4.5mg (憶思能) (Rivastigmine) 在哪裡？", a: "3", name: "調劑台右方" },
@@ -608,12 +748,12 @@
         { q: "Ezole 5mg (易靜) (Aripiprazole) 在哪裡？", a: "3", name: "調劑台右方" },
         { q: "Fenolip-U 160mg (袪脂優) (Fenofibrate  ) 在哪裡？", a: "1", name: "調劑台左方" },
         { q: "Fluanxol Depot 20mg/1ml (福祿安持續性注射液) (Flupentixol) 在哪裡？", a: "4", name: "針劑上抽" },
-        { q: "Flupine 0.25mg (福安源) (Flidiazepam) 在哪裡？", a: "17", name: "管4檯面" }, 
+        { q: "Flupine 0.25mg (福安源) (Fludiazepam) 在哪裡？", a: "17", name: "管4檯面" },
         { q: "Folic Acid 5mg(榮民) (葉酸) (Folic acid) 在哪裡？", a: "1", name: "調劑台左方" },
         { q: "Forxiga 10mg (福適佳) (Dapagliflozin) 在哪裡？", a: "1", name: "調劑台左方" },
         { q: "Fucon 10mg (保賜康) (Hyoscine Butylbromide) 在哪裡？", a: "2", name: "調劑台中間" },
         { q: "Furide 40mg (舒利諾) (Furosemide) 在哪裡？", a: "10", name: "口服3抽" },
-        { q: "Fuskin 10gm  20mg/gm (服皮欣乳膏 ) (Fusidic acid) 在哪裡？", a: "16", name: "預包區" },
+        { q: "Fuskin 10gm  20mg/gm (服皮欣乳膏 ) (Fusidic acid) 在哪裡？", a: "16,20", name: "預包區, 外用(後方)" },
         { q: "Fute 0.5mg (安平靜) (Flupentixol) 在哪裡？", a: "3", name: "調劑台右方" },
         { q: "Fute 5mg (安平靜) (Flupentixol) 在哪裡？", a: "1", name: "調劑台左方" },
         { q: "Galvus Met 50/500 (高糖優美) (Vildagliptin 50mg/Metformin 500mg) 在哪裡？", a: "1", name: "調劑台左方" },
@@ -628,8 +768,8 @@
         { q: "Hecalis Solution  200mg/ml, 40ml/btl (息癲適液) (Valproic acid) 在哪裡？", a: "16", name: "預包區" },
         { q: "Hodrin 1.5mg (好如臨) (Dihydroergotoxine) 在哪裡？", a: "1", name: "調劑台左方" },
         { q: "Homagyl 50mg (斯邁爾) (Sulpiride) 在哪裡？", a: "8", name: "口服2抽" },
-        { q: "Ichderm Cream 15gm (普膚乳膏) (Doxepin) 在哪裡？", a: "16", name: "預包區" },
-        { q: "Imovane 7.5mg (宜眠安) (Zopiclone) 在哪裡？", a: "17", name: "管4檯面" }, 
+        { q: "Ichderm Cream 15gm (普膚乳膏) (Doxepin) 在哪裡？", a: "20", name: "預包區, 外用(後方)" },
+        { q: "Imovane 7.5mg (宜眠安) (Zopiclone) 在哪裡？", a: "17", name: "管4檯面" },
         { q: "Inolim 3mg (宜喘寧) (Trimetoquinol) 在哪裡？", a: "16", name: "預包區" },
         { q: "Invega ER 3mg (思維佳) (Paliperidone) 在哪裡？", a: "1", name: "調劑台左方" },
         { q: "Invega ER 6mg (思維佳) (Paliperidone) 在哪裡？", a: "2", name: "調劑台中間" },
@@ -646,7 +786,7 @@
         { q: "Latuda 40mg (樂途達) (Lurasidone) 在哪裡？", a: "1", name: "調劑台左方" },
         { q: "Latuda 80mg (樂途達) (Lurasidone) 在哪裡？", a: "10", name: "口服3抽" },
         { q: "Leeyo 10mg (離憂) (Escitalopram) 在哪裡？", a: "2", name: "調劑台中間" },
-        { q: "Lendormin 0.25mg (戀多眠) (Brotizolam) 在哪裡？", a: "3", name: "調劑台右方" },
+        { q: "Lendormin 0.25mg (戀多眠) (Brotizolam) 在哪裡？", a: "17", name: "管4檯面" },
         { q: "Lesiton 5mg (樂息痛) (Dihydroergotamine) 在哪裡？", a: "8", name: "口服2抽" },
         { q: "Lexinping 30mg (樂心平) (Duloxetine) 在哪裡？", a: "1", name: "調劑台左方" },
         { q: "Lexotan 3mg (立舒定) (Bromazepam) 在哪裡？", a: "9", name: "管4抽屜" },
@@ -677,13 +817,126 @@
         { q: "Nicorette Freshmint 4 (尼古清薄荷咀嚼錠) (Nicotine) 在哪裡？", a: "11", name: "戒菸" },
         { q: "Nicorette QuickMist spray (尼古清戒菸噴霧) (Nicotine) 在哪裡？", a: "11", name: "戒菸" },
         { q: "Nicotinell TTS 30 (克菸貼片) (Nicotine) 在哪裡？", a: "11", name: "戒菸" },
-        { q: "Nincort oral gel 5gm (康寧口內膠) (Triamcinolone) 在哪裡？", a: "16", name: "預包區" },
+        { q: "Nincort oral gel 5gm (康寧口內膠) (Triamcinolone) 在哪裡？", a: "16,20", name: "預包區, 外用(後方)" },
+        { q: "Nitrostat 0.6mg (耐絞寧) (Nitroglycerin) 在哪裡？", a: "10", name: "口服3抽" },
+        { q: "Nobar 5mg (諾怡) (Amlodipine) 在哪裡？", a: "1", name: "調劑台左方" },
+        { q: "Nobelin 500mg (意必寧) (Levetiracetam) 在哪裡？", a: "1", name: "調劑台左方" },
+        { q: "Nodoff 5mg (納得復) (Olanzapine) 在哪裡？", a: "1", name: "調劑台左方" },
+        { q: "Notholic 50mg (納霍利) (Naltrexone) 在哪裡？", a: "2", name: "調劑台中間" },
+        { q: "Nystatin Vag. tab. 0.1MU (寧司泰定陰道錠) (Nystatin ) 在哪裡？", a: "16,20", name: "預包區, 外用(後方)" },
+        { q: "Olan OD 5mg (若寧口溶錠) (Olanzapine) 在哪裡？", a: "10", name: "口服3抽" },
+        { q: "Olipine OD 10mg (憂立平口崩片) (Olanzapine) 在哪裡？", a: "1", name: "調劑台左方" },
+        { q: "Olzapine 10mg (雙復明) (Olanzapine) 在哪裡？", a: "1", name: "調劑台左方" },
+        { q: "OMP 20mg (加胃先腸溶膠囊 ) (Omeprazole) 在哪裡？", a: "16", name: "預包區" },
+        { q: "Oxbu ER 5mg (歐舒緩釋錠) (Oxybutynin ) 在哪裡？", a: "8", name: "口服2抽" },
+        { q: "Partane 5mg (帕金鎮) (Trihexyphenidyl) 在哪裡？", a: "16", name: "預包區" },
+        { q: "Peace (鼻福) (Pseudoephedrine+Triprolidine) 在哪裡？", a: "2", name: "調劑台中間" },
+        { q: "Peden Retard 4mg (帕登長效錠) (Biperiden) 在哪裡？", a: "2", name: "調劑台中間" },
+        { q: "Pentixol 3mg (盼寧舒) (Flupentixol) 在哪裡？", a: "16", name: "預包區" },
+        { q: "Perisdone 2mg (普利思妥) (Risperidone) 在哪裡？", a: "1", name: "調劑台左方" },
         { q: "Picetam 400mg (必舒坦) (Piracetam) 在哪裡？", a: "1", name: "調劑台左方" },
-        { q: "Ripam 2mg (利平靜) (Clonazepam) 在哪裡？", a: "17", name: "管4檯面" }, 
-        { q: "Rivotril 0.5mg (利福全) (Clonazepam) 在哪裡？", a: "17", name: "管4檯面" }, 
-        { q: "Silence 1mg (悠然) (Lorazepam) 在哪裡？", a: "17", name: "管4檯面" }, 
-        { q: "Syndoman 15mg (欣得眠) (Flurazepam) 在哪裡？", a: "17", name: "管4檯面" }, 
-        { q: "Xanax  0.5mg (贊安諾) (Alprazolam) 在哪裡？", a: "17", name: "管4檯面" } 
+        { q: "Pramipexole (apo) 0.25mg (安保穩樂) (Pramipexole) 在哪裡？", a: "16", name: "預包區" },
+        { q: "Pravafen 160mg/40mg (普脂芬) (Fenofibrate/Pravastatin) 在哪裡？", a: "3", name: "調劑台右方" },
+        { q: "Prednisolone 5mg (普立朗) (Prednisolone) 在哪裡？", a: "16", name: "預包區" },
+        { q: "Promeran 5mg (胃明朗) (Metoclopramide) 在哪裡？", a: "10", name: "口服3抽" },
+        { q: "Propranolol 10mg (心律) (Propranolol) 在哪裡？", a: "1", name: "調劑台左方" },
+        { q: "Q-pine XR 300mg (康思寧持續性藥效錠) (Quetiapine) 在哪裡？", a: "3", name: "調劑台右方" },
+        { q: "Qtern 5mg/10mg (控糖穩) (Saxagliptin/Dapagliflozin) 在哪裡？", a: "1", name: "調劑台左方" },
+        { q: "Qting Oral Suspension 25mg/ml 120ml (康停懸液劑) (Quetiapine) 在哪裡？", a: "13", name: "水液劑" },
+        { q: "Rakinson 1mg (律莎) (Rasagiline) 在哪裡？", a: "8", name: "口服2抽" },
+        { q: "Rasitol 40mg (來喜妥) (Furosemide) 在哪裡？", a: "2", name: "調劑台中間" },
+        { q: "Relinide 1mg (醣立定) (Repaglinide) 在哪裡？", a: "1", name: "調劑台左方" },
+        { q: "Reminyl PR 16mg (利憶靈) (Galantamine) 在哪裡？", a: "3", name: "調劑台右方" },
+        { q: "Rexulti 1mg (銳思定) (Brexpiprazole) 在哪裡？", a: "3", name: "調劑台右方" },
+        { q: "Rexulti 2mg (銳思定) (Brexpiprazole) 在哪裡？", a: "3", name: "調劑台右方" },
+        { q: "Rexulti 4mg (銳思定) (Brexpiprazole) 在哪裡？", a: "3", name: "調劑台右方" },
+        { q: "Ribelite 200mg (樂彼來) (Amisulpride) 在哪裡？", a: "2", name: "調劑台中間" },
+        { q: "Rinderon-VA Cream 5gm (臨得隆-維膚軟膏) (Betamethasone+Fradiomycin) 在哪裡？", a: "16,20", name: "預包區, 外用(後方)" },
+        { q: "Ripam 2mg (利平靜) (Clonazepam) 在哪裡？", a: "17", name: "管4檯面" },
+        { q: "Ritalin 10mg (利他能) (Methylphenidate) 在哪裡？", a: "14", name: "管3上抽" },
+        { q: "Ritalin LA 10mg (利長能持續性藥效膠囊) (Methylphenidate) 在哪裡？", a: "15", name: "管3下抽" },
+        { q: "Ritalin LA 20mg (利長能持續性藥效膠囊) (Methylphenidate) 在哪裡？", a: "14", name: "管3上抽" },
+        { q: "Ritalin LA 40mg (利長能持續性藥效膠囊) (Methylphenidate) 在哪裡？", a: "15", name: "管3下抽" },
+        { q: "Rivotril 0.5mg (利福全) (Clonazepam) 在哪裡？", a: "17", name: "管4檯面" },
+        { q: "Rizatan 5mg (羅莎疼) (Rizatriptan) 在哪裡？", a: "8", name: "口服2抽" },
+        { q: "Rosup 25mg (瑞平) (Loxapine) 在哪裡？", a: "16", name: "預包區" },
+        { q: "Runesda-S 3mg (順眠) (Eszopiclone) 在哪裡？", a: "9", name: "管4抽屜" },
+        { q: "Sandel 50mg (心滴舒) (Dipyridamole) 在哪裡？", a: "10", name: "口服3抽" },
+        { q: "Sennapur 12.5mg (清立飄) (Sennoside A+B ) 在哪裡？", a: "16", name: "預包區" },
+        { q: "Sermion 10mg (適脈旺) (Nicergoline) 在哪裡？", a: "8", name: "口服2抽" },
+        { q: "Seroquel 100mg (思樂康) (Quetiapine) 在哪裡？", a: "1", name: "調劑台左方" },
+        { q: "Seroquel XR 200mg (思樂康持續性藥效錠) (Quetiapine) 在哪裡？", a: "3", name: "調劑台右方" },
+        { q: "Seroquel XR 50mg (思樂康持續性藥效錠) (Quetiapine) 在哪裡？", a: "3", name: "調劑台右方" },
+        { q: "Seroxat  20mg (克憂果) (Paroxetine) 在哪裡？", a: "2", name: "調劑台中間" },
+        { q: "Sevikar 5/40mg  (舒脈康膜衣錠) (Amlodipine/Olmesartan) 在哪裡？", a: "10", name: "口服3抽" },
+        { q: "Silence 1mg (悠然) (Lorazepam) 在哪裡？", a: "17", name: "管4檯面" },
+        { q: "Silymarin 150mg (赐康保肝膠囊) (Silymarin) 在哪裡？", a: "3", name: "調劑台右方" },
+        { q: "Sinomin (止膿敏點眼液) (Sulfamethoxazole) 在哪裡？", a: "6", name: "外用" },
+        { q: "Sodium chloride inj. 0.9% 20ml (生理食鹽水) (Sodium chloride) 在哪裡？", a: "4", name: "針劑上抽" },
+        { q: "Solian 50mg (首利安) (Amisulpride) 在哪裡？", a: "3", name: "調劑台右方" },
+        { q: "Solu-cortef Inj 100mg/2ml (舒汝固體膚) (Hydrocortisone) 在哪裡？", a: "5", name: "針劑下抽" },
+        { q: "Somn Well XR 2mg (亞眠靚長效錠) (Melatonin) 在哪裡？", a: "3", name: "調劑台右方" },
+        { q: "Stilnox CR 6.25mg (使蒂諾斯) (Zolpidem) 在哪裡？", a: "9", name: "管4抽屜" },
+        { q: "Strocain (息痛佳音) (Oxethazaine/Polymigel(Al hydroxide+CaCO3+MgCO3)) 在哪裡？", a: "3", name: "調劑台右方" },
+        { q: "Stromectol 3mg (絲每妥) (Ivermectin) 在哪裡？", a: "2", name: "調劑台中間" },
+        { q: "Switane 2mg (瑞丹) (Trihexyphenidyl) 在哪裡？", a: "1", name: "調劑台左方" },
+        { q: "Syndoman 15mg (欣得眠) (Flurazepam) 在哪裡？", a: "17", name: "管4檯面" },
+        { q: "Syntocriptine 2.5mg (比洛達) (Bromocriptine) 在哪裡？", a: "10", name: "口服3抽" },
+        { q: "Thiopental Inj. 1000mg/vial () (Thiopental) 在哪裡？", a: "5", name: "針劑下抽" },
+        { q: "Thrombifree 75mg (健克栓) (Clopidogrel) 在哪裡？", a: "10", name: "口服3抽" },
+        { q: "Tizalin 2mg (筋舒寧) (Tizanidine) 在哪裡？", a: "2", name: "調劑台中間" },
+        { q: "Tofranil 10mg (妥富腦) (Imipramine) 在哪裡？", a: "8", name: "口服2抽" },
+        { q: "Tofranil 25mg (妥富腦) (Imipramine) 在哪裡？", a: "2", name: "調劑台中間" },
+        { q: "Tramed 50mg (特美痛) (Tramadol) 在哪裡？", a: "9", name: "管4抽屜" },
+        { q: "Trazone 100mg (暢鬱舒) (Trazodone) 在哪裡？", a: "16", name: "預包區" },
+        { q: "Trileptal 300mg (除癲達) (Oxcarbazepine) 在哪裡？", a: "3", name: "調劑台右方" },
+        { q: "Ucefa 500mg (優克黴素) (Cefadroxil) 在哪裡？", a: "2", name: "調劑台中間" },
+        { q: "Valdoxan 25mg (煩多閃) (Agomelatine ) 在哪裡？", a: "10", name: "口服3抽" },
+        { q: "Venfaxime SR 75mg (免煩欣持續性藥效膠囊 ) (Venlafaxine) 在哪裡？", a: "3", name: "調劑台右方" },
+        { q: "Vitamin B1 Inj. 100mg/2ml (維他命乙１注射液) (Thiamine) 在哪裡？", a: "5", name: "針劑下抽" },
+        { q: "Volna-K  25mg (待可服寧) (Diclofenac pot.) 在哪裡？", a: "10", name: "口服3抽" },
+        { q: "Water for Injection () (Water for injection 20ml) 在哪裡？", a: "5", name: "針劑下抽" },
+        { q: "Winsumin 50mg (穩舒眠) (Chlorpromazine) 在哪裡？", a: "16", name: "預包區" },
+        { q: "Wontran ER (保寧緩釋錠) (Tramadol HCl/Acetaminophen) 在哪裡？", a: "9", name: "管4抽屜" },
+        { q: "Xanax  0.5mg (贊安諾) (Alprazolam) 在哪裡？", a: "17", name: "管4檯面" },
+        { q: "You-Jet 50mg (憂解) (Sertraline) 在哪裡？", a: "1", name: "調劑台左方" },
+        { q: "Zolnox 10mg (樂必眠) (Zolpidem) 在哪裡？", a: "9", name: "管4抽屜" },
+        { q: "Zonin 50mg (柔靈平) (Zotepine) 在哪裡？", a: "1", name: "調劑台左方" },
+        { q: "Zydus Topiramate 100mg (妥癲平) (Topiramate) 在哪裡？", a: "3", name: "調劑台右方" },
+        { q: "Dayvigo 5mg (達衛眠錠) (Lemborexant) 在哪裡？", a: "12", name: "抗生素/新藥" },
+        { q: "Tonvasca 2mg/10mg (同抑脂膠囊) (Pitavastatin/Ezetimibe\n) 在哪裡？", a: "12", name: "抗生素/新藥" },
+        { q: "Apo-methylphenidate 10mg (安保美喜錠) (Methylphenidate) 在哪裡？", a: "14", name: "管3上抽" },
+        { q: "Concerta 27mg (專思達) (Methylphenidate) 在哪裡？", a: "15", name: "管3下抽" },
+        { q: "Amizide 5mg/50mg (安立壓錠) (Amiloride/Hydrochlorthiazide) 在哪裡？", a: "3", name: "調劑台右方" },
+        { q: "Tamiflu 75mg (克流感) (Oseltamivir) 在哪裡？", a: "12", name: "抗生素/新藥" },
+        { q: "Spravato Nasal Spray (速開朗鼻噴劑) (Esketamine) 在哪裡？", a: "12", name: "抗生素/新藥" },
+        { q: "Eusartan 40 (優坦平) (Olmesartan medoxomil) 在哪裡？", a: "1", name: "調劑台左方" },
+        { q: "Duphalac Oral Sol'n 300ml (杜化液) (Lactulose) 在哪裡？", a: "16", name: "預包區" },
+        { q: "Doxycycline 100mg (多士林（去氧羥四環素）) (Doxycycline) 在哪裡？", a: "2", name: "調劑台中間" },
+        { q: "Briviact 100mg (必治癲) (Brivaracetam) 在哪裡？", a: "3", name: "調劑台右方" },
+        { q: "Antibiophilus 250mg (阿德比) (Lactobacillus casei variety Rhamnosus) 在哪裡？", a: "2", name: "調劑台中間" },
+        { q: "5% Glucose 500ml (葡萄糖注射液5％) (Dextrose) 在哪裡？", a: "18", name: "點滴" },
+        { q: "Liquor Ringer (林格爾氏液) (Cal. Chloride,Pot. Chloride,Sod. Chloride ) 在哪裡？", a: "18", name: "點滴" },
+        { q: "Normal Saline 0.9% 500ml (諾沙林注射液) (Sodium chloride) 在哪裡？", a: "18", name: "點滴" },
+        { q: "High-Xylmol  Oint 15gm (樂癒痔軟膏) (Betamethasone valerate/Lidocaine HCl/Phenylephrine HCl Oint.) 在哪裡？", a: "16,20", name: "預包區, 外用(後方)" },
+        { q: "Dextrose 5% 500ml (滴茲樂) (Dextrose) 在哪裡？", a: "18", name: "點滴" },
+        { q: "Invega Hafyera 1000mg (善久達持續性藥效肌肉注射懸浮劑) (Paliperidone) 在哪裡？", a: "19", name: "長效針(後方)" },
+        { q: "Invega Hafyera 700mg (善久達持續性藥效肌肉注射懸浮劑) (Paliperidone) 在哪裡？", a: "19", name: "長效針(後方)" },
+        { q: "Invega Sustenna Inj  100mg/1ml (善思達持續性注射劑) (Paliperidone) 在哪裡？", a: "19", name: "長效針(後方)" },
+        { q: "Invega Sustenna Inj  150mg/1.5ml (善思達持續性注射劑) (Paliperidone) 在哪裡？", a: "19", name: "長效針(後方)" },
+        { q: "Invega Trinza 350mg (善妥達持續性藥效肌肉注射懸液劑) (Paliperidone) 在哪裡？", a: "19", name: "長效針(後方)" },
+        { q: "Invega Trinza 525mg (善妥達持續性藥效肌肉注射懸液劑) (Paliperidone) 在哪裡？", a: "19", name: "長效針(後方)" },
+        { q: "Okedi 100mg PR Inj. (歐克蒂) (Risperidone) 在哪裡？", a: "19", name: "長效針(後方)" },
+        { q: "Okedi 75mg PR Inj. (歐克蒂) (Risperidone) 在哪裡？", a: "19", name: "長效針(後方)" },
+        { q: "Permethrin 5% cream 30g (滅疥乳膏) (Permethrin) 在哪裡？", a: "16,20", name: "預包區, 外用(後方)" },
+        { q: "Symvaga 100 (幸維佳持續性藥效肌肉注射懸浮劑) (Paliperidone palmitate Susp.) 在哪裡？", a: "19", name: "長效針(後方)" },
+        { q: "Symvaga 150 (幸維佳持續性藥效肌肉注射懸浮劑) (Paliperidone palmitate Susp.) 在哪裡？", a: "19", name: "長效針(後方)" },
+        { q: "Tonex Cream 10mg/gm 40gm (痛立平乳膏) (Piroxicam) 在哪裡？", a: "16,20", name: "預包區, 外用(後方)" },
+        { q: "Trimin 50mg (克暈) (Dimenhydrinate) 在哪裡？", a: "16", name: "預包區" },
+        { q: "Voren-G gel 10mg/gm 40gm (非炎凝膠) (Diclofenac sod.) 在哪裡？", a: "16,20", name: "預包區, 外用(後方)" },
+        { q: "Abilify Maintena ER Inj. 300mg (安立復美達持續性藥效肌肉注射用懸浮劑) (Aripiprazole) 在哪裡？", a: "19", name: "長效針(後方)" },
+        { q: "Abilify Maintena ER Inj. 400mg (安立復美達持續性藥效肌肉注射用懸浮劑) (Aripiprazole) 在哪裡？", a: "19", name: "長效針(後方)" },
+        { q: "Tetracycline Oph. Oint. 5gm (鹽酸四環素眼藥膏) (Tetracycline) 在哪裡？", a: "16,20", name: "預包區, 外用(後方)" }
     ];
 
     let nickname = "訪客";
@@ -696,21 +949,38 @@
 
     const googleSheetCSVURL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vSInj_hf5jioFl80-t9oqq7jZLJk29mzSHTy1r8Gj9ERSdhlOOWCZIm_lKoqSec3l0SPo6M97qHWYK8/pub?output=csv";
 
+    // 💡 預先設定：若使用者想要將快查紀錄送到 Google 表單，可在此填入對應的 formResponse 網址與 entry ID
+    // 目前先保留空白，不影響正常快查與挑戰賽運作
+    const quickSearchFormURL = ""; 
+    const searchDrugEntryID = ""; 
+    const searchTimeEntryID = ""; 
+
+    window.onload = function() {
+        fetchCloudLeaderboard();
+    };
+
+    function clearHighlights() {
+        document.querySelectorAll('.hotspot').forEach(el => el.classList.remove('reveal-answer'));
+        document.querySelectorAll('.search-target-label').forEach(el => el.remove());
+    }
+
     function checkSearchEmpty() {
         const inputKeyword = document.getElementById('drug-search-input').value.trim();
         if (inputKeyword === "") {
+            const mainHeader = document.getElementById('main-header');
+            if (mainHeader) mainHeader.style.display = 'block';
+
             if (document.getElementById('game-info-ui').style.display !== 'block' && document.getElementById('result-screen').style.display !== 'block') {
                 document.getElementById('login-screen-container').style.display = 'block';
             }
-            document.querySelectorAll('.hotspot').forEach(el => el.classList.remove('reveal-answer'));
+            clearHighlights();
             document.getElementById('search-result-block').innerHTML = "";
             document.getElementById('search-result-block').style.display = "none";
         }
     }
 
-    // 🔍 藥品落點模糊查詢邏輯
     function searchDrugLocation() {
-        document.querySelectorAll('.hotspot').forEach(el => el.classList.remove('reveal-answer'));
+        clearHighlights();
         const resultBlock = document.getElementById('search-result-block');
         resultBlock.innerHTML = "";
         resultBlock.style.display = "none";
@@ -720,9 +990,14 @@
         if (inputKeyword === "") {
             if (document.getElementById('game-info-ui').style.display !== 'block' && document.getElementById('result-screen').style.display !== 'block') {
                 document.getElementById('login-screen-container').style.display = 'block';
+                const mainHeader = document.getElementById('main-header');
+                if (mainHeader) mainHeader.style.display = 'block';
             }
             return;
         }
+
+        const mainHeader = document.getElementById('main-header');
+        if (mainHeader) mainHeader.style.display = 'none';
 
         if (document.getElementById('game-info-ui').style.display !== 'block') {
             document.getElementById('login-screen-container').style.display = 'none';
@@ -732,12 +1007,14 @@
 
         if (matchedDrugs.length > 0) {
             resultBlock.style.display = "block";
-            let htmlContent = `<strong>✨ 模糊快查成功！共找到 ${matchedDrugs.length} 筆藥品（💡 提示：可直接點選下方單一藥名，進行單獨聚焦閃爍）：</strong><br><ol style="margin:5px 0 0 20px; padding:0;">`;
+            let htmlContent = `<strong>✨ 模糊快查成功！共找到 ${matchedDrugs.length} 筆藥品（💡 提示：可點選下方單一藥名，進行單獨聚焦閃爍）：</strong><br><ol style="margin:5px 0 0 20px; padding:0;">`;
             
             const uniqueTargetIds = new Set();
 
             matchedDrugs.forEach((item, index) => {
-                uniqueTargetIds.add(item.a);
+                const areaIds = item.a.split(',').map(s => s.trim());
+                areaIds.forEach(id => uniqueTargetIds.add(id));
+                
                 const cleanName = item.q.replace("在哪裡？", "").trim();
                 
                 htmlContent += `<li style="margin-bottom:4px;">
@@ -756,33 +1033,71 @@
                     targetHotspot.classList.add('reveal-answer');
                 }
             });
+
+            if (matchedDrugs.length === 1) {
+                const singleDrug = matchedDrugs[0];
+                const cleanName = singleDrug.q.replace("在哪裡？", "").trim();
+                focusSingleDrug(singleDrug.a, singleDrug.name, cleanName, true);
+            }
         } else {
             resultBlock.style.display = "block";
             resultBlock.innerHTML = "❌ <span style='color:var(--danger); font-weight:bold;'>找不到任何包含此關鍵字的藥品，請檢查拼字！</span>";
         }
     }
 
-    // 💡 統一個別藥品聚焦閃爍控制（快查與錯題本共用邏輯）
-    function focusSingleDrug(areaId, areaName, drugName, isFromSearchSystem) {
-        // 先熄滅地圖上既有的所有紅框
-        document.querySelectorAll('.hotspot').forEach(el => el.classList.remove('reveal-answer'));
+    function focusSingleDrug(areaRaw, areaName, drugName, isFromSearchSystem) {
+        clearHighlights();
 
-        // 單獨讓點選的這款藥物區域亮起呼吸閃爍紅框
-        const targetHotspot = document.querySelector(`.hotspot[data-id="${areaId}"]`);
-        if (targetHotspot) {
-            targetHotspot.classList.add('reveal-answer');
-            
+        const areaIds = areaRaw.split(',').map(s => s.trim());
+        let foundAny = false;
+
+        areaIds.forEach(areaId => {
+            const targetHotspot = document.querySelector(`.hotspot[data-id="${areaId}"]`);
+            if (targetHotspot) {
+                targetHotspot.classList.add('reveal-answer');
+                foundAny = true;
+
+                const x = parseFloat(targetHotspot.getAttribute('x'));
+                const y = parseFloat(targetHotspot.getAttribute('y'));
+                const width = parseFloat(targetHotspot.getAttribute('width'));
+                const height = parseFloat(targetHotspot.getAttribute('height'));
+
+                const centerX = x + width / 2;
+                const centerY = y + height / 2;
+
+                const parentGroup = targetHotspot.parentElement;
+                if (parentGroup) {
+                    const textLabel = document.createElementNS("http://www.w3.org/2000/svg", "text");
+                    textLabel.setAttribute("x", centerX);
+                    textLabel.setAttribute("y", centerY);
+                    textLabel.setAttribute("class", "search-target-label");
+                    
+                    let displayDrugName = drugName;
+                    if (displayDrugName.length > 25) {
+                        displayDrugName = displayDrugName.substring(0, 23) + "...";
+                    }
+                    textLabel.textContent = `💊 ${displayDrugName}`;
+                    
+                    parentGroup.appendChild(textLabel);
+                }
+            }
+        });
+
+        if (foundAny) {
             if (isFromSearchSystem) {
-                // 快查系統更新提示
                 const headerHint = document.querySelector('#search-result-block strong');
                 if (headerHint) {
-                    headerHint.innerHTML = `🎯 正在單獨聚焦：<span style="color:var(--danger); font-size:1.05rem;">${drugName}</span> &rarr; 鎖定位置在【${areaId}號：${areaName}】`;
+                    headerHint.innerHTML = `🎯 正在單獨聚焦：<span style="color:var(--danger); font-size:1.05rem;">${drugName}</span> &rarr; 鎖定位置在【${areaRaw}號：${areaName}】`;
                 }
             } else {
-                // 錯題本更新標題動態提示
+                const resHeader = document.getElementById('result-header-block');
+                const resLeaderboard = document.getElementById('result-leaderboard-block');
+                if (resHeader) resHeader.style.display = 'none';
+                if (resLeaderboard) resLeaderboard.style.display = 'none';
+
                 const wrongTitleHint = document.querySelector('#wrong-answers-summary h3');
                 if (wrongTitleHint) {
-                    wrongTitleHint.innerHTML = `🎯 正在複習錯題位置：<span style="color:var(--danger); font-size:1.1rem;">${drugName}</span> &rarr; 【${areaId}號：${areaName}】`;
+                    wrongTitleHint.innerHTML = `🎯 正在複習錯題位置：<span style="color:var(--danger); font-size:1.1rem;">${drugName}</span> &rarr; 【${areaRaw}號：${areaName}】`;
                 }
             }
         }
@@ -807,6 +1122,9 @@
         score = 0;
         wrongAnswersList = []; 
         
+        const mainHeader = document.getElementById('main-header');
+        if (mainHeader) mainHeader.style.display = 'none';
+        
         document.getElementById('search-system-container').style.display = 'none';
         document.getElementById('login-screen-container').style.display = 'none';
         
@@ -814,7 +1132,7 @@
         document.getElementById('player-name').innerText = nickname;
         document.getElementById('score').innerText = score;
         
-        document.querySelectorAll('.hotspot').forEach(el => el.classList.remove('reveal-answer'));
+        clearHighlights();
         
         loadQuestion();
     }
@@ -830,30 +1148,35 @@
         document.getElementById('feedback').className = 'feedback';
         document.getElementById('feedback').innerText = '';
         
-        document.querySelectorAll('.hotspot').forEach(el => el.classList.remove('reveal-answer'));
+        clearHighlights();
         
         if(document.getElementById('current-q')) {
             document.getElementById('current-q').innerText = currentIdx + 1;
             document.getElementById('total-q').innerText = gameQuestions.length; 
-            document.getElementById('chances-left').innerText = 3;
+            document.getElementById('chances-left').innerText = 2;
             document.getElementById('question-text').innerText = gameQuestions[currentIdx].q;
         }
     }
 
-    document.querySelectorAll('.hotspot').forEach(hotspot => {
-        hotspot.addEventListener('click', function() {
+    document.querySelectorAll('.hotspot-group').forEach(group => {
+        group.addEventListener('click', function() {
             if (document.getElementById('game-info-ui').style.display !== 'block') {
                 return; 
             }
 
             if (isLocked) return;
-            const clickedId = this.getAttribute('data-id');
-            const clickedName = this.getAttribute('data-name'); 
-            const correctAnswer = gameQuestions[currentIdx].a;
+            const hotspot = this.querySelector('.hotspot');
+            if (!hotspot) return;
+
+            const clickedId = hotspot.getAttribute('data-id');
+            const clickedName = hotspot.getAttribute('data-name'); 
+            const correctAnswerRaw = gameQuestions[currentIdx].a;
             const correctName = gameQuestions[currentIdx].name;
             const feedbackEl = document.getElementById('feedback');
 
-            if (clickedId === correctAnswer) {
+            const correctIds = correctAnswerRaw.split(',').map(s => s.trim());
+
+            if (correctIds.includes(clickedId)) {
                 score += 5; 
                 document.getElementById('score').innerText = score;
                 feedbackEl.className = 'feedback correct';
@@ -862,26 +1185,54 @@
                 setTimeout(nextQuestion, 1200);
             } else {
                 wrongCount++;
-                let chancesLeft = 3 - wrongCount;
+                let chancesLeft = 2 - wrongCount;
                 document.getElementById('chances-left').innerText = chancesLeft;
 
-                if (wrongCount < 3) {
+                if (wrongCount < 2) {
                     feedbackEl.className = 'feedback try-again';
                     feedbackEl.innerText = `⚠️ 答錯囉！你點到的是【${clickedId}號：${clickedName}】。不是這裡，再試一次！(還剩 ${chancesLeft} 次機會)`;
                 } else {
                     feedbackEl.className = 'feedback wrong';
-                    feedbackEl.innerText = `❌ 機會用盡！你剛剛點到的是【${clickedId}號：${clickedName}】。正確答案已在圖片上幫您用紅框框起【${correctAnswer}號：${correctName}】。`;
+                    feedbackEl.innerText = `❌ 機會用盡！你剛剛點到的是【${clickedId}號：${clickedName}】。正確答案已在圖片上幫您用紅框框起【${correctAnswerRaw}號：${correctName}】。`;
                     isLocked = true;
                     
                     const drugCleanText = gameQuestions[currentIdx].q.replace("在哪裡？", "").trim();
                     wrongAnswersList.push({
                         drug: drugCleanText,
-                        id: correctAnswer,
+                        id: correctAnswerRaw,
                         name: correctName
                     });
 
-                    const correctTarget = document.querySelector(`.hotspot[data-id="${correctAnswer}"]`);
-                    if (correctTarget) correctTarget.classList.add('reveal-answer');
+                    correctIds.forEach(cId => {
+                        const correctTarget = document.querySelector(`.hotspot[data-id="${cId}"]`);
+                        if (correctTarget) {
+                            correctTarget.classList.add('reveal-answer');
+
+                            const x = parseFloat(correctTarget.getAttribute('x'));
+                            const y = parseFloat(correctTarget.getAttribute('y'));
+                            const width = parseFloat(correctTarget.getAttribute('width'));
+                            const height = parseFloat(correctTarget.getAttribute('height'));
+
+                            const centerX = x + width / 2;
+                            const centerY = y + height / 2;
+
+                            const parentGroup = correctTarget.parentElement;
+                            if (parentGroup) {
+                                const textLabel = document.createElementNS("http://www.w3.org/2000/svg", "text");
+                                textLabel.setAttribute("x", centerX);
+                                textLabel.setAttribute("y", centerY);
+                                textLabel.setAttribute("class", "search-target-label");
+                                
+                                let displayDrugName = drugCleanText;
+                                if (displayDrugName.length > 25) {
+                                    displayDrugName = displayDrugName.substring(0, 23) + "...";
+                                }
+                                textLabel.textContent = `💊 ${displayDrugName}`;
+                                parentGroup.appendChild(textLabel);
+                            }
+                        }
+                    });
+                    
                     setTimeout(nextQuestion, 3500);
                 }
             }
@@ -908,6 +1259,12 @@
 
         const maxScore = gameQuestions.length * 5; 
         document.getElementById('game-info-ui').style.display = 'none';
+        
+        const resHeader = document.getElementById('result-header-block');
+        const resLeaderboard = document.getElementById('result-leaderboard-block');
+        if (resHeader) resHeader.style.display = 'block';
+        if (resLeaderboard) resLeaderboard.style.display = 'block';
+
         document.getElementById('result-screen').style.display = 'block';
         document.getElementById('result-username').innerText = nickname;
         document.getElementById('final-score-num').innerText = score;
@@ -920,7 +1277,6 @@
         else rank = `🚨 分數不及格喔，${nickname}！請重新核對圖片與藥包位置！`;
         document.getElementById('rank-text').innerText = rank;
 
-        // 渲染錯題本清單
         const wrongSummaryUl = document.getElementById('wrong-summary-list');
         wrongSummaryUl.innerHTML = ""; 
         
@@ -928,7 +1284,6 @@
             wrongSummaryUl.innerHTML = `<li style="color:var(--success); font-weight:bold; list-style:none;">✨ 完美通關！您本次沒有答錯任何題目，實力無懈可擊！</li>`;
         } else {
             wrongAnswersList.forEach((item, idx) => {
-                // 💡 核心優化：將錯題名稱封裝成帶有 onclick 的 span 連結，點擊即可對應閃爍地圖位置！
                 wrongSummaryUl.innerHTML += `
                     <li style="margin-bottom:6px;">
                         題號 #${idx + 1}：<span class="search-item-clickable" onclick="focusSingleDrug('${item.id}', '${item.name}', '${item.drug.replace(/'/g, "\\'")}', false)">${item.drug}</span><br>
@@ -968,7 +1323,8 @@
             }
 
             if (lines.length < 2) {
-                document.getElementById('leaderboard-list').innerHTML = '<li class="loading-text">目前尚無排行紀錄。</li>';
+                if (document.getElementById('leaderboard-list')) document.getElementById('leaderboard-list').innerHTML = '<li class="loading-text">目前尚無排行紀錄。</li>';
+                if (document.getElementById('top5-leaderboard-list')) document.getElementById('top5-leaderboard-list').innerHTML = '<li style="text-align:center; color:#64748b; padding:10px;">目前尚無排行紀錄</li>';
                 return;
             }
 
@@ -999,23 +1355,49 @@
             }
 
             playerRecords.sort((a, b) => b.score - a.score);
+
+            let topFive = playerRecords.slice(0, 5);
+            const top5ListEl = document.getElementById('top5-leaderboard-list');
+            if (top5ListEl) {
+                top5ListEl.innerHTML = '';
+                if (topFive.length === 0) {
+                    top5ListEl.innerHTML = '<li style="text-align:center; color:#64748b; padding:10px;">None</li>';
+                } else {
+                    topFive.forEach((item, index) => {
+                        let rankClass = (index < 3) ? `rank-${index + 1}` : '';
+                        top5ListEl.innerHTML += `
+                            <li class="leaderboard-item">
+                                <span><span class="rank-badge ${rankClass}">#${index + 1}</span> ${item.name}</span>
+                                <strong style="color: var(--primary);">${item.score} 分</strong>
+                            </li>
+                        `;
+                    });
+                }
+            }
+
             let topTen = playerRecords.slice(0, 10);
             const listEl = document.getElementById('leaderboard-list');
-            listEl.innerHTML = ''; 
-
-            topTen.forEach((item, index) => {
-                let rankClass = (index < 3) ? `rank-${index + 1}` : '';
-                listEl.innerHTML += `
-                    <li class="leaderboard-item">
-                        <span><span class="rank-badge ${rankClass}">#${index + 1}</span> ${item.name}</span>
-                        <strong style="color: var(--primary);">${item.score} 分</strong>
-                    </li>
-                `;
-            });
+            if (listEl) {
+                listEl.innerHTML = ''; 
+                topTen.forEach((item, index) => {
+                    let rankClass = (index < 3) ? `rank-${index + 1}` : '';
+                    listEl.innerHTML += `
+                        <li class="leaderboard-item">
+                            <span><span class="rank-badge ${rankClass}">#${index + 1}</span> ${item.name}</span>
+                            <strong style="color: var(--primary);">${item.score} 分</strong>
+                        </li>
+                    `;
+                });
+            }
         })
         .catch(err => {
             console.error(err);
-            document.getElementById('leaderboard-list').innerHTML = '<li class="loading-text" style="color:red;">❌ 無法連線讀取雲端排行榜。</li>';
+            if (document.getElementById('leaderboard-list')) {
+                document.getElementById('leaderboard-list').innerHTML = '<li class="loading-text" style="color:red;">❌ 無法連線讀取雲端排行榜。</li>';
+            }
+            if (document.getElementById('top5-leaderboard-list')) {
+                document.getElementById('top5-leaderboard-list').innerHTML = '<li style="text-align:center; color:red; padding:10px;">❌ 排行榜讀取失敗</li>';
+            }
         });
     }
 </script>
