@@ -241,14 +241,14 @@
             color: white;
             padding: 15px;
             border-radius: 8px;
-            font-size: 1.1rem;
+            font-size: 1.05rem;
             font-weight: bold;
             margin-bottom: 20px;
         }
 
         .score-item span {
             color: #ff9f1c;
-            font-size: 1.3rem;
+            font-size: 1.25rem;
         }
 
         .question-box {
@@ -549,6 +549,8 @@
             <div class="score-item">目前題數: <span id="current-q">1</span> / <span id="total-q">20</span></div>
             <div class="score-item">剩餘嘗試次數: <span id="chances-left" style="color: #ff9f1c;">2</span></div>
             <div class="score-item">得分: <span id="score">0</span></div>
+            <!-- ⭐ 新增上方狀態欄歷時時間 -->
+            <div class="score-item">歷時: <span id="live-timer" style="color: #2ec4b6;">0秒</span></div>
         </div>
 
         <div class="question-box">
@@ -1004,6 +1006,7 @@
     let wrongAnswersList = []; 
 
     let startTime = 0;
+    let timerInterval = null; // ⭐ 計時器代碼變數
     let totalSecondsSpent = 0;
     let elapsedTimeStr = "0 分 0 秒";
 
@@ -1201,7 +1204,17 @@
         }
         nickname = inputVal;
         
+        // ⭐ 開始計時與計時器更新迴圈
         startTime = Date.now();
+        if (timerInterval) clearInterval(timerInterval);
+        timerInterval = setInterval(() => {
+            let currentSeconds = Math.floor((Date.now() - startTime) / 1000);
+            let m = Math.floor(currentSeconds / 60);
+            let s = currentSeconds % 60;
+            let timerText = m > 0 ? `${m}分${s}秒` : `${s}秒`;
+            const timerEl = document.getElementById('live-timer');
+            if (timerEl) timerEl.innerText = timerText;
+        }, 1000);
 
         gameQuestions = getRandomQuestions(questionBank, 20);
         currentIdx = 0;
@@ -1335,15 +1348,18 @@
     }
 
     function uploadToGoogleForm() {
+        // ⭐ 停止碼表計時
+        if (timerInterval) clearInterval(timerInterval);
+
         totalSecondsSpent = Math.floor((Date.now() - startTime) / 1000);
         const minutes = Math.floor(totalSecondsSpent / 60);
         const seconds = totalSecondsSpent % 60;
         elapsedTimeStr = `${minutes} 分 ${seconds} 秒`;
 
         const formActionURL = "https://docs.google.com/forms/d/e/1FAIpQLSdl_fklnEbSZjuoMm7KBL1rVlH1voPyorcGBJ9IGTYX7-NAXQ/formResponse"; 
-        const timeFieldID = "entry.1753421116"; // ⏱️ 剛剛從原始碼抓到的作答時間欄位 ID
-        const nameFieldID = "entry.122254180";   // 👤 姓名欄位 ID
-        const scoreFieldID = "entry.1908618859"; // 🏆 分數欄位 ID
+        const timeFieldID = "entry.1753421116"; 
+        const nameFieldID = "entry.122254180";   
+        const scoreFieldID = "entry.1908618859"; 
 
         const formData = new FormData();
         formData.append(timeFieldID, elapsedTimeStr);
@@ -1472,7 +1488,6 @@
                 }
             }
 
-            // ⭐ 雙重排序：分數高者優先；若分數相同，作答秒數少者優先
             playerRecords.sort((a, b) => {
                 if (b.score !== a.score) {
                     return b.score - a.score;
