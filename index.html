@@ -210,11 +210,19 @@
             border-color: var(--primary);
         }
 
+        .btn-action-group {
+            display: flex;
+            gap: 10px;
+            justify-content: center;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+
         .btn-start {
-            padding: 12px 30px;
+            padding: 12px 24px;
             background: var(--primary);
             color: white;
-            font-size: 1.1rem;
+            font-size: 1.05rem;
             font-weight: bold;
             border: none;
             border-radius: 6px;
@@ -225,6 +233,23 @@
 
         .btn-start:hover {
             background: #357abd;
+        }
+
+        .btn-practice {
+            padding: 12px 24px;
+            background: var(--success);
+            color: white;
+            font-size: 1.05rem;
+            font-weight: bold;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            box-shadow: 0 4px 6px rgba(46, 196, 182, 0.2);
+            transition: background 0.2s;
+        }
+
+        .btn-practice:hover {
+            background: #239b90;
         }
 
         /* 遊戲主畫面 */
@@ -528,9 +553,13 @@
             <div class="login-left-box">
                 <h2>🏆 參加調劑挑戰賽<br><span style="font-size:1.1rem; color:#64748b; font-weight:normal;">（隨機 20 題）</span></h2>
                 <div class="input-group">
-                    <input type="text" id="username-input" placeholder="請輸入您的暱稱或員編" maxlength="15" autocomplete="off">
+                    <input type="text" id="username-input" placeholder="請輸入您的暱稱或員編 (選填)" maxlength="15" autocomplete="off">
                 </div>
-                <button class="btn-start" onclick="startGame()">開始挑戰</button>
+                <!-- ⭐ 調整按鈕群組：包含「開始挑戰」與「我要練習」 -->
+                <div class="btn-action-group">
+                    <button class="btn-start" onclick="startGame()">開始挑戰</button>
+                    <button class="btn-practice" onclick="startPractice()">我要練習</button>
+                </div>
             </div>
 
             <div class="login-right-box">
@@ -549,7 +578,6 @@
             <div class="score-item">目前題數: <span id="current-q">1</span> / <span id="total-q">20</span></div>
             <div class="score-item">剩餘嘗試次數: <span id="chances-left" style="color: #ff9f1c;">2</span></div>
             <div class="score-item">得分: <span id="score">0</span></div>
-            <!-- ⭐ 新增上方狀態欄歷時時間 -->
             <div class="score-item">歷時: <span id="live-timer" style="color: #2ec4b6;">0秒</span></div>
         </div>
 
@@ -563,7 +591,7 @@
     <!-- 3. 考試總成績與雲端排行榜畫面 -->
     <div id="result-screen" class="result-screen">
         <div id="result-header-block">
-            <h2>🎉 挑戰賽結束 🎉</h2>
+            <h2>🎉 測驗結束 🎉</h2>
             <p style="font-size: 1.3rem; margin-bottom: 5px;"><span id="result-username" style="color:var(--primary); font-weight:bold;"></span> 的最終測驗成績：</p>
             <div class="final-score"><span id="final-score-num">0</span> / <span id="max-score">0</span> 分</div>
             <div class="time-spent-box">⏱️ 總作答時間：<span id="time-spent-text" style="color:var(--danger);">0 分 0 秒</span></div>
@@ -1006,7 +1034,7 @@
     let wrongAnswersList = []; 
 
     let startTime = 0;
-    let timerInterval = null; // ⭐ 計時器代碼變數
+    let timerInterval = null;
     let totalSecondsSpent = 0;
     let elapsedTimeStr = "0 分 0 秒";
 
@@ -1196,6 +1224,7 @@
         }
     });
 
+    // 🏆 開始挑戰賽（需填暱稱）
     function startGame() {
         const inputVal = document.getElementById('username-input').value.trim();
         if (inputVal === "") {
@@ -1203,8 +1232,18 @@
             return;
         }
         nickname = inputVal;
-        
-        // ⭐ 開始計時與計時器更新迴圈
+        initGameProcess();
+    }
+
+    // 🎯 ⭐ 新增：開始練習模式（免強制填寫暱稱，預設為「練習生」）
+    function startPractice() {
+        const inputVal = document.getElementById('username-input').value.trim();
+        nickname = inputVal !== "" ? inputVal : "練習生";
+        initGameProcess();
+    }
+
+    // 共用遊戲初始化邏輯
+    function initGameProcess() {
         startTime = Date.now();
         if (timerInterval) clearInterval(timerInterval);
         timerInterval = setInterval(() => {
@@ -1232,7 +1271,6 @@
         document.getElementById('score').innerText = score;
         
         clearHighlights();
-        
         loadQuestion();
     }
 
@@ -1348,7 +1386,6 @@
     }
 
     function uploadToGoogleForm() {
-        // ⭐ 停止碼表計時
         if (timerInterval) clearInterval(timerInterval);
 
         totalSecondsSpent = Math.floor((Date.now() - startTime) / 1000);
