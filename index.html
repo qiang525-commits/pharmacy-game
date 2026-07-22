@@ -1448,6 +1448,7 @@
         });
     }
 
+    // ⭐ 智慧動態對應的排行榜解析函數（能自動適應任何欄位順序或舊資料）
     function fetchCloudLeaderboard() {
         fetch(googleSheetCSVURL)
         .then(response => response.text())
@@ -1472,22 +1473,34 @@
                 return;
             }
 
-            // ⭐ 試算表欄位精準鎖定 (對應 Google 表單預設順序)
-            // 欄位 0: 時間戳記, 欄位 1: 作答時間, 欄位 2: name, 欄位 3: score
-            const timeColIdx = 1;
-            const nameColIdx = 2;
-            const scoreColIdx = 3;
+            let headers = parseCSVLine(lines[0]);
+            let nameColIdx = 2;  
+            let scoreColIdx = 3; 
+            let timeColIdx = 1;
+
+            for(let j = 0; j < headers.length; j++) {
+                let headerStr = headers[j].toLowerCase().trim();
+                if(headerStr.includes("name") || headerStr.includes("名字") || headerStr.includes("員編") || headerStr.includes("暱稱")) {
+                    nameColIdx = j;
+                }
+                if(headerStr.includes("score") || headerStr.includes("分數") || headerStr.includes("成績")) {
+                    scoreColIdx = j;
+                }
+                if(headerStr.includes("time") || headerStr.includes("時間") || headerStr.includes("作答")) {
+                    timeColIdx = j;
+                }
+            }
 
             for (let i = 1; i < lines.length; i++) {
                 if (!lines[i].trim()) continue;
                 let columns = parseCSVLine(lines[i]);
-                if (columns.length > Math.max(nameColIdx, scoreColIdx, timeColIdx)) {
-                    let name = columns[nameColIdx].trim();
-                    let pScore = parseInt(columns[scoreColIdx].trim().replace(/[^0-9]/g, '')) || 0;
+                if (columns.length > Math.max(nameColIdx, scoreColIdx)) {
+                    let name = columns[nameColIdx] ? columns[nameColIdx].trim() : "訪客";
+                    let pScore = parseInt(columns[scoreColIdx] ? columns[scoreColIdx].trim().replace(/[^0-9]/g, '') : '0') || 0;
                     
                     let pSeconds = 9999;
                     let timeDisplay = "";
-                    if (columns[timeColIdx]) {
+                    if (timeColIdx !== -1 && columns[timeColIdx]) {
                         let timeValRaw = columns[timeColIdx].trim();
                         timeDisplay = timeValRaw;
                         let matchMin = timeValRaw.match(/(\d+)\s*分/);
@@ -1497,7 +1510,10 @@
                             let s = matchSec ? parseInt(matchSec[1]) : 0;
                             pSeconds = m * 60 + s;
                         } else {
-                            pSeconds = parseInt(timeValRaw.replace(/[^0-9]/g, '')) || 9999;
+                            let numParsed = parseInt(timeValRaw.replace(/[^0-9]/g, ''));
+                            if (!isNaN(numParsed) && timeValRaw !== "") {
+                                pSeconds = numParsed;
+                            }
                         }
                     } else {
                         timeDisplay = "未記錄";
@@ -1509,7 +1525,6 @@
                 }
             }
 
-            // ⭐ 雙重排序：分數高者優先；若分數相同，作答秒數少者優先
             playerRecords.sort((a, b) => {
                 if (b.score !== a.score) {
                     return b.score - a.score;
@@ -1527,7 +1542,7 @@
                 } else {
                     topFive.forEach((item, index) => {
                         let rankClass = (index < 3) ? `rank-${index + 1}` : '';
-                        let timeInfo = item.timeStr !== "未記錄" ? `⏳ ${item.timeStr}` : '';
+                        let timeInfo = (item.timeStr && item.timeStr !== "未記錄") ? `⏳ ${item.timeStr}` : '';
                         top5ListEl.innerHTML += `
                             <li class="leaderboard-item">
                                 <span><span class="rank-badge ${rankClass}">#${index + 1}</span> ${item.name} <br><small class="leaderboard-meta">${timeInfo}</small></span>
@@ -1544,7 +1559,7 @@
                 listEl.innerHTML = ''; 
                 topTen.forEach((item, index) => {
                     let rankClass = (index < 3) ? `rank-${index + 1}` : '';
-                    let timeInfo = item.timeStr !== "未記錄" ? `(⏳ 用時: ${item.timeStr})` : '';
+                    let timeInfo = (item.timeStr && item.timeStr !== "未記錄") ? `(⏳ 用時: ${item.timeStr})` : '';
                     listEl.innerHTML += `
                         <li class="leaderboard-item">
                             <span><span class="rank-badge ${rankClass}">#${index + 1}</span> ${item.name} <span class="leaderboard-meta">${timeInfo}</span></span>
