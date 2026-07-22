@@ -391,7 +391,18 @@
             font-size: 3.5rem;
             color: var(--warning);
             font-weight: bold;
-            margin: 15px 0;
+            margin: 10px 0;
+        }
+
+        .time-spent-box {
+            font-size: 1.15rem;
+            color: #334155;
+            background: #e2e8f0;
+            display: inline-block;
+            padding: 6px 16px;
+            border-radius: 20px;
+            margin-bottom: 10px;
+            font-weight: bold;
         }
 
         .cloud-notice {
@@ -431,6 +442,7 @@
         .leaderboard-item {
             display: flex;
             justify-content: space-between;
+            align-items: center;
             padding: 8px 12px;
             border-bottom: 1px solid #f1f5f9;
             font-size: 1rem;
@@ -449,6 +461,11 @@
         .rank-1 { color: #ff9f1c; }
         .rank-2 { color: #94a3b8; }
         .rank-3 { color: #b45309; }
+
+        .leaderboard-meta {
+            font-size: 0.85rem;
+            color: #64748b;
+        }
 
         /* ❌ 錯題複習本專用外框樣式 */
         .wrong-summary-box {
@@ -547,6 +564,7 @@
             <h2>🎉 挑戰賽結束 🎉</h2>
             <p style="font-size: 1.3rem; margin-bottom: 5px;"><span id="result-username" style="color:var(--primary); font-weight:bold;"></span> 的最終測驗成績：</p>
             <div class="final-score"><span id="final-score-num">0</span> / <span id="max-score">0</span> 分</div>
+            <div class="time-spent-box">⏱️ 總作答時間：<span id="time-spent-text" style="color:var(--danger);">0 分 0 秒</span></div>
             <p id="rank-text" style="font-size: 1.2rem; font-weight: bold; color: var(--dark); margin-bottom: 10px;"></p>
             <div class="cloud-notice">☁️ 成績已自動同步上傳至雲端後台。</div>
         </div>
@@ -985,9 +1003,12 @@
     let isLocked = false; 
     let wrongAnswersList = []; 
 
+    let startTime = 0;
+    let totalSecondsSpent = 0;
+    let elapsedTimeStr = "0 分 0 秒";
+
     const googleSheetCSVURL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vSInj_hf5jioFl80-t9oqq7jZLJk29mzSHTy1r8Gj9ERSdhlOOWCZIm_lKoqSec3l0SPo6M97qHWYK8/pub?output=csv";
 
-    // 💡 已完成：將快查紀錄發送至您的專屬 Google 表單 (entry.1035242856 與 entry.1146663743)
     function logQuickSearchToForm(drugName) {
         const formActionURL = "https://docs.google.com/forms/d/16yxm83-Ir98b8hHMwxQJ2ZroUkaOMD56biGw4nMRlaM/formResponse";
         const drugEntryID = "entry.1035242856";
@@ -1180,6 +1201,8 @@
         }
         nickname = inputVal;
         
+        startTime = Date.now();
+
         gameQuestions = getRandomQuestions(questionBank, 20);
         currentIdx = 0;
         score = 0;
@@ -1312,11 +1335,18 @@
     }
 
     function uploadToGoogleForm() {
+        totalSecondsSpent = Math.floor((Date.now() - startTime) / 1000);
+        const minutes = Math.floor(totalSecondsSpent / 60);
+        const seconds = totalSecondsSpent % 60;
+        elapsedTimeStr = `${minutes} 分 ${seconds} 秒`;
+
         const formActionURL = "https://docs.google.com/forms/d/e/1FAIpQLSdl_fklnEbSZjuoMm7KBL1rVlH1voPyorcGBJ9IGTYX7-NAXQ/formResponse"; 
-        const nameFieldID = "entry.122254180";   
-        const scoreFieldID = "entry.1908618859"; 
+        const timeFieldID = "entry.1753421116"; // ⏱️ 剛剛從原始碼抓到的作答時間欄位 ID
+        const nameFieldID = "entry.122254180";   // 👤 姓名欄位 ID
+        const scoreFieldID = "entry.1908618859"; // 🏆 分數欄位 ID
 
         const formData = new FormData();
+        formData.append(timeFieldID, elapsedTimeStr);
         formData.append(nameFieldID, nickname);
         formData.append(scoreFieldID, score);
 
@@ -1333,6 +1363,8 @@
         document.getElementById('final-score-num').innerText = score;
         document.getElementById('max-score').innerText = maxScore;
         
+        document.getElementById('time-spent-text').innerText = elapsedTimeStr;
+
         let rank = "";
         if(score === maxScore) rank = `👑 太厲害了，${nickname}！拿到 100 分滿分！`;
         else if(score >= 80) rank = `⚡ 表現很好，${nickname}！對藥品位置相當熟悉！`;
@@ -1394,6 +1426,7 @@
             let headers = parseCSVLine(lines[0]);
             let nameColIdx = 1;  
             let scoreColIdx = 2; 
+            let timeColIdx = -1;
 
             for(let j = 0; j < headers.length; j++) {
                 let headerStr = headers[j].toLowerCase().trim();
@@ -1403,6 +1436,9 @@
                 if(headerStr.includes("score") || headerStr.includes("分數") || headerStr.includes("成績")) {
                     scoreColIdx = j;
                 }
+                if(headerStr.includes("time") || headerStr.includes("時間") || headerStr.includes("作答")) {
+                    timeColIdx = j;
+                }
             }
 
             for (let i = 1; i < lines.length; i++) {
@@ -1411,13 +1447,39 @@
                 if (columns.length > Math.max(nameColIdx, scoreColIdx)) {
                     let name = columns[nameColIdx].trim();
                     let pScore = parseInt(columns[scoreColIdx].trim().replace(/[^0-9]/g, '')) || 0;
+                    
+                    let pSeconds = 9999;
+                    let timeDisplay = "";
+                    if (timeColIdx !== -1 && columns[timeColIdx]) {
+                        let timeValRaw = columns[timeColIdx].trim();
+                        timeDisplay = timeValRaw;
+                        let matchMin = timeValRaw.match(/(\d+)\s*分/);
+                        let matchSec = timeValRaw.match(/(\d+)\s*秒/);
+                        if (matchMin || matchSec) {
+                            let m = matchMin ? parseInt(matchMin[1]) : 0;
+                            let s = matchSec ? parseInt(matchSec[1]) : 0;
+                            pSeconds = m * 60 + s;
+                        } else {
+                            pSeconds = parseInt(timeValRaw.replace(/[^0-9]/g, '')) || 9999;
+                        }
+                    } else {
+                        timeDisplay = "未記錄";
+                    }
+
                     if (name.length > 0) {
-                        playerRecords.push({ name: name, score: pScore });
+                        playerRecords.push({ name: name, score: pScore, seconds: pSeconds, timeStr: timeDisplay });
                     }
                 }
             }
 
-            playerRecords.sort((a, b) => b.score - a.score);
+            // ⭐ 雙重排序：分數高者優先；若分數相同，作答秒數少者優先
+            playerRecords.sort((a, b) => {
+                if (b.score !== a.score) {
+                    return b.score - a.score;
+                } else {
+                    return a.seconds - b.seconds;
+                }
+            });
 
             let topFive = playerRecords.slice(0, 5);
             const top5ListEl = document.getElementById('top5-leaderboard-list');
@@ -1428,9 +1490,10 @@
                 } else {
                     topFive.forEach((item, index) => {
                         let rankClass = (index < 3) ? `rank-${index + 1}` : '';
+                        let timeInfo = item.timeStr !== "未記錄" ? `⏳ ${item.timeStr}` : '';
                         top5ListEl.innerHTML += `
                             <li class="leaderboard-item">
-                                <span><span class="rank-badge ${rankClass}">#${index + 1}</span> ${item.name}</span>
+                                <span><span class="rank-badge ${rankClass}">#${index + 1}</span> ${item.name} <br><small class="leaderboard-meta">${timeInfo}</small></span>
                                 <strong style="color: var(--primary);">${item.score} 分</strong>
                             </li>
                         `;
@@ -1444,9 +1507,10 @@
                 listEl.innerHTML = ''; 
                 topTen.forEach((item, index) => {
                     let rankClass = (index < 3) ? `rank-${index + 1}` : '';
+                    let timeInfo = item.timeStr !== "未記錄" ? `(⏳ 用時: ${item.timeStr})` : '';
                     listEl.innerHTML += `
                         <li class="leaderboard-item">
-                            <span><span class="rank-badge ${rankClass}">#${index + 1}</span> ${item.name}</span>
+                            <span><span class="rank-badge ${rankClass}">#${index + 1}</span> ${item.name} <span class="leaderboard-meta">${timeInfo}</span></span>
                             <strong style="color: var(--primary);">${item.score} 分</strong>
                         </li>
                     `;
