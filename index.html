@@ -555,7 +555,6 @@
                 <div class="input-group">
                     <input type="text" id="username-input" placeholder="請輸入您的暱稱或員編 (選填)" maxlength="15" autocomplete="off">
                 </div>
-                <!-- ⭐ 調整按鈕群組：包含「開始挑戰」與「我要練習」 -->
                 <div class="btn-action-group">
                     <button class="btn-start" onclick="startGame()">開始挑戰</button>
                     <button class="btn-practice" onclick="startPractice()">我要練習</button>
@@ -1224,7 +1223,6 @@
         }
     });
 
-    // 🏆 開始挑戰賽（需填暱稱）
     function startGame() {
         const inputVal = document.getElementById('username-input').value.trim();
         if (inputVal === "") {
@@ -1235,14 +1233,12 @@
         initGameProcess();
     }
 
-    // 🎯 ⭐ 新增：開始練習模式（免強制填寫暱稱，預設為「練習生」）
     function startPractice() {
         const inputVal = document.getElementById('username-input').value.trim();
         nickname = inputVal !== "" ? inputVal : "練習生";
         initGameProcess();
     }
 
-    // 共用遊戲初始化邏輯
     function initGameProcess() {
         startTime = Date.now();
         if (timerInterval) clearInterval(timerInterval);
@@ -1476,34 +1472,22 @@
                 return;
             }
 
-            let headers = parseCSVLine(lines[0]);
-            let nameColIdx = 1;  
-            let scoreColIdx = 2; 
-            let timeColIdx = -1;
-
-            for(let j = 0; j < headers.length; j++) {
-                let headerStr = headers[j].toLowerCase().trim();
-                if(headerStr.includes("name") || headerStr.includes("名字") || headerStr.includes("員編") || headerStr.includes("暱稱")) {
-                    nameColIdx = j;
-                }
-                if(headerStr.includes("score") || headerStr.includes("分數") || headerStr.includes("成績")) {
-                    scoreColIdx = j;
-                }
-                if(headerStr.includes("time") || headerStr.includes("時間") || headerStr.includes("作答")) {
-                    timeColIdx = j;
-                }
-            }
+            // ⭐ 試算表欄位精準鎖定 (對應 Google 表單預設順序)
+            // 欄位 0: 時間戳記, 欄位 1: 作答時間, 欄位 2: name, 欄位 3: score
+            const timeColIdx = 1;
+            const nameColIdx = 2;
+            const scoreColIdx = 3;
 
             for (let i = 1; i < lines.length; i++) {
                 if (!lines[i].trim()) continue;
                 let columns = parseCSVLine(lines[i]);
-                if (columns.length > Math.max(nameColIdx, scoreColIdx)) {
+                if (columns.length > Math.max(nameColIdx, scoreColIdx, timeColIdx)) {
                     let name = columns[nameColIdx].trim();
                     let pScore = parseInt(columns[scoreColIdx].trim().replace(/[^0-9]/g, '')) || 0;
                     
                     let pSeconds = 9999;
                     let timeDisplay = "";
-                    if (timeColIdx !== -1 && columns[timeColIdx]) {
+                    if (columns[timeColIdx]) {
                         let timeValRaw = columns[timeColIdx].trim();
                         timeDisplay = timeValRaw;
                         let matchMin = timeValRaw.match(/(\d+)\s*分/);
@@ -1525,6 +1509,7 @@
                 }
             }
 
+            // ⭐ 雙重排序：分數高者優先；若分數相同，作答秒數少者優先
             playerRecords.sort((a, b) => {
                 if (b.score !== a.score) {
                     return b.score - a.score;
