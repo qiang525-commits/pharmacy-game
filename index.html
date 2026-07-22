@@ -210,19 +210,11 @@
             border-color: var(--primary);
         }
 
-        .btn-action-group {
-            display: flex;
-            gap: 10px;
-            justify-content: center;
-            align-items: center;
-            flex-wrap: wrap;
-        }
-
         .btn-start {
-            padding: 12px 24px;
+            padding: 12px 30px;
             background: var(--primary);
             color: white;
-            font-size: 1.05rem;
+            font-size: 1.1rem;
             font-weight: bold;
             border: none;
             border-radius: 6px;
@@ -233,23 +225,6 @@
 
         .btn-start:hover {
             background: #357abd;
-        }
-
-        .btn-practice {
-            padding: 12px 24px;
-            background: var(--success);
-            color: white;
-            font-size: 1.05rem;
-            font-weight: bold;
-            border: none;
-            border-radius: 6px;
-            cursor: pointer;
-            box-shadow: 0 4px 6px rgba(46, 196, 182, 0.2);
-            transition: background 0.2s;
-        }
-
-        .btn-practice:hover {
-            background: #239b90;
         }
 
         /* 遊戲主畫面 */
@@ -266,14 +241,14 @@
             color: white;
             padding: 15px;
             border-radius: 8px;
-            font-size: 1.05rem;
+            font-size: 1.1rem;
             font-weight: bold;
             margin-bottom: 20px;
         }
 
         .score-item span {
             color: #ff9f1c;
-            font-size: 1.25rem;
+            font-size: 1.3rem;
         }
 
         .question-box {
@@ -553,12 +528,9 @@
             <div class="login-left-box">
                 <h2>🏆 參加調劑挑戰賽<br><span style="font-size:1.1rem; color:#64748b; font-weight:normal;">（隨機 20 題）</span></h2>
                 <div class="input-group">
-                    <input type="text" id="username-input" placeholder="請輸入您的暱稱或員編 (選填)" maxlength="15" autocomplete="off">
+                    <input type="text" id="username-input" placeholder="請輸入您的暱稱或員編" maxlength="15" autocomplete="off">
                 </div>
-                <div class="btn-action-group">
-                    <button class="btn-start" onclick="startGame()">開始挑戰</button>
-                    <button class="btn-practice" onclick="startPractice()">我要練習</button>
-                </div>
+                <button class="btn-start" onclick="startGame()">開始挑戰</button>
             </div>
 
             <div class="login-right-box">
@@ -577,7 +549,6 @@
             <div class="score-item">目前題數: <span id="current-q">1</span> / <span id="total-q">20</span></div>
             <div class="score-item">剩餘嘗試次數: <span id="chances-left" style="color: #ff9f1c;">2</span></div>
             <div class="score-item">得分: <span id="score">0</span></div>
-            <div class="score-item">歷時: <span id="live-timer" style="color: #2ec4b6;">0秒</span></div>
         </div>
 
         <div class="question-box">
@@ -590,7 +561,7 @@
     <!-- 3. 考試總成績與雲端排行榜畫面 -->
     <div id="result-screen" class="result-screen">
         <div id="result-header-block">
-            <h2>🎉 測驗結束 🎉</h2>
+            <h2>🎉 挑戰賽結束 🎉</h2>
             <p style="font-size: 1.3rem; margin-bottom: 5px;"><span id="result-username" style="color:var(--primary); font-weight:bold;"></span> 的最終測驗成績：</p>
             <div class="final-score"><span id="final-score-num">0</span> / <span id="max-score">0</span> 分</div>
             <div class="time-spent-box">⏱️ 總作答時間：<span id="time-spent-text" style="color:var(--danger);">0 分 0 秒</span></div>
@@ -1033,7 +1004,6 @@
     let wrongAnswersList = []; 
 
     let startTime = 0;
-    let timerInterval = null;
     let totalSecondsSpent = 0;
     let elapsedTimeStr = "0 分 0 秒";
 
@@ -1230,26 +1200,8 @@
             return;
         }
         nickname = inputVal;
-        initGameProcess();
-    }
-
-    function startPractice() {
-        const inputVal = document.getElementById('username-input').value.trim();
-        nickname = inputVal !== "" ? inputVal : "練習生";
-        initGameProcess();
-    }
-
-    function initGameProcess() {
+        
         startTime = Date.now();
-        if (timerInterval) clearInterval(timerInterval);
-        timerInterval = setInterval(() => {
-            let currentSeconds = Math.floor((Date.now() - startTime) / 1000);
-            let m = Math.floor(currentSeconds / 60);
-            let s = currentSeconds % 60;
-            let timerText = m > 0 ? `${m}分${s}秒` : `${s}秒`;
-            const timerEl = document.getElementById('live-timer');
-            if (timerEl) timerEl.innerText = timerText;
-        }, 1000);
 
         gameQuestions = getRandomQuestions(questionBank, 20);
         currentIdx = 0;
@@ -1267,6 +1219,7 @@
         document.getElementById('score').innerText = score;
         
         clearHighlights();
+        
         loadQuestion();
     }
 
@@ -1382,17 +1335,15 @@
     }
 
     function uploadToGoogleForm() {
-        if (timerInterval) clearInterval(timerInterval);
-
         totalSecondsSpent = Math.floor((Date.now() - startTime) / 1000);
         const minutes = Math.floor(totalSecondsSpent / 60);
         const seconds = totalSecondsSpent % 60;
         elapsedTimeStr = `${minutes} 分 ${seconds} 秒`;
 
         const formActionURL = "https://docs.google.com/forms/d/e/1FAIpQLSdl_fklnEbSZjuoMm7KBL1rVlH1voPyorcGBJ9IGTYX7-NAXQ/formResponse"; 
-        const timeFieldID = "entry.1753421116"; 
-        const nameFieldID = "entry.122254180";   
-        const scoreFieldID = "entry.1908618859"; 
+        const timeFieldID = "entry.1753421116"; // ⏱️ 剛剛從原始碼抓到的作答時間欄位 ID
+        const nameFieldID = "entry.122254180";   // 👤 姓名欄位 ID
+        const scoreFieldID = "entry.1908618859"; // 🏆 分數欄位 ID
 
         const formData = new FormData();
         formData.append(timeFieldID, elapsedTimeStr);
@@ -1472,22 +1423,34 @@
                 return;
             }
 
-            // ⭐ 試算表欄位精準鎖定 (對應 Google 表單預設順序)
-            // 欄位 0: 時間戳記, 欄位 1: 作答時間, 欄位 2: name, 欄位 3: score
-            const timeColIdx = 1;
-            const nameColIdx = 2;
-            const scoreColIdx = 3;
+            let headers = parseCSVLine(lines[0]);
+            let nameColIdx = 1;  
+            let scoreColIdx = 2; 
+            let timeColIdx = -1;
+
+            for(let j = 0; j < headers.length; j++) {
+                let headerStr = headers[j].toLowerCase().trim();
+                if(headerStr.includes("name") || headerStr.includes("名字") || headerStr.includes("員編") || headerStr.includes("暱稱")) {
+                    nameColIdx = j;
+                }
+                if(headerStr.includes("score") || headerStr.includes("分數") || headerStr.includes("成績")) {
+                    scoreColIdx = j;
+                }
+                if(headerStr.includes("time") || headerStr.includes("時間") || headerStr.includes("作答")) {
+                    timeColIdx = j;
+                }
+            }
 
             for (let i = 1; i < lines.length; i++) {
                 if (!lines[i].trim()) continue;
                 let columns = parseCSVLine(lines[i]);
-                if (columns.length > Math.max(nameColIdx, scoreColIdx, timeColIdx)) {
+                if (columns.length > Math.max(nameColIdx, scoreColIdx)) {
                     let name = columns[nameColIdx].trim();
                     let pScore = parseInt(columns[scoreColIdx].trim().replace(/[^0-9]/g, '')) || 0;
                     
                     let pSeconds = 9999;
                     let timeDisplay = "";
-                    if (columns[timeColIdx]) {
+                    if (timeColIdx !== -1 && columns[timeColIdx]) {
                         let timeValRaw = columns[timeColIdx].trim();
                         timeDisplay = timeValRaw;
                         let matchMin = timeValRaw.match(/(\d+)\s*分/);
