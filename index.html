@@ -760,7 +760,7 @@
 </div>
 
 <script>
-    // ⭐ 第三版完整題庫（共 315 筆，已精準校正 1-1 ~ 1-5 的所有藥品歸位，並修復了 10~19 號區域誤判切換畫面的 bug！）
+    // ⭐ 第三版完整題庫（共 315 筆，已精準校正 1-1 ~ 1-5 的所有藥品歸位！）
     const questionBank = [
         // --- 1-1 區域 (共 13 筆) ---
         { q: "Alinamin-F 50mg (合利他命F50) (Fursultiamine)", a: "1-1", name: "調劑台左方（調劑台左方-1）" },
@@ -832,7 +832,7 @@
         { q: "Qtern 5mg/10mg (控糖穩) (Saxagliptin/Dapagliflozin)", a: "1-5", name: "調劑台左方（調劑台左方-5）" },
         { q: "Relinide 1mg (醣立定) (Repaglinide)", a: "1-5", name: "調劑台左方（調劑台左方-5）" },
 
-        // --- 以下為系統其餘題庫 (不受影響，且已移除會衝突的藥物) ---
+        // --- 以下為系統其餘題庫 (不受影響) ---
         { q: "Abilify 10mg", a: "7", name: "口服1抽" },
         { q: "Abilify 10mg (安立復) (Aripiprazole)", a: "7", name: "口服1抽" },
         { q: "Abilify 2mg", a: "7", name: "口服1抽" },
@@ -949,12 +949,15 @@
         { q: "Ichderm Cream 15gm (普膚乳膏) (Doxepin)", a: "20", name: "預包區, 外用(後方)" },
         { q: "Imovane 7.5mg (宜眠安) (Zopiclone)", a: "17", name: "管4檯面" },
         { q: "Inolim 3mg (宜喘寧) (Trimetoquinol)", a: "16", name: "預包區" },
+        { q: "Invega ER 6mg (思維佳) (Paliperidone)", a: "2", name: "調劑台中間" },
         { q: "Juxac 20mg (解鬱) (Fluoxetine)", a: "16", name: "預包區" },
         { q: "Kascoal  40mg (加斯克兒) (Dimethyl polysiloxane)", a: "16", name: "預包區" },
         { q: "Ketoprofen inj  25mg/ml 3ml (可多普洛菲肌肉注射液) (Ketoprofen)", a: "5", name: "針劑下抽" },
         { q: "Ketoprofen inj  25mg/ml 3ml (可多普洛菲注射液) (Ketoprofen)", a: "5", name: "針劑下抽" },
         { q: "Knowful 400mg (腦福) (Piracetam)", a: "2", name: "調劑台中間" },
         { q: "Konax 60mg (咳諾) (Dextromethorphan)", a: "2", name: "調劑台中間" },
+        { q: "Lamictal 100mg (樂命達) (Lamotrigine)", a: "10", name: "口服3抽" },
+        { q: "Latuda 80mg (樂途達) (Lurasidone)", a: "10", name: "口服3抽" },
         { q: "Leeyo 10mg (離憂) (Escitalopram)", a: "2", name: "調劑台中間" },
         { q: "Lendormin 0.25mg (戀多眠) (Brotizolam)", a: "17", name: "管4檯面" },
         { q: "Lesiton 5mg (樂息痛) (Dihydroergotamine)", a: "8", name: "口服2抽" },
@@ -1246,6 +1249,8 @@
             });
             if (hasArea1 && currentViewMode === 'overview') {
                 switchToZoom1();
+            } else if (!hasArea1 && currentViewMode === 'zoom1') {
+                switchToOverview(); // 自動退回全景
             }
 
             uniqueTargetIds.forEach(areaId => {
@@ -1270,17 +1275,21 @@
     }
 
     function focusSingleDrug(areaRaw, areaName, drugName, isFromSearchSystem) {
-        clearHighlights();
-
         const areaIds = areaRaw.split(',').map(s => s.trim());
+        
+        // --- 修復：雙向自動判斷切換畫面 ---
+        let hasArea1 = areaIds.some(id => id === '1' || id.startsWith('1-'));
+        if (hasArea1 && currentViewMode === 'overview') {
+            switchToZoom1(); // 這個 function 內建會呼叫 clearHighlights()
+        } else if (!hasArea1 && currentViewMode === 'zoom1') {
+            switchToOverview(); // 自動退回全景，內建會呼叫 clearHighlights()
+        } else {
+            clearHighlights();
+        }
+
         let foundAny = false;
 
         areaIds.forEach(areaId => {
-            // --- 修復：確保只有「真正的1號或1開頭的細部(1-x)」才自動切換放大圖 ---
-            if ((areaId === '1' || areaId.startsWith('1-')) && currentViewMode === 'overview') {
-                switchToZoom1();
-            }
-
             const targetHotspot = document.querySelector(`.hotspot[data-id="${areaId}"]`);
             if (targetHotspot) {
                 targetHotspot.classList.add('reveal-answer');
@@ -1416,6 +1425,7 @@
 
         const correctIds = correctAnswerRaw.split(',').map(s => s.trim());
 
+        // 如果點到 1 號大區塊，且正解在 1 號內，自動放大
         if (correctIds.some(id => id.startsWith('1-')) && clickedId === '1' && currentViewMode === 'overview') {
             switchToZoom1();
             feedbackEl.className = 'feedback try-again';
@@ -1443,8 +1453,12 @@
                 feedbackEl.innerText = `❌ 機會用盡！你剛剛點到的是【${clickedId}號：${clickedName}】。正確答案已在圖片上幫您用紅框框起【${correctAnswerRaw}號：${correctName}】。`;
                 isLocked = true;
                 
-                if (correctIds.some(id => id.startsWith('1-')) && currentViewMode === 'overview') {
+                // --- 修復：遊戲模式中答錯，也能雙向自動判斷切換畫面 ---
+                let hasArea1 = correctIds.some(id => id === '1' || id.startsWith('1-'));
+                if (hasArea1 && currentViewMode === 'overview') {
                     switchToZoom1();
+                } else if (!hasArea1 && currentViewMode === 'zoom1') {
+                    switchToOverview();
                 }
 
                 const drugCleanText = gameQuestions[currentIdx].q.replace("在哪裡？", "").replace(/[\n\r]+/g, ' ').trim();
