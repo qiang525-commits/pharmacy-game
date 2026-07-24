@@ -760,7 +760,7 @@
 </div>
 
 <script>
-    // ⭐ 第三版完整題庫（共 315 筆，1-1 至 1-5 已全部精準完美對齊）
+    // ⭐ 第三版完整題庫（共 315 筆，已精準校正 1-1 ~ 1-5 的所有藥品歸位，並修復了 10~19 號區域誤判切換畫面的 bug！）
     const questionBank = [
         // --- 1-1 區域 (共 13 筆) ---
         { q: "Alinamin-F 50mg (合利他命F50) (Fursultiamine)", a: "1-1", name: "調劑台左方（調劑台左方-1）" },
@@ -1239,9 +1239,10 @@
             htmlContent += "</ol>";
             resultBlock.innerHTML = htmlContent;
 
+            // --- 修復：確保只有「真正的1號或1開頭的細部(1-x)」才自動切換放大圖 ---
             let hasArea1 = matchedDrugs.some(item => {
                 const parts = item.a.split(',').map(s => s.trim());
-                return parts.some(p => p.startsWith('1') || p === '1');
+                return parts.some(p => p === '1' || p.startsWith('1-'));
             });
             if (hasArea1 && currentViewMode === 'overview') {
                 switchToZoom1();
@@ -1275,7 +1276,8 @@
         let foundAny = false;
 
         areaIds.forEach(areaId => {
-            if ((areaId.startsWith('1') || areaId === '1') && currentViewMode === 'overview') {
+            // --- 修復：確保只有「真正的1號或1開頭的細部(1-x)」才自動切換放大圖 ---
+            if ((areaId === '1' || areaId.startsWith('1-')) && currentViewMode === 'overview') {
                 switchToZoom1();
             }
 
