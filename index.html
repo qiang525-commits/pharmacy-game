@@ -788,7 +788,7 @@
 </div>
 
 <script>
-    // ⭐ 第三版完整題庫（包含 OMP 雙重對應，以及 1號全區、2-1 ~ 2-3 歸位！）
+    // ⭐ 第三版完整題庫（包含 OMP 雙重對應，以及 1號與2號全區完美對齊！）
     const questionBank = [
         // --- 1-1 區域 (共 13 筆) ---
         { q: "Alinamin-F 50mg (合利他命F50) (Fursultiamine)", a: "1-1", name: "調劑台左方（調劑台左方-1）" },
@@ -885,17 +885,35 @@
         { q: "Rasitol 40mg (來喜妥) (Furosemide)", a: "2-3", name: "調劑台中間（調劑台中間-3）" },
         { q: "Ucefa 500mg (優克黴素) (Cefadroxil)", a: "2-3", name: "調劑台中間（調劑台中間-3）" },
 
-        // --- 以下為系統其餘題庫 (不受影響) ---
+        // --- 2-4 區域 (共 6 筆) ---
+        { q: "Leeyo 10mg (離憂) (Escitalopram)", a: "2-4", name: "調劑台中間（調劑台中間-4）" },
+        { q: "Peden Retard 4mg (帕登長效錠) (Biperiden)", a: "2-4", name: "調劑台中間（調劑台中間-4）" },
+        { q: "Ribelite 200mg (樂彼來) (Amisulpride)", a: "2-4", name: "調劑台中間（調劑台中間-4）" },
+        { q: "Seroxat  20mg (克憂果) (Paroxetine)", a: "2-4", name: "調劑台中間（調劑台中間-4）" },
+        { q: "Tizalin 2mg (筋舒寧) (Tizanidine)", a: "2-4", name: "調劑台中間（調劑台中間-4）" },
+        { q: "Tofranil 25mg (妥富腦) (Imipramine)", a: "2-4", name: "調劑台中間（調劑台中間-4）" },
+
+        // --- 2-5 區域 (共 7 筆) ---
+        { q: "Acamprosate 333mg () (Acamprosate)", a: "2-5", name: "調劑台中間（調劑台中間-5）" },
+        { q: "Alglutol 333 mg (戒酒妥) (Acamprosate)", a: "2-5", name: "調劑台中間（調劑台中間-5）" },
+        { q: "Co-Diovan (可得安穩) (Valsartan+Hydrochlorthiazide)", a: "2-5", name: "調劑台中間（調劑台中間-5）" },
+        { q: "Cozaar 50mg (可悅您) (Losartan potassium)", a: "2-5", name: "調劑台中間（調劑台中間-5）" },
+        { q: "Medicon-A 20mg (滅咳康) (Dextromethorphan)", a: "2-5", name: "調劑台中間（調劑台中間-5）" },
+        { q: "Notholic 50mg (納霍利) (Naltrexone)", a: "2-5", name: "調劑台中間（調劑台中間-5）" },
+        { q: "Peace (鼻福) (Pseudoephedrine+Triprolidine)", a: "2-5", name: "調劑台中間（調劑台中間-5）" },
+
+        // --- 2-6 區域 (共 1 筆) ---
+        { q: "Stromectol 3mg (絲每妥) (Ivermectin)", a: "2-6", name: "調劑台中間（調劑台中間-6）" },
+
+        // --- 以下為系統其餘題庫 (不受影響，已剃除被移至 1 及 2 號細部分區的藥品) ---
         { q: "Abilify 10mg", a: "7", name: "口服1抽" },
         { q: "Abilify 10mg (安立復) (Aripiprazole)", a: "7", name: "口服1抽" },
         { q: "Abilify 2mg", a: "7", name: "口服1抽" },
         { q: "Abilify 2mg (安立復) (Aripiprazole)", a: "7", name: "口服1抽" },
         { q: "Abilify 30mg", a: "3", name: "調劑台右方" },
         { q: "Abilify 30mg (安立復) (Aripiprazole)", a: "3", name: "調劑台右方" },
-        { q: "Acamprosate 333mg () (Acamprosate)", a: "2", name: "調劑台中間" },
         { q: "Actein 200mg (愛克痰) (Acetylcysteine)", a: "3", name: "調劑台右方" },
         { q: "Adhood ER  27mg (助專長效錠) (Methylphenidate)", a: "14", name: "管3上抽" },
-        { q: "Alglutol 333 mg (戒酒妥) (Acamprosate)", a: "2", name: "調劑台中間" },
         { q: "Allopurinol 100mg (安樂普諾) (Allopurinol)", a: "7", name: "口服1抽" },
         { q: "Amizide  5mg/50mg (安立壓) (Amiloride (HCl)/Hydrochlorothiazide)", a: "3", name: "調劑台右方" },
         { q: "Andine Aq. 120ml (安碘液) (Povidone-Iodine Aq. Sol'n)", a: "16,20", name: "預包區, 外用(後方)" },
@@ -942,13 +960,11 @@
         { q: "Cetimin 10mg (喜克敏) (Cetirizine)", a: "7", name: "口服1抽" },
         { q: "Citao 20mg (替你憂) (Citalopram)", a: "8", name: "口服2抽" },
         { q: "Cividoid gel 20gm 250IU/gm  (喜美凝膠) (Heparinoid )", a: "16,20", name: "預包區, 外用(後方)" },
-        { q: "Co-Diovan (可得安穩) (Valsartan+Hydrochlorthiazide)", a: "2", name: "調劑台中間" },
         { q: "Colchicine 0.5mg (可樂喜定) (Colchicine)", a: "7", name: "口服1抽" },
         { q: "Concerta ER 18mg (專思達) (Methylphenidate)", a: "15", name: "管3下抽" },
         { q: "Concerta ER 36mg (專思達) (Methylphenidate)", a: "14", name: "管3上抽" },
         { q: "Const-K ER 750mg (舒補鉀持續性藥效錠) (Potassium chloride)", a: "16", name: "預包區" },
         { q: "Cospirit 400mg (復思朗) (Amisulpride)", a: "7", name: "口服1抽" },
-        { q: "Cozaar 50mg (可悅您) (Losartan potassium)", a: "2", name: "調劑台中間" },
         { q: "Cravit 500mg (可樂必妥) (Levofloxacin)", a: "12", name: "抗生素/新藥" },
         { q: "Crestor 10mg (冠脂妥) (Rosuvastatin)", a: "8", name: "口服2抽" },
         { q: "Curam 1000mg (諾快寧) (Amoxicillin/Clavulanate)", a: "12", name: "抗生素/新藥" },
@@ -956,7 +972,6 @@
         { q: "Depyretin 500mg (得百利寧) (Acetaminophen)", a: "16", name: "預包區" },
         { q: "Desud Plus 8mg/2mg (解佳益) (Buprenorphine/Naloxone tab. 8mg/2mg)", a: "15", name: "管3下抽" },
         { q: "Diapine 5mg (大安源) (Diazepam)", a: "9", name: "管4抽屜" },
-        { q: "Dilantin  100mg (癲能停膠囊) (Phenytoin)", a: "16", name: "預包區" },
         { q: "Diphenhydramine inj 30mg/ml 1ml (鹽酸二苯胺明) (Diphenhydramine)", a: "5", name: "針劑下抽" },
         { q: "Dispain patch (袪痛貼貼片) (Flurbiprofen patch 40mg/12gm(10cm*14cm))", a: "16,20", name: "預包區, 外用(後方)" },
         { q: "Dolan (多倫) (Acetaminophen/Orphenadrine 450mg/35mg)", a: "16", name: "預包區" },
@@ -1000,7 +1015,9 @@
         { q: "Kascoal  40mg (加斯克兒) (Dimethyl polysiloxane)", a: "16", name: "預包區" },
         { q: "Ketoprofen inj  25mg/ml 3ml (可多普洛菲肌肉注射液) (Ketoprofen)", a: "5", name: "針劑下抽" },
         { q: "Ketoprofen inj  25mg/ml 3ml (可多普洛菲注射液) (Ketoprofen)", a: "5", name: "針劑下抽" },
-        { q: "Leeyo 10mg (離憂) (Escitalopram)", a: "2", name: "調劑台中間" },
+        { q: "Knowful 400mg (腦福) (Piracetam)", a: "2", name: "調劑台中間" },
+        { q: "Lamictal 100mg (樂命達) (Lamotrigine)", a: "10", name: "口服3抽" },
+        { q: "Latuda 80mg (樂途達) (Lurasidone)", a: "10", name: "口服3抽" },
         { q: "Lendormin 0.25mg (戀多眠) (Brotizolam)", a: "17", name: "管4檯面" },
         { q: "Lesiton 5mg (樂息痛) (Dihydroergotamine)", a: "8", name: "口服2抽" },
         { q: "Lexotan 3mg (立舒定) (Bromazepam)", a: "9", name: "管4抽屜" },
@@ -1009,7 +1026,7 @@
         { q: "Madopar 250mg (美道普錠) (Levodopa/Benserazide)", a: "16", name: "預包區" },
         { q: "Madopar HBS 125mg (美道普持續性藥效膠囊) (Levodopa/Benserazide)", a: "16", name: "預包區" },
         { q: "Magnesium Oxide 250mg (氧化鎂) (Magnesium Oxide)", a: "16", name: "預包區" },
-        { q: "Medicon-A 20mg (滅咳康) (Dextromethorphan)", a: "2", name: "調劑台中間" },
+        { q: "Melocam 7.5mg (美樂康) (Meloxicam)", a: "10", name: "口服3抽" },
         { q: "Methydur SR 22 mg (思有得持續性藥效膠囊) (Methylphenidate)", a: "14", name: "管3上抽" },
         { q: "Methydur SR 33mg (思有得) (Methylphenidate)", a: "15", name: "管3下抽" },
         { q: "Modipanol 2mg (美得眠) (Flunitrazepam)", a: "14", name: "管3上抽" },
@@ -1022,13 +1039,10 @@
         { q: "Nicotinell TTS 30 (克菸貼片) (Nicotine)", a: "11", name: "戒菸" },
         { q: "Nincort oral gel 5gm (康寧口內膠) (Triamcinolone)", a: "16,20", name: "預包區, 外用(後方)" },
         { q: "Nitrostat 0.6mg (耐絞寧) (Nitroglycerin)", a: "10", name: "口服3抽" },
-        { q: "Notholic 50mg (納霍利) (Naltrexone)", a: "2", name: "調劑台中間" },
         { q: "Nystatin Vag. tab. 0.1MU (寧司泰定陰道錠) (Nystatin )", a: "16,20", name: "預包區, 外用(後方)" },
         { q: "Olan OD 5mg (若寧口溶錠) (Olanzapine)", a: "10", name: "口服3抽" },
         { q: "Oxbu ER 5mg (歐舒緩釋錠) (Oxybutynin )", a: "8", name: "口服2抽" },
         { q: "Partane 5mg (帕金鎮) (Trihexyphenidyl)", a: "16", name: "預包區" },
-        { q: "Peace (鼻福) (Pseudoephedrine+Triprolidine)", a: "2", name: "調劑台中間" },
-        { q: "Peden Retard 4mg (帕登長效錠) (Biperiden)", a: "2", name: "調劑台中間" },
         { q: "Pentixol 3mg (盼寧舒) (Flupentixol)", a: "16", name: "預包區" },
         { q: "Pramipexole (apo) 0.25mg (安保穩樂) (Pramipexole)", a: "16", name: "預包區" },
         { q: "Pravafen 160mg/40mg (普脂芬) (Fenofibrate/Pravastatin)", a: "3", name: "調劑台右方" },
@@ -1041,7 +1055,6 @@
         { q: "Rexulti 1mg (銳思定) (Brexpiprazole)", a: "3", name: "調劑台右方" },
         { q: "Rexulti 2mg (銳思定) (Brexpiprazole)", a: "3", name: "調劑台右方" },
         { q: "Rexulti 4mg (銳思定) (Brexpiprazole)", a: "3", name: "調劑台右方" },
-        { q: "Ribelite 200mg (樂彼來) (Amisulpride)", a: "2", name: "調劑台中間" },
         { q: "Rinderon-VA Cream 5gm (臨得隆-維膚軟膏) (Betamethasone+Fradiomycin)", a: "16,20", name: "預包區, 外用(後方)" },
         { q: "Ripam 2mg (利平靜) (Clonazepam)", a: "17", name: "管4檯面" },
         { q: "Ritalin 10mg (利他能) (Methylphenidate)", a: "14", name: "管3上抽" },
@@ -1068,14 +1081,10 @@
         { q: "Somn Well XR 2mg (亞眠靚長效錠) (Melatonin)", a: "3", name: "調劑台右方" },
         { q: "Stilnox CR 6.25mg (使蒂諾斯) (Zolpidem)", a: "9", name: "管4抽屜" },
         { q: "Strocain (息痛佳音) (Oxethazaine/Polymigel(Al hydroxide+CaCO3+MgCO3))", a: "3", name: "調劑台右方" },
-        { q: "Stromectol 3mg (絲每妥) (Ivermectin)", a: "2", name: "調劑台中間" },
         { q: "Syndoman 15mg (欣得眠) (Flurazepam)", a: "17", name: "管4檯面" },
         { q: "Syntocriptine 2.5mg (比洛達) (Bromocriptine)", a: "10", name: "口服3抽" },
         { q: "Thiopental Inj. 1000mg/vial () (Thiopental)", a: "5", name: "針劑下抽" },
         { q: "Thrombifree 75mg (健克栓) (Clopidogrel)", a: "10", name: "口服3抽" },
-        { q: "Tizalin 2mg (筋舒寧) (Tizanidine)", a: "2", name: "調劑台中間" },
-        { q: "Tofranil 10mg (妥富腦) (Imipramine)", a: "8", name: "口服2抽" },
-        { q: "Tofranil 25mg (妥富腦) (Imipramine)", a: "2", name: "調劑台中間" },
         { q: "Tramed 50mg (特美痛) (Tramadol)", a: "9", name: "管4抽屜" },
         { q: "Trazone 100mg (暢鬱舒) (Trazodone)", a: "16", name: "預包區" },
         { q: "Trileptal 300mg (除癲達) (Oxcarbazepine)", a: "3", name: "調劑台右方" },
@@ -1084,6 +1093,7 @@
         { q: "Vitamin B1 Inj. 100mg/2ml (維他命乙１注射液) (Thiamine)", a: "5", name: "針劑下抽" },
         { q: "Volna-K  25mg (待可服寧) (Diclofenac pot.)", a: "10", name: "口服3抽" },
         { q: "Water for Injection () (Water for injection 20ml)", a: "5", name: "針劑下抽" },
+        { q: "Winsumin 50mg (穩舒眠) (Chlorpromazine)", a: "16", name: "預包區" },
         { q: "Wontran ER (保寧緩釋錠) (Tramadol HCl/Acetaminophen)", a: "9", name: "管4抽屜" },
         { q: "Xanax  0.5mg (贊安諾) (Alprazolam)", a: "17", name: "管4檯面" },
         { q: "Zolnox 10mg (樂必眠) (Zolpidem)", a: "9", name: "管4抽屜" },
@@ -1497,7 +1507,6 @@
             return;
         }
 
-        // 判定是否點擊正確 (支援多重落點判定)
         if (correctIds.includes(clickedId)) {
             score += 5; 
             document.getElementById('score').innerText = score;
