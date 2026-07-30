@@ -26,7 +26,7 @@
         }
 
         .container {
-            max-width: 1000px;
+            max-width: 1050px;
             width: 100%;
             background: white;
             padding: 20px;
@@ -74,14 +74,25 @@
             transform: translateY(-1px);
         }
 
-        /* 🔍 藥品快速查詢系統專用樣式 */
+        /* 🔍 藥品快速查詢系統 與 熱門排行榜 雙欄佈局 */
+        .top-section-flex {
+            display: flex;
+            gap: 20px;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+        }
+
         .search-box-container {
+            flex: 2;
+            min-width: 320px;
             background: #fff;
             border: 2px solid var(--primary);
             padding: 15px;
             border-radius: 8px;
-            margin-bottom: 20px;
             box-shadow: 0 2px 8px rgba(74, 144, 226, 0.1);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
         }
 
         .search-row {
@@ -89,6 +100,7 @@
             gap: 10px;
             align-items: center;
             justify-content: center;
+            flex-wrap: wrap;
         }
 
         .search-box-container input {
@@ -96,8 +108,8 @@
             font-size: 1rem;
             border: 1px solid #cbd5e1;
             border-radius: 6px;
-            width: 350px;
-            max-width: 60%;
+            width: 300px;
+            max-width: 100%;
             outline: none;
         }
 
@@ -115,6 +127,7 @@
             border-radius: 6px;
             cursor: pointer;
             transition: background 0.2s;
+            white-space: nowrap;
         }
 
         .btn-search:hover {
@@ -144,6 +157,69 @@
         .search-item-clickable:hover {
             color: var(--danger);
             font-weight: bold;
+        }
+
+        /* 熱門搜尋排行榜區塊 */
+        .hot-search-box {
+            flex: 1;
+            min-width: 250px;
+            background: #fffaf0;
+            border: 1px solid #fbd38d;
+            padding: 15px;
+            border-radius: 8px;
+            box-shadow: 0 2px 8px rgba(251, 211, 141, 0.2);
+        }
+
+        .hot-search-box h3 {
+            margin: 0 0 10px 0;
+            font-size: 1.05rem;
+            color: #c05621;
+            border-bottom: 2px solid #fbd38d;
+            padding-bottom: 5px;
+            text-align: center;
+        }
+
+        .hot-search-list {
+            margin: 0;
+            padding: 0;
+            list-style: none;
+            font-size: 0.95rem;
+        }
+
+        .hot-search-list li {
+            padding: 4px 0;
+            border-bottom: 1px dashed #fed7aa;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .hot-search-list li:last-child {
+            border-bottom: none;
+        }
+        
+        .hot-search-name {
+            color: #1a0dab;
+            cursor: pointer;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            max-width: 180px;
+            text-decoration: underline;
+        }
+
+        .hot-search-name:hover {
+            color: var(--danger);
+            font-weight: bold;
+        }
+
+        .hot-search-count {
+            color: #9c4221;
+            font-size: 0.85rem;
+            font-weight: bold;
+            background: #feebc8;
+            padding: 2px 6px;
+            border-radius: 12px;
         }
 
         /* 歡迎/輸入暱稱畫面 */
@@ -559,14 +635,25 @@
         </div>
     </header>
 
-    <!-- 🔍 藥品快速查詢系統專用樣式 -->
-    <div id="search-system-container" class="search-box-container">
-        <div class="search-row">
-            <label for="drug-search-input"><strong>🔍 藥品落點快查：</strong></label>
-            <input type="text" id="drug-search-input" placeholder="請輸入藥名關鍵字（例如：安、Ativan、Amizide）" autocomplete="off" oninput="checkSearchEmpty()">
-            <button class="btn-search" onclick="searchDrugLocation()">查詢落點</button>
+    <!-- 🔍 雙欄位佈局：搜尋系統 與 熱門搜尋排行榜 -->
+    <div class="top-section-flex" id="search-flex-container">
+        <!-- 左側：藥品快速查詢 -->
+        <div class="search-box-container">
+            <div class="search-row">
+                <label for="drug-search-input"><strong>🔍 藥品落點快查：</strong></label>
+                <input type="text" id="drug-search-input" placeholder="請輸入藥名關鍵字（例如：安、Ativan、Amizide）" autocomplete="off" oninput="checkSearchEmpty()">
+                <button class="btn-search" onclick="searchDrugLocation()">查詢落點</button>
+            </div>
+            <div id="search-result-block" class="search-result-block"></div>
         </div>
-        <div id="search-result-block" class="search-result-block"></div>
+
+        <!-- 右側：熱門搜尋排行榜 -->
+        <div class="hot-search-box">
+            <h3>🔥 最常尋找藥品 TOP 5</h3>
+            <ul class="hot-search-list" id="top-searched-list">
+                <li style="color:#a0aec0; justify-content:center; border:none; padding-top:10px;">讀取中...</li>
+            </ul>
+        </div>
     </div>
 
     <!-- 1. 登入歡迎畫面 -->
@@ -1015,9 +1102,6 @@
         { q: "Kascoal  40mg (加斯克兒) (Dimethyl polysiloxane)", a: "16", name: "預包區" },
         { q: "Ketoprofen inj  25mg/ml 3ml (可多普洛菲肌肉注射液) (Ketoprofen)", a: "5", name: "針劑下抽" },
         { q: "Ketoprofen inj  25mg/ml 3ml (可多普洛菲注射液) (Ketoprofen)", a: "5", name: "針劑下抽" },
-        { q: "Knowful 400mg (腦福) (Piracetam)", a: "2", name: "調劑台中間" },
-        { q: "Lamictal 100mg (樂命達) (Lamotrigine)", a: "10", name: "口服3抽" },
-        { q: "Latuda 80mg (樂途達) (Lurasidone)", a: "10", name: "口服3抽" },
         { q: "Lendormin 0.25mg (戀多眠) (Brotizolam)", a: "17", name: "管4檯面" },
         { q: "Lesiton 5mg (樂息痛) (Dihydroergotamine)", a: "8", name: "口服2抽" },
         { q: "Lexotan 3mg (立舒定) (Bromazepam)", a: "9", name: "管4抽屜" },
@@ -1026,7 +1110,6 @@
         { q: "Madopar 250mg (美道普錠) (Levodopa/Benserazide)", a: "16", name: "預包區" },
         { q: "Madopar HBS 125mg (美道普持續性藥效膠囊) (Levodopa/Benserazide)", a: "16", name: "預包區" },
         { q: "Magnesium Oxide 250mg (氧化鎂) (Magnesium Oxide)", a: "16", name: "預包區" },
-        { q: "Melocam 7.5mg (美樂康) (Meloxicam)", a: "10", name: "口服3抽" },
         { q: "Methydur SR 22 mg (思有得持續性藥效膠囊) (Methylphenidate)", a: "14", name: "管3上抽" },
         { q: "Methydur SR 33mg (思有得) (Methylphenidate)", a: "15", name: "管3下抽" },
         { q: "Modipanol 2mg (美得眠) (Flunitrazepam)", a: "14", name: "管3上抽" },
@@ -1068,9 +1151,8 @@
         { q: "Sandel 50mg (心滴舒) (Dipyridamole)", a: "10", name: "口服3抽" },
         { q: "Sennapur 12.5mg (清立飄) (Sennoside A+B )", a: "16", name: "預包區" },
         { q: "Sermion 10mg (適脈旺) (Nicergoline)", a: "8", name: "口服2抽" },
-        { q: "Seroquel XR 200mg (思樂康持續性藥效錠) (Quetiapine)", a: "3", name: "調劑台右方" },
-        { q: "Seroquel XR 50mg (思樂康持續性藥效錠) (Quetiapine)", a: "3", name: "調劑台右方" },
-        { q: "Seroxat  20mg (克憂果) (Paroxetine)", a: "2", name: "調劑台中間" },
+        { q: "Seroquel XR 200mg (思樂康持续性藥效錠) (Quetiapine)", a: "3", name: "調劑台右方" },
+        { q: "Seroquel XR 50mg (思樂康持续性藥效錠) (Quetiapine)", a: "3", name: "調劑台右方" },
         { q: "Sevikar 5/40mg  (舒脈康膜衣錠) (Amlodipine/Olmesartan)", a: "10", name: "口服3抽" },
         { q: "Silence 1mg (悠然) (Lorazepam)", a: "17", name: "管4檯面" },
         { q: "Silymarin 150mg (赐康保肝膠囊) (Silymarin)", a: "3", name: "調劑台右方" },
@@ -1089,7 +1171,7 @@
         { q: "Trazone 100mg (暢鬱舒) (Trazodone)", a: "16", name: "預包區" },
         { q: "Trileptal 300mg (除癲達) (Oxcarbazepine)", a: "3", name: "調劑台右方" },
         { q: "Valdoxan 25mg (煩多閃) (Agomelatine )", a: "10", name: "口服3抽" },
-        { q: "Venfaxime SR 75mg (免煩欣持續性藥效膠囊 ) (Venlafaxine)", a: "3", name: "調劑台右方" },
+        { q: "Venfaxime SR 75mg (免煩欣持续性藥效膠囊 ) (Venlafaxine)", a: "3", name: "調劑台右方" },
         { q: "Vitamin B1 Inj. 100mg/2ml (維他命乙１注射液) (Thiamine)", a: "5", name: "針劑下抽" },
         { q: "Volna-K  25mg (待可服寧) (Diclofenac pot.)", a: "10", name: "口服3抽" },
         { q: "Water for Injection () (Water for injection 20ml)", a: "5", name: "針劑下抽" },
@@ -1112,22 +1194,22 @@
         { q: "Normal Saline 0.9% 500ml (諾沙林注射液) (Sodium chloride)", a: "18", name: "點滴" },
         { q: "High-Xylmol  Oint 15gm (樂癒痔軟膏) (Betamethasone valerate/Lidocaine HCl/Phenylephrine HCl Oint.)", a: "16,20", name: "預包區, 外用(後方)" },
         { q: "Dextrose 5% 500ml (滴茲樂) (Dextrose)", a: "18", name: "點滴" },
-        { q: "Invega Hafyera 1000mg (善久達持續性藥效肌肉注射懸浮劑) (Paliperidone)", a: "19", name: "長效針(後方)" },
-        { q: "Invega Hafyera 700mg (善久達持續性藥效肌肉注射懸浮劑) (Paliperidone)", a: "19", name: "長效針(後方)" },
-        { q: "Invega Sustenna Inj  100mg/1ml (善思達持續性注射劑) (Paliperidone)", a: "19", name: "長效針(後方)" },
-        { q: "Invega Sustenna Inj  150mg/1.5ml (善思達持續性注射劑) (Paliperidone)", a: "19", name: "長效針(後方)" },
-        { q: "Invega Trinza 350mg (善妥達持續性藥效肌肉注射懸液劑) (Paliperidone)", a: "19", name: "長效針(後方)" },
-        { q: "Invega Trinza 525mg (善妥達持續性藥效肌肉注射懸液劑) (Paliperidone)", a: "19", name: "長效針(後方)" },
+        { q: "Invega Hafyera 1000mg (善久達持续性藥效肌肉注射懸浮劑) (Paliperidone)", a: "19", name: "長效針(後方)" },
+        { q: "Invega Hafyera 700mg (善久達持续性藥效肌肉注射懸浮劑) (Paliperidone)", a: "19", name: "長效針(後方)" },
+        { q: "Invega Sustenna Inj  100mg/1ml (善思達持续性注射劑) (Paliperidone)", a: "19", name: "長效針(後方)" },
+        { q: "Invega Sustenna Inj  150mg/1.5ml (善思達持续性注射劑) (Paliperidone)", a: "19", name: "長效針(後方)" },
+        { q: "Invega Trinza 350mg (善妥達持续性藥效肌肉注射懸液劑) (Paliperidone)", a: "19", name: "長效針(後方)" },
+        { q: "Invega Trinza 525mg (善妥達持续性藥效肌肉注射懸液劑) (Paliperidone)", a: "19", name: "長效針(後方)" },
         { q: "Okedi 100mg PR Inj. (歐克蒂) (Risperidone)", a: "19", name: "長效針(後方)" },
         { q: "Okedi 75mg PR Inj. (歐克蒂) (Risperidone)", a: "19", name: "長效針(後方)" },
         { q: "Permethrin 5% cream 30g (滅疥乳膏) (Permethrin)", a: "16,20", name: "預包區, 外用(後方)" },
-        { q: "Symvaga 100 (幸維佳持續性藥效肌肉注射懸浮劑) (Paliperidone palmitate Susp.)", a: "19", name: "長效針(後方)" },
-        { q: "Symvaga 150 (幸維佳持續性藥效肌肉注射懸浮劑) (Paliperidone palmitate Susp.)", a: "19", name: "長效針(後方)" },
+        { q: "Symvaga 100 (幸維佳持续性藥效肌肉注射懸浮劑) (Paliperidone palmitate Susp.)", a: "19", name: "長效針(後方)" },
+        { q: "Symvaga 150 (幸維佳持续性藥效肌肉注射懸浮劑) (Paliperidone palmitate Susp.)", a: "19", name: "長效針(後方)" },
         { q: "Tonex Cream 10mg/gm 40gm (痛立平乳膏) (Piroxicam)", a: "16,20", name: "預包區, 外用(後方)" },
         { q: "Trimin 50mg (克暈) (Dimenhydrinate)", a: "16", name: "預包區" },
         { q: "Voren-G gel 10mg/gm 40gm (非炎凝膠) (Diclofenac sod.)", a: "16,20", name: "預包區, 外用(後方)" },
-        { q: "Abilify Maintena ER Inj. 300mg (安立復美達持續性藥效肌肉注射用懸浮劑) (Aripiprazole)", a: "19", name: "長效針(後方)" },
-        { q: "Abilify Maintena ER Inj. 400mg (安立復美達持續性藥效肌肉注射用懸浮劑) (Aripiprazole)", a: "19", name: "長效針(後方)" },
+        { q: "Abilify Maintena ER Inj. 300mg (安立復美達持续性藥效肌肉注射用懸浮劑) (Aripiprazole)", a: "19", name: "長效針(後方)" },
+        { q: "Abilify Maintena ER Inj. 400mg (安立復美達持续性藥效肌肉注射用懸浮劑) (Aripiprazole)", a: "19", name: "長效針(後方)" },
         { q: "Tetracycline Oph. Oint. 5gm (鹽酸四環素眼藥膏) (Tetracycline)", a: "16,20", name: "預包區, 外用(後方)" }
     ];
 
@@ -1145,7 +1227,8 @@
     let elapsedTimeStr = "0 分 0 秒";
     let currentViewMode = 'overview';
 
-    const googleSheetCSVURL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vSInj_hf5jioFl80-t9oqq7jZLJk29mzSHTy1r8Gj9ERSdhlOOWCZIm_lKoqSec3l0SPo6M97qHWYK8/pub?output=csv";
+    // 排行榜與熱門搜尋 CSV 網址（已設定完成）
+    const searchLogCSVURL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vTJ46fMW9l2m_rnXGWQEX7AZFfOGD1RmkxJWZuX1PaVcW1RjoFYPr8AQMp19G10AIQ0PQdcnuuhsTvM/pub?output=csv";
 
     function logQuickSearchToForm(drugName) {
         const formActionURL = "https://docs.google.com/forms/d/16yxm83-Ir98b8hHMwxQJ2ZroUkaOMD56biGw4nMRlaM/formResponse";
@@ -1168,13 +1251,89 @@
             method: "POST",
             mode: "no-cors",
             body: formData
+        }).then(() => {
+            // 延遲更新以確保資料寫入
+            setTimeout(fetchTopSearchedDrugs, 1000);
         }).catch(err => {
             console.error("Quick search log error:", err);
         });
     }
 
+    // 🏆 新增：讀取快查紀錄 CSV 並統計出前 5 名
+    function fetchTopSearchedDrugs() {
+        const listEl = document.getElementById('top-searched-list');
+        if (!listEl) return;
+
+        if (!searchLogCSVURL || searchLogCSVURL.includes("YOUR_SEARCH_LOG")) {
+            listEl.innerHTML = '<li style="text-align:center; color:#c53030; padding:10px;">⚠️ 尚未設定 CSV 網址，請於程式碼替換</li>';
+            return;
+        }
+
+        fetch(searchLogCSVURL)
+        .then(response => response.text())
+        .then(csvText => {
+            let lines = csvText.split(/\r?\n/);
+            let drugCounts = {};
+
+            // 假設您的表單：第 1 欄為時間戳記，第 2 欄為藥品名稱 (index 1)
+            for (let i = 1; i < lines.length; i++) {
+                if (!lines[i].trim()) continue;
+                
+                // 簡易 CSV 剖析
+                let cols = [];
+                let inQuotes = false;
+                let curCol = '';
+                for(let char of lines[i]) {
+                    if (char === '"') inQuotes = !inQuotes;
+                    else if (char === ',' && !inQuotes) {
+                        cols.push(curCol);
+                        curCol = '';
+                    } else curCol += char;
+                }
+                cols.push(curCol);
+
+                // 取出藥品名稱
+                if (cols.length > 1) {
+                    let drugName = cols[1].trim().replace(/^"|"$/g, '');
+                    if (drugName) {
+                        drugCounts[drugName] = (drugCounts[drugName] || 0) + 1;
+                    }
+                }
+            }
+
+            // 轉成陣列並由高到低排序
+            let sortedDrugs = Object.entries(drugCounts).sort((a, b) => b[1] - a[1]);
+            let top5 = sortedDrugs.slice(0, 5);
+
+            // 更新畫面
+            listEl.innerHTML = '';
+            if (top5.length === 0) {
+                listEl.innerHTML = '<li style="text-align:center; color:#64748b;">目前尚無搜尋紀錄</li>';
+            } else {
+                top5.forEach((item, index) => {
+                    let rankIcon = ['🥇', '🥈', '🥉', '✨', '🔥'][index] || '📌';
+                    // 讓藥品名稱變成可以點擊直接查詢
+                    let cleanName = item[0].replace(/'/g, "\\'");
+                    listEl.innerHTML += `
+                        <li>
+                            <span class="hot-search-name" onclick="document.getElementById('drug-search-input').value='${cleanName}'; searchDrugLocation();" title="點擊直接查詢">
+                                ${rankIcon} ${item[0]}
+                            </span>
+                            <span class="hot-search-count">${item[1]} 次</span>
+                        </li>
+                    `;
+                });
+            }
+        })
+        .catch(err => {
+            console.error(err);
+            listEl.innerHTML = '<li style="text-align:center; color:red; padding:10px;">❌ 讀取失敗</li>';
+        });
+    }
+
     window.onload = function() {
         fetchCloudLeaderboard();
+        fetchTopSearchedDrugs(); // 網頁載入時呼叫一次
     };
 
     function clearHighlights() {
@@ -1190,6 +1349,7 @@
 
             if (document.getElementById('game-info-ui').style.display !== 'block' && document.getElementById('result-screen').style.display !== 'block') {
                 document.getElementById('login-screen-container').style.display = 'block';
+                document.getElementById('search-flex-container').style.display = 'flex';
             }
             clearHighlights();
             document.getElementById('search-result-block').innerHTML = "";
@@ -1450,7 +1610,7 @@
         const mainHeader = document.getElementById('main-header');
         if (mainHeader) mainHeader.style.display = 'none';
         
-        document.getElementById('search-system-container').style.display = 'none';
+        document.getElementById('search-flex-container').style.display = 'none';
         document.getElementById('login-screen-container').style.display = 'none';
         
         document.getElementById('game-info-ui').style.display = 'block';
@@ -1657,7 +1817,9 @@
     }
 
     function fetchCloudLeaderboard() {
-        fetch(googleSheetCSVURL)
+        const leaderboardCSVURL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vSInj_hf5jioFl80-t9oqq7jZLJk29mzSHTy1r8Gj9ERSdhlOOWCZIm_lKoqSec3l0SPo6M97qHWYK8/pub?output=csv";
+
+        fetch(leaderboardCSVURL)
         .then(response => response.text())
         .then(csvText => {
             let lines = csvText.split(/\r?\n/);
